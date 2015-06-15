@@ -58,3 +58,5 @@ target/
 
 .DS_Store
 .pyc
+
+0001_initial.py

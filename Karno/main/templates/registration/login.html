@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Login</title>
+</head>
+<body>
+
+	<form method="post" action="">{% csrf_token %}
+	     {{ form.errors }}
+         {% csrf_token %}
+         {{ form.as_p }}
+    	  <input type="submit" value="Login" />
+	</form>
+	<a href="{% url 'home' %}"> return to home page </a>
+</body>
+</html>
