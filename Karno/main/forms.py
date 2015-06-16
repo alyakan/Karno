@@ -1,5 +1,6 @@
 from django import forms
 from main.models import File
+from django.contrib.auth.models import User
 
 
 class FileUploadForm(forms.ModelForm):
@@ -8,3 +9,11 @@ class FileUploadForm(forms.ModelForm):
     class Meta:
         model = File
         fields = ['file_uploaded', ]
+
+
+class UserForm(forms.ModelForm):
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password')
