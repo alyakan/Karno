@@ -58,5 +58,6 @@ target/
 
 .DS_Store
 .pyc
+
 Karno/main/migrations/
 Karno/db.sqlite3/

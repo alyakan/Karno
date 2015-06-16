@@ -56,7 +56,7 @@ ROOT_URLCONF = 'Karno.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['main/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -85,6 +85,8 @@ DATABASES = {
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
+LOGIN_REDIRECT_URL = '/main'
+LOGIN_URL = '/main/user/login/'
 
 LANGUAGE_CODE = 'en-us'
 
