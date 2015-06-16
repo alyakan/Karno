@@ -3,45 +3,43 @@ from django.views.generic import CreateView, FormView
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
 
-# Create your views here.
-class UserRegisteration(CreateView):
+class LoginRequiredMixin(object):
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
+
+
+class UserRegisteration(FormView):
     """
     Class to handle user Registeration
     Author: Moustafa
     """
-    def get(self, request, *args, **kwargs):
-        """
-        Initializes form for user registeration
-        Author: Moustafa
-        """
-        form = UserCreationForm()
-        return render(
-            request, 'registration/user-registeration.html', {'form': form})
+    template_name = 'registration/user-registeration.html'
+    form_class = UserCreationForm
 
-    def post(self, request, *args, **kwargs):
+    def form_valid(self, form):
         """
-        Validated Registeration form and auto-login the new user.
+        Saves user and automatically logs him/her in
         """
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            user = authenticate(
-                username=request.POST['username'],
-                password=request.POST['password1'])
-            login(request, user)
-            messages.add_message(
+        form.save()
+        user = authenticate(
+                username=form.cleaned_data['username'],
+                password=form.cleaned_data['password1'])
+        login(self.request, user)
+        messages.add_message(
                 self.request, messages.INFO,
-                'welcome ' + request.user.username + '.')
-            return HttpResponseRedirect(reverse('home'))
-        return render(
-            request, 'registration/user-registeration.html', {'form': form})
+                'welcome ' + self.request.user.username + '.')
+        return HttpResponseRedirect(reverse_lazy('home'))
 
 
-class UserChangePassword(FormView):
+class UserChangePassword(LoginRequiredMixin, FormView):
     """
     Class to allow user to change his/her password.
     Author: Moustafa
