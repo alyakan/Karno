@@ -26,7 +26,7 @@ class UploadFile(SuccessMessageMixin, FormView):
         form.save(commit=True)
         messages.add_message(self.request,
                              messages.INFO,
-                             "File was Uploaded successfully" )
+                             "File was Uploaded successfully")
         return super(UploadFile, self).form_valid(form)
 
 
@@ -35,6 +35,7 @@ class FileListView(ListView):
 
 
 class RegisterView(FormView):
+
     """
     Registers a user.
 
@@ -63,15 +64,18 @@ class RegisterView(FormView):
             password = request.POST.get('password')
             user = authenticate(username=username, password=password)
             login(request, user)
-            return render(request, self.template_name, {'form': form,
-                          'registered': registered})
+            return render(request,
+                          self.template_name,
+                          {'form': form,
+                           'registered': registered})
         messages.error(self.request, "Invalid username or password!")
         registered = False
         return render(request, self.template_name, {'form': form,
-                      'registered': registered})
+                                                    'registered': registered})
 
 
 class LoginView(FormView):
+
     """
     Logins a user into the system.
 

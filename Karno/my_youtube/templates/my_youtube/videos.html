@@ -4,15 +4,14 @@
 	<title></title>
 </head>
 <body>
-
-	<a href="{% url "youtube_upload" %}">Upload another >></a>
-
-{% load i18n %}
+	<a href="{% url "youtube_upload" %}">Upload a video >></a>
+	{% load i18n %}
 	{% block content %}
 		{% if video_params %}
 			    {% for params in video_params %}
 				    <section>
 				    	{% include "my_youtube/video.html" with video_id=params.video_id width=params.width height=params.height origin=params.origin %}
+				    	<a href="{% url "youtube_video" params.video_id %}">Watch this video</a>
 				    </section>
 			    {% endfor %}
 		{% else %}
