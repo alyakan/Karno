@@ -7,9 +7,10 @@
 	<h1>Files</h1>
 		{% for file in object_list %}
 		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a></h1>
-			<a href="{{ file.file_uploaded.url }}">{{file.file_uploaded.url}}</a>
+			<!-- <a href="{{ file.file_uploaded.url }}">{{file.file_uploaded.url}}</a> -->
+			<source src="{{ file.file_uploaded.url }}" type="video/mov"></source>
 		{% endfor %}
-		<a href="{{url 'upload'}}"> Share File</a>
+		<a href="{% url 'upload' %}"> Share File</a>
 
 			{% if messages %}
 		<ul class="messages">
