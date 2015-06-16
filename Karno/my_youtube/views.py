@@ -22,7 +22,6 @@ def _video_params(request, video_id):
     width = request.GET.get("width", "70%")
     height = request.GET.get("height", "350")
     origin = request.get_host()
-
     return {"video_id": video_id, "origin": origin, "width": width, "height": height}
 
 
@@ -83,10 +82,11 @@ def video_list(request, username=None):
     user = User.objects.get(username=username) if username else request.user
 
     # loop through the videos of the user
-    videos = Video.objects.filter(user=user).all()
+    videos = Video.objects.all()
     video_params = []
     for video in videos:
         video_params.append(_video_params(request, video.video_id))
+        print video.youtube_url
 
     return render_to_response(
         "my_youtube/videos.html",
@@ -110,6 +110,7 @@ def direct_upload(request):
         if `only_data` set, a json object.
         otherwise redirects to the video display page
     """
+    print {"direct"}
     if request.method == "POST":
         try:
             form = YoutubeDirectUploadForm(request.POST, request.FILES)
@@ -144,7 +145,7 @@ def direct_upload(request):
                 video.save()
 
                 # delete the uploaded video instance
-                uploaded_video.delete()
+                # uploaded_video.delete()
 
                 # return the response
                 return_only_data = request.GET.get('only_data')

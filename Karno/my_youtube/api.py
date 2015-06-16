@@ -6,6 +6,7 @@ from django.utils.translation import ugettext as _
 
 
 class OperationError(BaseException):
+
     """
     Raise when an error happens on Api class
     """
@@ -13,6 +14,7 @@ class OperationError(BaseException):
 
 
 class ApiError(BaseException):
+
     """
     Raise when a Youtube API related error occurs
     i.e. redirect Youtube errors with this error
@@ -21,6 +23,7 @@ class ApiError(BaseException):
 
 
 class AccessControl:
+
     """
     Enum-like structure to determine the permission of a video
     """
@@ -28,6 +31,7 @@ class AccessControl:
 
 
 class Api:
+
     """
     Wrapper for Youtube API
     See: https://developers.google.com/youtube/1.0/developers_guide_python
@@ -44,7 +48,8 @@ class Api:
                 "Youtube Developer Key is missing on settings.")
 
         try:
-            # client id is not required but will be used for other features like analytics
+            # client id is not required but will be used for other features
+            # like analytics
             self.client_id = settings.YOUTUBE_CLIENT_ID
         except AttributeError:
             self.client_id = None
@@ -153,7 +158,8 @@ class Api:
         extension = self._access_control(access_control, my_media_group)
 
         # create the gdata.youtube.YouTubeVideoEntry to be uploaded
-        video_entry = gdata.youtube.YouTubeVideoEntry(media=my_media_group, extension_elements=extension)
+        video_entry = gdata.youtube.YouTubeVideoEntry(
+            media=my_media_group, extension_elements=extension)
 
         # add developer tags
         if developer_tags:
@@ -280,12 +286,12 @@ class Api:
         if description:
             entry.media.description.text = description
 
-        #if keywords:
+        # if keywords:
         #    entry.media.keywords.text = keywords
 
         success = Api.yt_service.UpdateVideoEntry(entry)
         return success
-        #if success is None:
+        # if success is None:
         #    raise OperationError(_("Cannot update video on Youtube"))
 
     def delete_video(self, video_id):

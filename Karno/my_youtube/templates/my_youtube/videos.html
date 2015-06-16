@@ -1,12 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+	<a href="{% url "youtube_upload" %}">Upload another >></a>
+
 {% load i18n %}
-{% block content %}
-	{% if video_params %}
-		<ul>
-		    {% for params in video_params %}
-		        <li>{% include "my_youtube/video.html" with video_id=params.video_id width=params.width height=params.height origin=params.origin %}</li>
-		    {% endfor %}
-		</ul>
-	{% else %}
-		{% trans "No video found" %}
-	{% endif %}
-{% endblock %}
+	{% block content %}
+		{% if video_params %}
+			    {% for params in video_params %}
+				    <section>
+				    	{% include "my_youtube/video.html" with video_id=params.video_id width=params.width height=params.height origin=params.origin %}
+				    </section>
+			    {% endfor %}
+		{% else %}
+			{% trans "No video found" %}
+		{% endif %}
+	{% endblock %}
+</body>
+</html>
