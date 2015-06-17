@@ -1,11 +1,14 @@
 from django.shortcuts import render
-from django.views.generic import CreateView, FormView
+from django.views.generic import FormView, ListView
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from main.forms import FileUploadForm
+from main.models import File
+from django.contrib.messages.views import SuccessMessageMixin
 
 
 class LoginRequiredMixin(object):
@@ -17,6 +20,7 @@ class LoginRequiredMixin(object):
 
 
 class UserRegisteration(FormView):
+
     """
     Class to handle user Registeration
     Author: Moustafa
@@ -30,20 +34,22 @@ class UserRegisteration(FormView):
         """
         form.save()
         user = authenticate(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1'])
+            username=form.cleaned_data['username'],
+            password=form.cleaned_data['password1'])
         login(self.request, user)
         messages.add_message(
-                self.request, messages.INFO,
-                'welcome ' + self.request.user.username + '.')
+            self.request, messages.INFO,
+            'welcome ' + self.request.user.username + '.')
         return HttpResponseRedirect(reverse_lazy('home'))
 
 
 class UserChangePassword(LoginRequiredMixin, FormView):
+
     """
     Class to allow user to change his/her password.
     Author: Moustafa
     """
+
     def get(self, request, *args, **kwargs):
         """
         Initializes form for user registeration
@@ -68,3 +74,22 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             return HttpResponseRedirect(reverse('home'))
         return render(
             request, 'registration/user-change-password.html', {'form': form})
+
+
+class UploadFile(SuccessMessageMixin, FormView):
+    form_class = FileUploadForm
+    success_url = reverse_lazy('file-list')
+    model = File
+    template_name = 'main/upload_file.html'
+    sucess_message = 'File Uploaded Successfully'
+
+    def form_valid(self, form):
+        form.save(commit=True)
+        messages.add_message(self.request,
+                             messages.INFO,
+                             "File was Uploaded successfully")
+        return super(UploadFile, self).form_valid(form)
+
+
+class FileListView(ListView):
+    model = File
