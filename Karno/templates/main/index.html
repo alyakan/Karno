@@ -4,6 +4,12 @@
 	<title></title>
 </head>
 <body>
+	<div>
+		{% for document_entry in documents_feed.entry %}
+		  	# Display the title of the document on the command line.
+			<h2> {{ document_entry.title.text }} </h2>
+		{% endfor %}
+	</div>
 	{% if messages %}
         <div class="messages">
             {% for message in messages %}

@@ -1,4 +1,4 @@
-from django.views.generic import FormView, ListView
+from django.views.generic import FormView, ListView, TemplateView
 from django.core.urlresolvers import reverse_lazy
 from main.forms import FileUploadForm
 from main.models import File
@@ -13,6 +13,41 @@ from django.views.decorators.debug import sensitive_post_parameters
 from main.forms import UserForm
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
+import gdata.docs.service
+
+
+class IndexView(TemplateView):
+
+    """
+    Display the Index Page.
+
+    Author: Aly Yakan
+
+    **Template:**
+
+    :template:`main/index.html`
+    """
+    template_name = "main/index.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        Gets Context Data Used in main.html Template
+
+        Author: Aly Yakan
+        """
+        context = super(IndexView, self).get_context_data(**kwargs)
+        # Create a client class which will make HTTP requests with Google Docs
+        # server.
+        client = gdata.docs.service.DocsService()
+        # Authenticate using your Google Docs email address and password.
+        client.ClientLogin('aly.yakan@gmail.com', 'kapaa100894')
+
+        # Query the server for an Atom feed containing a list of your
+        # documents.
+        documents_feed = client.GetDocumentListFeed()
+        print documents_feed
+        context['documents_feed'] = documents_feed
+        return context
 
 
 class UploadFile(SuccessMessageMixin, FormView):
