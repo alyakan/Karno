@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Share File</title>
+</head>
+<body>
+	<h1>Share A File</h1>
+	        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <p>{{ form.non_field_errors }}</p>
+            <p>{{ form.file_uploaded.label_tag }} {{ form.file_uploaded.help_text }}</p>
+            <p>
+                {{ form.file_uploaded.errors }}
+                {{ form.file_uploaded }}
+            </p>
+            <p><input type="submit" value="Upload" /></p>
+        </form>
+
+</body>
+</html>
