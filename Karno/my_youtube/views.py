@@ -86,7 +86,7 @@ def video_list(request, username=None):
     video_params = []
     for video in videos:
         video_params.append(_video_params(request, video.video_id))
-        print video.youtube_url
+        print video_params
 
     return render_to_response(
         "my_youtube/videos.html",
