@@ -14,11 +14,13 @@
 	{% endif %}
 	{% if user.is_authenticated %}
 		<a href="{% url 'user-logout' %}">Log Out</a><br>
-		<a href="{% url 'user-manage' %}">Manage Account</a><br>
+		<a href="{% url 'user-manage' %}">Manage Account</a><br><br>
+		<h5> <a href="/messages/"> Messages </a> </a><br>
+
 		<!-- <a href="{% url 'user-reset' %}">reset</a> -->
 	{% else %}
 		<a href="{% url 'user-new' %}">Sign Up</a><br>
-		<a href="{% url 'user-login' %}">Log In</a><br>
+		<a href="{% url 'user-login' %}">Log In</a><br><br>
 	{% endif %}
 </body>
 </html>

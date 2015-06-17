@@ -38,6 +38,8 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'postman',
+
 )
 
 MIDDLEWARE_CLASSES = (
@@ -98,6 +100,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+POSTMAN_DISALLOW_ANONYMOUS = True
+
+POSTMAN_AUTO_MODERATE_AS = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+WSGI_APPLICATION = 'Karno.wsgi.application'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/

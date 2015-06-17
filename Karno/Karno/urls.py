@@ -8,4 +8,6 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^main/', include('main.urls')),
+    url(r'^messages/', include('postman.urls')),
+
 ]
