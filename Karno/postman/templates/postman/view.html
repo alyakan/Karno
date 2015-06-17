@@ -14,6 +14,11 @@
  </div>
  <div class="pm_body">{{ message.body|linebreaksbr }}</div>
 </div>
+<div class="">
+<a href="{{  message.attachment.file_uploaded.url }}"> {{  message.attachment.file_uploaded.url }} </a>
+</div>
+
+</div>
 {% if forloop.last %}
 <form action="" method="post">{% csrf_token %}
 <input type="hidden" {% if pm_messages|length > 1 and message.thread_id %}name="tpks" value="{{ message.thread_id }}"{% else %}name="pks" value="{{ message.pk }}"{% endif %} />

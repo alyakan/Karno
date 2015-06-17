@@ -26,13 +26,13 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from postman.fields import CommaSeparatedUserField
 from postman.models import Message
 from postman.utils import WRAP_WIDTH
-from django.db import models
+from main.models import File
 
 
 class BaseWriteForm(forms.ModelForm):
 
     """The base class for other forms."""
-    file_attatched = models.FileField(required=False)
+    attatched_file = forms.FileField(required=False)
 
     class Meta:
         model = Message
@@ -120,8 +120,12 @@ class BaseWriteForm(forms.ModelForm):
 
         """
         recipients = self.cleaned_data.get('recipients', [])
-        file_attatched = self.cleaned_data.get('file_attatched')
-        print ('attatched file ', file_attatched)
+        attatched_file = self.cleaned_data.get('attatched_file')
+        file_ = False
+        if attatched_file:
+            file_ = File.objects.create(file_uploaded=attatched_file)
+            print ("File Upload : ", attatched_file)
+            print ("File id : ", file_.id)
         # at the very first reply, make it a conversation
         if parent and not parent.thread_id:
             parent.thread = parent
@@ -139,6 +143,9 @@ class BaseWriteForm(forms.ModelForm):
             recipients.insert(0, recipient)
         is_successful = True
         for r in recipients:
+            if file_:
+                self.instance.attachment_id = file_.id
+                print("message Attatchment", file_)
             if isinstance(r, get_user_model()):
                 self.instance.recipient = r
             else:
@@ -175,7 +182,7 @@ class WriteForm(BaseWriteForm):
         label=(_("Recipients"), _("Recipient")), help_text='')
 
     class Meta(BaseWriteForm.Meta):
-        fields = ('recipients', 'subject', 'body','file_attatched')
+        fields = ('recipients', 'subject', 'body')
 
 
 class AnonymousWriteForm(BaseWriteForm):
