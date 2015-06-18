@@ -39,7 +39,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'main',
     'postman',
-
+    'my_youtube',
+    'filetransfers',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -85,10 +86,38 @@ DATABASES = {
 }
 
 
+YOUTUBE_AUTH_EMAIL = 'aly.yakan@gmail.com'
+YOUTUBE_AUTH_PASSWORD = 'kapaa100894'
+YOUTUBE_DEVELOPER_KEY = 'AI39si4zRoQ7hmj4OidAm2T0uXkizdqTqTIzgP0wkkUa39Cqqv5y09VL4iKlJGKTRV2GxvVbbNGlGChUnUCKXRgt_UmegUUkIA'
+YOUTUBE_CLIENT_ID = '541524317759-5hdk9q5g64mhh4rf6b2jhj90b6oflcdu.apps.googleusercontent.com'
+YOUTUBE_UPLOAD_REDIRECT_URL = '/youtube/videos/'
+YOUTUBE_DELETE_REDIRECT_URL = '/main/file_list/'
+
+PREPARE_UPLOAD_BACKEND = 'filetransfers.backends.default.prepare_upload'
+SERVE_FILE_BACKEND = 'filetransfers.backends.default.serve_file'
+PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.default.public_download_url'
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 LOGIN_REDIRECT_URL = '/main'
 LOGIN_URL = '/main/user/login/'
+
+"""
+email setup
+"""
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_USE_TLS = False
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mostafa.93.mahmoud@gmail.com'
+EMAIL_HOST_PASSWORD = 'THEkey324'
+DEFAULT_FROM_EMAIL = 'mostafa.93.mahmoud@gmail.com'
+# DEFAULT_TO_EMAIL = 'to email'
 
 LANGUAGE_CODE = 'en-us'
 
@@ -112,6 +141,8 @@ WSGI_APPLICATION = 'Karno.wsgi.application'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
+STATIC_PATH = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (STATIC_PATH,)
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 MEDIA_URL = '/media/'

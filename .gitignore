@@ -59,9 +59,19 @@ target/
 .DS_Store
 .pyc
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 Karno/main/migrations/
 Karno/db.sqlite3/
 =======
 main/migrations/
 >>>>>>> 7c3f3dfca2fabde19336dad5e6dc66297d2d7460
+=======
+
+Karno/main/migrations/
+Karno/db.sqlite3/
+
+main/migrations/
+*.sqlite3
+
+>>>>>>> fa47ecdfb40b5abce9ae6454e5fc49049d82b903
