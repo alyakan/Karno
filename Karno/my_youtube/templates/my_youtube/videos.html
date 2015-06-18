@@ -19,7 +19,7 @@
 			    {% for params in video_params %}
 				    <section>
 				    	{% include "my_youtube/video.html" with video_id=params.video_id width=params.width height=params.height origin=params.origin %}
-				    	<a href="{% url "" %}">Share this</a>
+				    	<a href="{% url "youtube_video" params.video_id %}">Share this</a>
 				    </section>
 			    {% endfor %}
 		{% endif %}
@@ -27,7 +27,7 @@
 			{% for vid in embeded_videos %}
 			    <section>
 			    	{% include "my_youtube/video.html" with video_id=vid.video_id width='70%' height='350' origin='localhost:8000' %}
-			    	<a href="{% url "" %}">Share this</a>
+			    	<a href="{% url "youtube_video" vid.video_id  %}">Share this</a>
 			    </section>
 			{% endfor %}
 		{% endif %}
