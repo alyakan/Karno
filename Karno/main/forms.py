@@ -1,5 +1,5 @@
 from django import forms
-from main.models import File
+from main.models import File, AudioFile
 
 
 class FileUploadForm(forms.ModelForm):
@@ -8,3 +8,10 @@ class FileUploadForm(forms.ModelForm):
     class Meta:
         model = File
         fields = ['file_uploaded', ]
+
+
+class AudioFileUploadForm(forms.ModelForm):
+
+    class Meta:
+        model = AudioFile
+        exclude = ['source_file', ]
