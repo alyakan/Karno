@@ -15,9 +15,13 @@
  <div class="pm_body">{{ message.body|linebreaksbr }}</div>
 </div>
 <div class="">
+<br>
+{% if message.attachment.file_uploaded.url %}
+<h3> Attatched File </h3>
 <a href="{{  message.attachment.file_uploaded.url }}"> {{  message.attachment.file_uploaded.url }} </a>
+{%  endif %}
+<br><br>
 </div>
-
 </div>
 {% if forloop.last %}
 <form action="" method="post">{% csrf_token %}
