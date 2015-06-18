@@ -14,6 +14,6 @@ class YoutubeUrl(models.Model):
     Author: Aly Yakan
 
     """
-    url = models.CharField(max_length=128)
+    url = models.CharField(max_length=128, null=False)
     video_id = models.CharField(max_length=128)
     user = models.ForeignKey(User)
