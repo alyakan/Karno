@@ -63,13 +63,6 @@ class UserChangePassword(LoginRequiredMixin, FormView):
         form = PasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
             form.save()
-            email = EmailMessage(
-                'Hello', 'World', to=['mostafa.93.mahmoud@gmail.com'])
-            # send_email(
-            #     'Subject here', 'Here is the message.',
-            #     settings.EMAIL_HOST_USER,
-            #     ['mostafa.93.mahmo@example.com'], fail_silently=False)
-            email.send()
             update_session_auth_hash(request, form.user)
             messages.add_message(
                 self.request, messages.INFO,
