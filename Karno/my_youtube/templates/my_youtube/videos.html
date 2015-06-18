@@ -27,7 +27,6 @@
 			{% for vid in embeded_videos %}
 			    <section>
 			    	{% include "my_youtube/video.html" with video_id=vid.video_id width='70%' height='350' origin='localhost:8000' %}
-			    	<a href="{% url "youtube_video" vid.video_id  %}">Share this</a>
 			    </section>
 			{% endfor %}
 		{% endif %}

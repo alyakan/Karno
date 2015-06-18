@@ -6,22 +6,21 @@
 </head>
 <body>
 	<h1>Files</h1><br>
-		{% for file in object_list %}
+	{% for file in object_list %}
 		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a>
-			<a href="{% url "file-detail" file.id %}">Share these files</a>
-			<a href="{% url 'download-file' file.id %}">download</a><br><br>
-		{% endfor %}
-		<br>
-		<a href="{% url 'upload'%}"> Share File</a>
+		<a href="{% url "file-detail" file.id %}">Share this file</a>
+		<a href="{% url 'download-file' file.id %}">Download</a><br><br>
+	{% endfor %}
+	<br>
+	<a href="{% url 'upload'%}"> Upload</a>
 
-			{% if messages %}
+	{% if messages %}
 		<ul class="messages">
 		    {% for message in messages %}
 		    {% if message.tags %} <class="{{ message.tags }}"{% endif %}>
 		    <script type="">alert("{{message}}")</script>
 		    {% endfor %}
 		</ul>
-		{% endif %}
-
+	{% endif %}
 </body>
 </html>
