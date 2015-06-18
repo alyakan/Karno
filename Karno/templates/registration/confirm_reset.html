@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Login</title>
+	<title>Reset Password!</title>
+	<font size="8"><center>Enter Your New Password</center></font
 </head>
 <body>
-
 	<form method="post" action="">{% csrf_token %}
 	     {{ form.errors }}
          {{ form.as_p }}
-    	  <input type="submit" value="Login" />
+    	  <input type="submit" value="Reset" />
 	</form>
 	<a href="{% url 'home' %}"> return to home page </a>
 </body>

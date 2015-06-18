@@ -1,10 +1,37 @@
 from django.db import models
+from main.RestrictedFileField import RestrictedFileField
 from django.contrib.auth.models import User
 
 
 class File(models.Model):
-    file = models.FileField()
-    file_type = models.CharField(max_length=50)
+
+    """
+    A Single File Entry
+    Author: Rana El-Garem
+    """
+    file_uploaded = RestrictedFileField(upload_to='%Y/%m/%d')
+    user = models.ForeignKey(User)
+    public = models.BooleanField(default=False)
+    registered_users = models.BooleanField(default=False)
+    group = models.BooleanField(default=False)
+
+    def extension(self):
+        """
+        Returns extension of file_uploaded
+        Author: Rana El-Garem
+        """
+        name, extension = self.file_uploaded.name.split(".")
+        return extension
+
+
+class GroupPermission(models.Model):
+
+    """
+    A Single GroupPermission
+    Entry Author: Rana El-Garem
+    """
+    file_uploaded = models.ForeignKey(File)
+    user = models.ForeignKey(User)
 
 
 class YoutubeUrl(models.Model):
@@ -16,4 +43,3 @@ class YoutubeUrl(models.Model):
     """
     url = models.CharField(max_length=128, null=False)
     video_id = models.CharField(max_length=128)
-    user = models.ForeignKey(User)
