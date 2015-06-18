@@ -21,8 +21,10 @@
     </style>
 </head>
 <body>
-
     <h1>Share A File</h1>
+
+
+
             <form id="myForm" action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <p>{{ form.non_field_errors }}</p>
@@ -32,7 +34,6 @@
 
                 <input id="id_file_uploaded" name="file_uploaded" type="file">
 
-                {{ form.file_uploaded }}
                 <input  type="hidden" name="user" value={{ user.id }}>
                 <br>
                 <br> Share With: <br>
@@ -50,24 +51,34 @@
                 {% endfor %}
                 </select>
                 </div>
-            <p><input type="submit" value="Upload" /></p>  
+
+                <div id="audioform" class="audioform">
+
+                  <h3> Plonk info to your audio </h3>
+                {% for field in audioform.visible_fields %}
+                {{ field.errors }}
+                {{ field.name }}  {{ field }} <br><br>      
+                {% endfor %}  <br> </h6>
+
+                </div>
+            <p><input type="submit" value="Upload" /></p> 
+
         </form>
+
 
 
 <script type="text/javascript">
 $(document).ready( function() {
-
- $("#post-form").show();
-
-
+ $("#audioform").hide();
     $('input[type="file"]').change(function(){
         var filename = $('input[type=file]').val().replace(/C:\\fakepath\\/i, '')
         var extension = $('input[type=file]').val().split('.').pop();
-
-         ///if(extension.equals('jpeg')) {
-            //alert(extension)
-          //  $("body").html("A is larger than B");}
-
+        if(extension ==='mp3' || extension ==='ogg'  || extension ==='wav' || extension ==='mp4') {
+            $("#audioform").show();
+          }
+        else {
+            $("#audioform").hide();
+        }
     }) 
 
 }); 

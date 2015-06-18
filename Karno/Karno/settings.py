@@ -38,12 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
-<<<<<<< HEAD
     'jquery',
-
-=======
-    'django_select2'
->>>>>>> 759beab7abf96979692f7974e0dab62cb6f3fb79
 )
 
 MIDDLEWARE_CLASSES = (
@@ -130,17 +125,8 @@ PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 STATIC_PATH = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-<<<<<<< HEAD
-
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
-
-=======
 STATICFILES_DIRS = (STATIC_PATH,)
->>>>>>> 759beab7abf96979692f7974e0dab62cb6f3fb79
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 MEDIA_URL = '/media/'
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)

@@ -1,23 +1,16 @@
-<<<<<<< HEAD
 from django.shortcuts import render
-from django.views.generic import FormView, ListView
-=======
 from django.views.generic import FormView, ListView
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm
 from main.models import File, GroupPermission
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import render
->>>>>>> 759beab7abf96979692f7974e0dab62cb6f3fb79
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from main.forms import FileUploadForm
-from main.models import File
-from django.contrib.messages.views import SuccessMessageMixin
+from forms import AudioFileUploadForm
 
 
 class LoginRequiredMixin(object):
@@ -29,12 +22,14 @@ class LoginRequiredMixin(object):
 
 
 class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
+
     """
     A class responsible for uploading a file
     and creating an instance of Model:main.File
     Author: Rana El-Garem
     """
     form_class = FileUploadForm
+    audio_form = AudioFileUploadForm(prefix="audioform")
     success_url = reverse_lazy('file-list')
     model = File
     template_name = 'main/upload_file.html'
@@ -43,6 +38,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super(UploadFile, self).get_context_data(**kwargs)
         context['users'] = User.objects.all()
+        context['audioform'] = self.audio_form
         return context
 
     def form_valid(self, form, **kwargs):
@@ -53,6 +49,22 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         Author: Rana El-Garem
         """
         form1 = form.save(commit=True)
+        ################
+
+        extension = form1.file_uploaded.url.split(".")[-1]
+        if (extension == "mp3"
+                or extension == "mp4"
+                or extension == "ogg"
+                or extension == "wav"):
+            audio_form = AudioFileUploadForm(
+                self.request.POST, prefix='audioform')
+            if audio_form.is_valid():
+                aud = audio_form.save(commit=False)
+                aud.source_file = form1
+                audio_form.save()
+            else:
+                pass
+        ################
         if form.cleaned_data['group']:
             for user in self.request.POST.getlist('users'):
                 GroupPermission.objects.create(
@@ -62,6 +74,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
 
 class FileListView(ListView):
+
     """
     A class for listing all instances of Model:main.File
     Author: Rana El-Garem
