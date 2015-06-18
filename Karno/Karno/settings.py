@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'main',
     'my_youtube',
+    'filetransfers',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,7 +92,9 @@ YOUTUBE_CLIENT_ID = '541524317759-5hdk9q5g64mhh4rf6b2jhj90b6oflcdu.apps.googleus
 YOUTUBE_UPLOAD_REDIRECT_URL = '/youtube/videos/'
 YOUTUBE_DELETE_REDIRECT_URL = '/main/file_list/'
 
-
+PREPARE_UPLOAD_BACKEND = 'filetransfers.backends.default.prepare_upload'
+SERVE_FILE_BACKEND = 'filetransfers.backends.default.serve_file'
+PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.default.public_download_url'
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 LOGIN_REDIRECT_URL = '/main'

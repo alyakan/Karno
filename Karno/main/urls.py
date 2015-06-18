@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
-from main.views import YoutubeUrlFormView
+from main.views import YoutubeUrlFormView, download_handler
 from django.contrib.auth.forms import PasswordResetForm
 from main.views import UploadFile, FileListView
 
@@ -43,5 +43,6 @@ urlpatterns = patterns(
         name='password_reset_confirm'),
     url(
         r'^reset/done/$', auth_views.login,
-        name='password_reset_complete')
+        name='password_reset_complete'),
+    url(r'^file_download/(?P<pk>\d+)/$', download_handler, name='download-file'),
 )
