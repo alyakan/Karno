@@ -4,10 +4,10 @@
 	<title>Files</title>
 </head>
 <body>
-	<h1>Files</h1>
+	<h1>Files</h1><br>
 		{% for file in object_list %}
-		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a></h1>
-			<a href="{{ file.file_uploaded.url }}">{{file.file_uploaded.name}}</a>
+		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a>
+			<a href="{% url "file-detail" file.id %}">Share these videos</a>
 		{% endfor %}
 		<br>
 		<a href="{% url 'upload'%}"> Share File</a>
@@ -20,5 +20,6 @@
 		    {% endfor %}
 		</ul>
 		{% endif %}
+
 </body>
 </html>

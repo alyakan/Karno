@@ -4,7 +4,7 @@ from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
 from main.views import YoutubeUrlFormView
 from django.contrib.auth.forms import PasswordResetForm
-from main.views import UploadFile, FileListView
+from main.views import UploadFile, FileListView, FileDetailView
 
 urlpatterns = patterns(
     '',
@@ -43,5 +43,8 @@ urlpatterns = patterns(
         name='password_reset_confirm'),
     url(
         r'^reset/done/$', auth_views.login,
-        name='password_reset_complete')
+        name='password_reset_complete'),
+    url(
+        r'^file/list/(?P<pk>[0-9]+)/$',
+        FileDetailView.as_view(), name="file-detail"),
 )
