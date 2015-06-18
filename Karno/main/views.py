@@ -148,13 +148,13 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
 
 class FileDetailView(DetailView):
     """
-    Views a single book's detials.
+    Views a single File's detials.
 
     Author: Aly Yakan
 
     **Template:**
 
-    :template:`main/book_detail.html`
+    :template:`main/file_detail.html`
     """
     model = File
     template_name = "main/file_detail.html"
