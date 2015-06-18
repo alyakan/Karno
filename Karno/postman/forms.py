@@ -121,11 +121,11 @@ class BaseWriteForm(forms.ModelForm):
         """
         recipients = self.cleaned_data.get('recipients', [])
         attatched_file = self.cleaned_data.get('attatched_file')
+        us = self.instance.sender
         file_ = False
         if attatched_file:
-            file_ = File.objects.create(file_uploaded=attatched_file)
-            print ("File Upload : ", attatched_file)
-            print ("File id : ", file_.id)
+            file_ = File.objects.create(
+                file_uploaded=attatched_file, user=us)
         # at the very first reply, make it a conversation
         if parent and not parent.thread_id:
             parent.thread = parent

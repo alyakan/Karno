@@ -9,6 +9,7 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
+        ('main', '__first__'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -30,6 +31,7 @@ class Migration(migrations.Migration):
                 ('moderation_status', models.CharField(default='p', max_length=1, verbose_name='status', choices=[('p', 'Pending'), ('a', 'Accepted'), ('r', 'Rejected')])),
                 ('moderation_date', models.DateTimeField(null=True, verbose_name='moderated at', blank=True)),
                 ('moderation_reason', models.CharField(max_length=120, verbose_name='rejection reason', blank=True)),
+                ('attachment', models.ForeignKey(to='main.File', null=True)),
                 ('moderation_by', models.ForeignKey(related_name='moderated_messages', verbose_name='moderator', blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('parent', models.ForeignKey(related_name='next_messages', verbose_name='parent message', blank=True, to='postman.Message', null=True)),
                 ('recipient', models.ForeignKey(related_name='received_messages', verbose_name='recipient', blank=True, to=settings.AUTH_USER_MODEL, null=True)),

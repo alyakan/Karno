@@ -17,7 +17,8 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.decorators import method_decorator
 try:
-    from django.utils.six.moves.urllib.parse import urlsplit, urlunsplit  # Django 1.4.11, 1.5.5
+    # Django 1.4.11, 1.5.5
+    from django.utils.six.moves.urllib.parse import urlsplit, urlunsplit
 except ImportError:
     from urlparse import urlsplit, urlunsplit
 try:
@@ -53,6 +54,7 @@ def _get_referer(request):
 # Views
 ########
 class FolderMixin(object):
+
     """Code common to the folders."""
     http_method_names = ['get']
 
@@ -69,20 +71,24 @@ class FolderMixin(object):
         order_by = get_order_by(self.request.GET)
         if order_by:
             params['order_by'] = order_by
-        msgs = getattr(Message.objects, self.folder_name)(self.request.user, **params)
+        msgs = getattr(Message.objects, self.folder_name)(
+            self.request.user, **params)
         context.update({
-            'pm_messages': msgs,  # avoid 'messages', already used by contrib.messages
+            # avoid 'messages', already used by contrib.messages
+            'pm_messages': msgs,
             'by_conversation': option is None,
             'by_message': option == OPTION_MESSAGES,
             'by_conversation_url': reverse(self.view_name),
             'by_message_url': reverse(self.view_name, args=[OPTION_MESSAGES]),
             'current_url': self.request.get_full_path(),
-            'gets': self.request.GET,  # useful to postman_order_by template tag
+            # useful to postman_order_by template tag
+            'gets': self.request.GET,
         })
         return context
 
 
 class InboxView(FolderMixin, TemplateView):
+
     """
     Display the list of received messages for the current user.
 
@@ -102,6 +108,7 @@ class InboxView(FolderMixin, TemplateView):
 
 
 class SentView(FolderMixin, TemplateView):
+
     """
     Display the list of sent messages for the current user.
 
@@ -116,6 +123,7 @@ class SentView(FolderMixin, TemplateView):
 
 
 class ArchivesView(FolderMixin, TemplateView):
+
     """
     Display the list of archived messages for the current user.
 
@@ -130,6 +138,7 @@ class ArchivesView(FolderMixin, TemplateView):
 
 
 class TrashView(FolderMixin, TemplateView):
+
     """
     Display the list of deleted messages for the current user.
 
@@ -144,6 +153,7 @@ class TrashView(FolderMixin, TemplateView):
 
 
 class ComposeMixin(object):
+
     """
     Code common to the write and reply views.
 
@@ -183,9 +193,11 @@ class ComposeMixin(object):
             params['parent'] = self.parent
         is_successful = form.save(**params)
         if is_successful:
-            messages.success(self.request, _("Message successfully sent."), fail_silently=True)
+            messages.success(
+                self.request, _("Message successfully sent."), fail_silently=True)
         else:
-            messages.warning(self.request, _("Message rejected for at least one recipient."), fail_silently=True)
+            messages.warning(self.request, _(
+                "Message rejected for at least one recipient."), fail_silently=True)
         return redirect(self.get_success_url())
 
     def get_context_data(self, **kwargs):
@@ -198,6 +210,7 @@ class ComposeMixin(object):
 
 
 class WriteView(ComposeMixin, FormView):
+
     """
     Display a form to compose a message.
 
@@ -226,7 +239,8 @@ class WriteView(ComposeMixin, FormView):
     def get_initial(self):
         initial = super(WriteView, self).get_initial()
         if self.request.method == 'GET':
-            initial.update(self.request.GET.items())  # allow optional initializations by query string
+            # allow optional initializations by query string
+            initial.update(self.request.GET.items())
             recipients = self.kwargs.get('recipients')
             if recipients:
                 # order_by() is not mandatory, but: a) it doesn't hurt; b) it eases the test suite
@@ -243,7 +257,8 @@ class WriteView(ComposeMixin, FormView):
     def get_form_kwargs(self):
         kwargs = super(WriteView, self).get_form_kwargs()
         if isinstance(self.autocomplete_channels, tuple) and len(self.autocomplete_channels) == 2:
-            channel = self.autocomplete_channels[self.request.user.is_anonymous()]
+            channel = self.autocomplete_channels[
+                self.request.user.is_anonymous()]
         else:
             channel = self.autocomplete_channels
         kwargs['channel'] = channel
@@ -251,6 +266,7 @@ class WriteView(ComposeMixin, FormView):
 
 
 class ReplyView(ComposeMixin, FormView):
+
     """
     Display a form to compose a reply.
 
@@ -272,12 +288,14 @@ class ReplyView(ComposeMixin, FormView):
     def dispatch(self, request, message_id, *args, **kwargs):
         perms = Message.objects.perms(request.user)
         self.parent = get_object_or_404(Message, perms, pk=message_id)
-        return super(ReplyView, self).dispatch(request,*args, **kwargs)
+        return super(ReplyView, self).dispatch(request, *args, **kwargs)
 
     def get_initial(self):
-        self.initial = self.parent.quote(*self.formatters)  # will also be partially used in get_form_kwargs()
+        # will also be partially used in get_form_kwargs()
+        self.initial = self.parent.quote(*self.formatters)
         if self.request.method == 'GET':
-            self.initial.update(self.request.GET.items())  # allow overwriting of the defaults by query string
+            # allow overwriting of the defaults by query string
+            self.initial.update(self.request.GET.items())
         return self.initial
 
     def get_form_kwargs(self):
@@ -298,6 +316,7 @@ class ReplyView(ComposeMixin, FormView):
 
 
 class DisplayMixin(object):
+
     """
     Code common to the by-message and by-conversation views.
 
@@ -309,7 +328,8 @@ class DisplayMixin(object):
     """
     http_method_names = ['get']
     form_class = QuickReplyForm
-    formatters = (format_subject, format_body if getattr(settings, 'POSTMAN_QUICKREPLY_QUOTE_BODY', False) else None)
+    formatters = (format_subject, format_body if getattr(
+        settings, 'POSTMAN_QUICKREPLY_QUOTE_BODY', False) else None)
     template_name = 'postman/view.html'
 
     @login_required_m
@@ -334,7 +354,8 @@ class DisplayMixin(object):
                 break
         else:
             archived = True
-        # look for the most recent received message (and non-deleted to comply with the future perms() control), if any
+        # look for the most recent received message (and non-deleted to comply
+        # with the future perms() control), if any
         for m in reversed(self.msgs):
             if m.recipient == user and not m.recipient_deleted_at:
                 received = m
@@ -352,6 +373,7 @@ class DisplayMixin(object):
 
 
 class MessageView(DisplayMixin, TemplateView):
+
     """Display one specific message."""
 
     def get(self, request, message_id, *args, **kwargs):
@@ -360,6 +382,7 @@ class MessageView(DisplayMixin, TemplateView):
 
 
 class ConversationView(DisplayMixin, TemplateView):
+
     """Display a conversation."""
 
     def get(self, request, thread_id, *args, **kwargs):
@@ -368,6 +391,7 @@ class ConversationView(DisplayMixin, TemplateView):
 
 
 class UpdateMessageMixin(object):
+
     """
     Code common to the archive/delete/undelete actions.
 
@@ -395,18 +419,22 @@ class UpdateMessageMixin(object):
         if pks or tpks:
             user = request.user
             filter = Q(pk__in=pks) | Q(thread__in=tpks)
-            recipient_rows = Message.objects.as_recipient(user, filter).update(**{'recipient_{0}'.format(self.field_bit): self.field_value})
-            sender_rows = Message.objects.as_sender(user, filter).update(**{'sender_{0}'.format(self.field_bit): self.field_value})
+            recipient_rows = Message.objects.as_recipient(user, filter).update(
+                **{'recipient_{0}'.format(self.field_bit): self.field_value})
+            sender_rows = Message.objects.as_sender(user, filter).update(
+                **{'sender_{0}'.format(self.field_bit): self.field_value})
             if not (recipient_rows or sender_rows):
                 raise Http404  # abnormal enough, like forged ids
             messages.success(request, self.success_msg, fail_silently=True)
             return redirect(request.GET.get('next') or self.success_url or next_url)
         else:
-            messages.warning(request, _("Select at least one object."), fail_silently=True)
+            messages.warning(
+                request, _("Select at least one object."), fail_silently=True)
             return redirect(next_url)
 
 
 class ArchiveView(UpdateMessageMixin, View):
+
     """Mark messages/conversations as archived."""
     field_bit = 'archived'
     success_msg = lz_("Messages or conversations successfully archived.")
@@ -414,6 +442,7 @@ class ArchiveView(UpdateMessageMixin, View):
 
 
 class DeleteView(UpdateMessageMixin, View):
+
     """Mark messages/conversations as deleted."""
     field_bit = 'deleted_at'
     success_msg = lz_("Messages or conversations successfully deleted.")
@@ -421,6 +450,7 @@ class DeleteView(UpdateMessageMixin, View):
 
 
 class UndeleteView(UpdateMessageMixin, View):
+
     """Revert messages/conversations from marked as deleted."""
     field_bit = 'deleted_at'
     success_msg = lz_("Messages or conversations successfully recovered.")

@@ -1,7 +1,5 @@
-<<<<<<< HEAD
 from django.shortcuts import render
 from django.views.generic import CreateView, FormView, ListView
-=======
 from django.views.generic import FormView, ListView
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm
@@ -9,22 +7,18 @@ from main.models import File, GroupPermission
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import render
->>>>>>> fa47ecdfb40b5abce9ae6454e5fc49049d82b903
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-<<<<<<< HEAD
 from main.forms import FileUploadForm
 from main.models import File
 from django.contrib.messages.views import SuccessMessageMixin
-=======
 from main.forms import YoutubeUrlForm
 from main.models import YoutubeUrl
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
->>>>>>> fa47ecdfb40b5abce9ae6454e5fc49049d82b903
 
 
 class LoginRequiredMixin(object):
@@ -141,25 +135,10 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             request, 'registration/user-change-password.html', {'form': form})
 
 
-<<<<<<< HEAD
-class UploadFile(SuccessMessageMixin, FormView):
-    form_class = FileUploadForm
-    success_url = reverse_lazy('file-list')
-    model = File
-    template_name = 'main/upload_file.html'
-    sucess_message = 'File Uploaded Successfully'
-
-    def form_valid(self, form):
-        form.save(commit=True)
-        messages.add_message(self.request,
-                             messages.INFO,
-                             "File was Uploaded successfully")
-        return super(UploadFile, self).form_valid(form)
-
-
 class FileListView(ListView):
     model = File
-=======
+
+
 class YoutubeUrlFormView(LoginRequiredMixin, FormView):
     """
     Creates a single Youtube Url to be embeded.
@@ -187,5 +166,3 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
         vid_id = url.split('?v=')[1]
         YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
         return HttpResponseRedirect(reverse_lazy('youtube_video_list'))
-
->>>>>>> fa47ecdfb40b5abce9ae6454e5fc49049d82b903
