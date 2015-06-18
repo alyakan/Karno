@@ -107,10 +107,10 @@
 // })
         function CheckUser() {
         $.get('/main/check/', {username: $('#id_formset-'+x+'-user-autocomplete').val(),},
-        function(data){
-                        console.log('checkuser:', $('#id_formset-'+x+'-user-autocomplete').val() )
+        function(response){
+        // console.log('checkuser:', $('#id_formset-'+x+'-user-autocomplete').val() )
 
-        if(data == "False"){
+        if(response == "False"){
 
             alert("Incorrect UserName")
         } 
