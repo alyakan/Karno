@@ -38,8 +38,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+<<<<<<< HEAD
     'jquery',
 
+=======
+    'django_select2'
+>>>>>>> 759beab7abf96979692f7974e0dab62cb6f3fb79
 )
 
 MIDDLEWARE_CLASSES = (
@@ -91,6 +95,24 @@ LOGIN_REDIRECT_URL = '/main'
 
 LOGIN_URL = '/main/user/login/'
 
+"""
+email setup
+"""
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_USE_TLS = False
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mostafa.93.mahmoud@gmail.com'
+EMAIL_HOST_PASSWORD = 'THEkey324'
+DEFAULT_FROM_EMAIL = 'mostafa.93.mahmoud@gmail.com'
+# DEFAULT_TO_EMAIL = 'to email'
+
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -106,10 +128,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
+STATIC_PATH = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+<<<<<<< HEAD
 
 STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 
+=======
+STATICFILES_DIRS = (STATIC_PATH,)
+>>>>>>> 759beab7abf96979692f7974e0dab62cb6f3fb79
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 MEDIA_URL = '/media/'

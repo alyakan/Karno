@@ -7,7 +7,8 @@ class FileUploadForm(forms.ModelForm):
 
     class Meta:
         model = File
-        fields = ['file_uploaded', ]
+        fields = ['file_uploaded', 'user',
+                  'public', 'registered_users', 'group']
 
 
 class AudioFileUploadForm(forms.ModelForm):

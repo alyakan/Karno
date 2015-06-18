@@ -8,6 +8,9 @@
 	<form method="post" action="">{% csrf_token %}
 	     {{ form.errors }}
          {{ form.as_p }}
+         {% if forget %}
+         	<a href="{% url 'user-reset' %}">reset</a>
+         {% endif %}
     	  <input type="submit" value="Sign Up" />
 	</form>
 	<a href="{% url 'home' %}"> return to home page </a>
