@@ -7,14 +7,9 @@
 <body>
 	<h1>Files</h1><br>
 		{% for file in object_list %}
-<<<<<<< HEAD
 		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a>
-			<a href="{% url "file-detail" file.id %}">Share these videos</a>
-=======
-		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a></h1><br>
-			<a href="{{ file.file_uploaded.url }}">{{file.file_uploaded.name}}</a><br>
+			<a href="{% url "file-detail" file.id %}">Share these files</a>
 			<a href="{% url 'download-file' file.id %}">download</a><br><br>
->>>>>>> 557c63b219755f3303d9660c60d144d6c8c53f43
 		{% endfor %}
 		<br>
 		<a href="{% url 'upload'%}"> Share File</a>

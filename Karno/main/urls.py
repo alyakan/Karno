@@ -44,11 +44,8 @@ urlpatterns = patterns(
     url(
         r'^reset/done/$', auth_views.login,
         name='password_reset_complete'),
-<<<<<<< HEAD
     url(
         r'^file/list/(?P<pk>[0-9]+)/$',
         FileDetailView.as_view(), name="file-detail"),
-=======
     url(r'^file_download/(?P<pk>\d+)/$', download_handler, name='download-file'),
->>>>>>> 557c63b219755f3303d9660c60d144d6c8c53f43
 )
