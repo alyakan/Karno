@@ -12,7 +12,15 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 
-class UploadFile(SuccessMessageMixin, FormView):
+class LoginRequiredMixin(object):
+
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
+
+
+class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
     """
     A class responsible for uploading a file
     and creating an instance of Model:main.File
@@ -51,14 +59,6 @@ class FileListView(ListView):
     Author: Rana El-Garem
     """
     model = File
-
-
-class LoginRequiredMixin(object):
-
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view)
 
 
 class UserRegisteration(FormView):
