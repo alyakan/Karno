@@ -32,5 +32,5 @@ urlpatterns = patterns(
         name='password_reset_confirm'),
     url(
         r'^reset/done/$', auth_views.password_reset_done,
-        name='password_reset_done')
+        name='password_reset_complete')
 )
