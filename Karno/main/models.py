@@ -10,7 +10,7 @@ class File(models.Model):
     Author: Rana El-Garem
     """
     file_uploaded = RestrictedFileField(upload_to='%Y/%m/%d')
-    user = models.ForeignKey(User)
+    uer = models.ForeignKey(User)
     public = models.BooleanField(default=False)
     registered_users = models.BooleanField(default=False)
     group = models.BooleanField(default=False)

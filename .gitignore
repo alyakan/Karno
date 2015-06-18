@@ -62,6 +62,6 @@ target/
 Karno/main/migrations/
 Karno/db.sqlite3/
 
-main/migrations/
+migrations/
 *.sqlite3
 
