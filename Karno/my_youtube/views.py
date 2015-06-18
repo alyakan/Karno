@@ -73,11 +73,6 @@ def video_list(request, username=None):
     list of videos of a user
     if username does not set, shows the currently logged in user
     """
-
-    # If user is not authenticated and username is None, raise an error
-    if username is None and not request.user.is_authenticated():
-        from django.http import Http404
-        raise Http404
     # loop through the videos of the user
     videos = Video.objects.all()
     video_params = []

@@ -72,14 +72,26 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             request, 'registration/user-change-password.html', {'form': form})
 
 
-class YoutubeUrlFormView(FormView):
+class YoutubeUrlFormView(LoginRequiredMixin, FormView):
+    """
+    Creates a single Youtube Url to be embeded.
+
+    Author: Aly Yakan
+
+    **Template:**
+
+    :template:`main/youtubeurl_form.html`
+    """
     model = YoutubeUrl
     form_class = YoutubeUrlForm
     template_name = 'main/youtubeurl_form.html'
 
     def form_valid(self, form):
         """
-        Saves user and automatically logs him/her in
+        Gets the Video ID from the Url and the current logged in user
+        then saves an instance of YoutubeUrl using this information
+
+        Author: Aly Yakan
         """
         form.save(commit=False)
         user = self.request.user

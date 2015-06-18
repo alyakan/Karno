@@ -8,6 +8,12 @@ class File(models.Model):
 
 
 class YoutubeUrl(models.Model):
+    """
+    Represents a single existing Youtube Url to be embeded
+
+    Author: Aly Yakan
+
+    """
     url = models.CharField(max_length=128)
     video_id = models.CharField(max_length=128)
     user = models.ForeignKey(User)
