@@ -13,6 +13,7 @@ from my_youtube.forms import YoutubeUploadForm, YoutubeDirectUploadForm
 from django.views.decorators.csrf import csrf_exempt
 import logging
 import json
+from main.models import YoutubeUrl
 
 logger = logging.getLogger(__name__)
 
@@ -77,20 +78,18 @@ def video_list(request, username=None):
     if username is None and not request.user.is_authenticated():
         from django.http import Http404
         raise Http404
-
-    from django.contrib.auth.models import User
-    user = User.objects.get(username=username) if username else request.user
-
     # loop through the videos of the user
     videos = Video.objects.all()
     video_params = []
     for video in videos:
         video_params.append(_video_params(request, video.video_id))
         print video_params
-
+    embeded_videos = YoutubeUrl.objects.all()
+    print embeded_videos
     return render_to_response(
         "my_youtube/videos.html",
-        {"video_params": video_params},
+        {"video_params": video_params,
+         "embeded_videos": embeded_videos},
         context_instance=RequestContext(request)
     )
 

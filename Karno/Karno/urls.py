@@ -8,4 +8,5 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^main/', include('main.urls')),
+    url(r'^youtube/', include('my_youtube.urls')),
 ]

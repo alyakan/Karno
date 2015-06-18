@@ -2,6 +2,7 @@ from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
+from main.views import YoutubeUrlFormView
 from django.contrib.auth.forms import PasswordResetForm
 
 urlpatterns = patterns(
@@ -25,6 +26,10 @@ urlpatterns = patterns(
         r'^resetpassword/passwordsent/$',
         auth_views.password_reset_done,
         name='password_reset_done'),
+    url(
+        r'^add/youtubeurl/$',
+        YoutubeUrlFormView.as_view(),
+        name='youtubeurl-add'),
     url(
         r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         auth_views.password_reset_confirm,

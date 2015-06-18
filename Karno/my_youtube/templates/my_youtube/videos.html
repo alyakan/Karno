@@ -2,9 +2,6 @@
 <html>
 <head>
 	<title></title>
-	<script type="text/javascript">var switchTo5x=true;</script>
-	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
-	<script type="text/javascript">stLight.options({publisher: "19b54de1-bc03-466a-aca3-919232e87a2e", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
 </head>
 <body>
 	<a href="{% url "youtube_upload" %}">Upload a video >></a>
@@ -14,21 +11,17 @@
 			    {% for params in video_params %}
 				    <section>
 				    	{% include "my_youtube/video.html" with video_id=params.video_id width=params.width height=params.height origin=params.origin %}
-
-						<span class='st_sharethis_large' displayText='ShareThis'></span>
-						<span class='st_facebook_large' displayText='Facebook'></span>
-						<span class='st_twitter_large' displayText='Tweet'></span>
-<!-- 						<span class='st_linkedin_large' displayText='LinkedIn'></span>
-						<span class='st_pinterest_large' displayText='Pinterest'></span>
-						<span class='st_email_large' displayText='Email'></span> -->
-				    	<a href="{% url "youtube_video" params.video_id %}">Watch this video</a>
 				    </section>
 			    {% endfor %}
+		{% elif embeded_videos %}
+			{% for vid in embeded_videos %}
+			    <section>
+			    	{% include "my_youtube/video.html" with video_id=vid.video_id width='70%' height='350' origin='localhost:8000' %}
+			    </section>
+			{% endfor %}
 		{% else %}
 			{% trans "No video found" %}
 		{% endif %}
-		{% include "my_youtube/video.html" with video_id='AdSdsdaZel8' width='70%' height='350' origin='localhost:8000' %}
-		<iframe width='800' height='700' frameborder='0' src="https://docs.google.com/spreadsheets/d/14TbYtRyMcd5qn7eTXy687do52L78CE-oKKCx9_H9850/edit?usp=sharing"></iframe><a href="https://docs.google.com/spreadsheets/d/14TbYtRyMcd5qn7eTXy687do52L78CE-oKKCx9_H9850/edit?usp=sharing">Open this document</a>
 	{% endblock %}
 </body>
 </html>

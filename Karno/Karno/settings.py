@@ -84,6 +84,14 @@ DATABASES = {
 }
 
 
+YOUTUBE_AUTH_EMAIL = 'aly.yakan@gmail.com'
+YOUTUBE_AUTH_PASSWORD = 'kapaa100894'
+YOUTUBE_DEVELOPER_KEY = 'AI39si4zRoQ7hmj4OidAm2T0uXkizdqTqTIzgP0wkkUa39Cqqv5y09VL4iKlJGKTRV2GxvVbbNGlGChUnUCKXRgt_UmegUUkIA'
+YOUTUBE_CLIENT_ID = '541524317759-5hdk9q5g64mhh4rf6b2jhj90b6oflcdu.apps.googleusercontent.com'
+YOUTUBE_UPLOAD_REDIRECT_URL = '/youtube/videos/'
+YOUTUBE_DELETE_REDIRECT_URL = '/main/file_list/'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 LOGIN_REDIRECT_URL = '/main'
