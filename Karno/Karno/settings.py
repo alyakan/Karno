@@ -56,7 +56,7 @@ ROOT_URLCONF = 'Karno.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['main/templates'],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -87,6 +87,24 @@ DATABASES = {
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 LOGIN_REDIRECT_URL = '/main'
 LOGIN_URL = '/main/user/login/'
+
+"""
+email setup
+"""
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'localhost'
+# EMAIL_PORT = 1025
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_USE_TLS = False
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mostafa.93.mahmoud@gmail.com'
+EMAIL_HOST_PASSWORD = 'THEkey324'
+DEFAULT_FROM_EMAIL = 'mostafa.93.mahmoud@gmail.com'
+# DEFAULT_TO_EMAIL = 'to email'
 
 LANGUAGE_CODE = 'en-us'
 
