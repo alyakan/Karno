@@ -12,6 +12,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from main.forms import YoutubeUrlForm
 from main.models import YoutubeUrl
+from filetransfers.api import serve_file
+from django.shortcuts import get_object_or_404
 
 
 class LoginRequiredMixin(object):
@@ -20,6 +22,14 @@ class LoginRequiredMixin(object):
     def as_view(cls, **initkwargs):
         view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
         return login_required(view)
+
+
+def download_handler(request, pk):
+    """
+    Function that handles a download request of a file
+    """
+    upload = get_object_or_404(File, pk=pk)
+    return serve_file(request, upload.file_uploaded, save_as=True)
 
 
 class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
@@ -145,6 +155,7 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
         YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
         return HttpResponseRedirect(reverse_lazy('youtube_video_list'))
 
+<<<<<<< HEAD
 
 class FileDetailView(DetailView):
     """
@@ -158,3 +169,5 @@ class FileDetailView(DetailView):
     """
     model = File
     template_name = "main/file_detail.html"
+=======
+>>>>>>> 557c63b219755f3303d9660c60d144d6c8c53f43
