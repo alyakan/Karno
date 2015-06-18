@@ -47,10 +47,13 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         Creates a GroupPermission instance for each user in 'users' list
         when File.group is set to True
         Author: Rana El-Garem
+
+        Creates an AudioFile instance if extension returned in
+        file_uploaded.url is supported.
+        Author: Kareem Tarek
         """
         form1 = form.save(commit=True)
-        ################
-
+        #  Handling Extensions #
         extension = form1.file_uploaded.url.split(".")[-1]
         if (extension == "mp3"
                 or extension == "mp4"
