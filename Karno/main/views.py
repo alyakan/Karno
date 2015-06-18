@@ -10,6 +10,8 @@ from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from main.forms import YoutubeUrlForm
+from main.models import YoutubeUrl
 
 
 class LoginRequiredMixin(object):
@@ -113,3 +115,32 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             return HttpResponseRedirect(reverse('home'))
         return render(
             request, 'registration/user-change-password.html', {'form': form})
+
+
+class YoutubeUrlFormView(LoginRequiredMixin, FormView):
+    """
+    Creates a single Youtube Url to be embeded.
+
+    Author: Aly Yakan
+
+    **Template:**
+
+    :template:`main/youtubeurl_form.html`
+    """
+    model = YoutubeUrl
+    form_class = YoutubeUrlForm
+    template_name = 'main/youtubeurl_form.html'
+
+    def form_valid(self, form):
+        """
+        Gets the Video ID from the Url and the current logged in user
+        then saves an instance of YoutubeUrl using this information
+
+        Author: Aly Yakan
+        """
+        form.save(commit=False)
+        user = self.request.user
+        url = form.cleaned_data['url']
+        vid_id = url.split('?v=')[1]
+        YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
+        return HttpResponseRedirect(reverse_lazy('youtube_video_list'))

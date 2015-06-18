@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 class File(models.Model):
 
     """
-    A Single GroupPermission Entry
+    A Single File Entry
     Author: Rana El-Garem
     """
     file_uploaded = RestrictedFileField(upload_to='%Y/%m/%d')
@@ -31,4 +31,16 @@ class GroupPermission(models.Model):
     Entry Author: Rana El-Garem
     """
     file_uploaded = models.ForeignKey(File)
+    user = models.ForeignKey(User)
+
+
+class YoutubeUrl(models.Model):
+    """
+    Represents a single existing Youtube Url to be embeded
+
+    Author: Aly Yakan
+
+    """
+    url = models.CharField(max_length=128, null=False)
+    video_id = models.CharField(max_length=128)
     user = models.ForeignKey(User)
