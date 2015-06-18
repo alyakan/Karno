@@ -4,7 +4,8 @@
 	<title></title>
 </head>
 <body>
-	<a href="{% url "youtube_upload" %}">Upload a video >></a>
+	<a href="{% url "home" %}">Back Home</a><br>
+	<a href="{% url "youtube_upload" %}">Upload a video</a>
 	{% load i18n %}
 	{% block content %}
 		{% if video_params %}
@@ -13,14 +14,13 @@
 				    	{% include "my_youtube/video.html" with video_id=params.video_id width=params.width height=params.height origin=params.origin %}
 				    </section>
 			    {% endfor %}
-		{% elif embeded_videos %}
+		{% endif %}
+		{% if embeded_videos %}
 			{% for vid in embeded_videos %}
 			    <section>
 			    	{% include "my_youtube/video.html" with video_id=vid.video_id width='70%' height='350' origin='localhost:8000' %}
 			    </section>
 			{% endfor %}
-		{% else %}
-			{% trans "No video found" %}
 		{% endif %}
 	{% endblock %}
 </body>
