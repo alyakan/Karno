@@ -161,8 +161,6 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
         vid_id = url.split('?v=')[1]
         YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
         return HttpResponseRedirect(reverse_lazy('youtube_video_list'))
-<<<<<<< HEAD
-=======
 
 
 class FileDetailView(DetailView):
@@ -177,4 +175,3 @@ class FileDetailView(DetailView):
     """
     model = File
     template_name = "main/file_detail.html"
->>>>>>> cbd3fe33350a59d346d6d7427595c8e6cd3bc3b4
