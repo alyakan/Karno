@@ -2,7 +2,6 @@ from django.db import models
 from main.RestrictedFileField import RestrictedFileField
 from django.contrib.auth.models import User
 
-<<<<<<< HEAD
 
 class Tag(models.Model):
     """
@@ -15,8 +14,6 @@ class Tag(models.Model):
         return unicode(self.tag)
 
 
-=======
->>>>>>> master
 class File(models.Model):
 
     """
