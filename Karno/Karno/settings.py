@@ -39,6 +39,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'main',
     'my_youtube',
+    'django_select2',
 )
 
 MIDDLEWARE_CLASSES = (
