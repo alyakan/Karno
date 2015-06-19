@@ -2,6 +2,18 @@ from django.db import models
 from main.RestrictedFileField import RestrictedFileField
 from django.contrib.auth.models import User
 
+
+class Tag(models.Model):
+    """
+    A Single Tag Entry
+    Author: Rana El-Garem
+    """
+    tag = models.CharField(max_length=15, unique=True)
+
+    def __unicode__(self):
+        return unicode(self.tag)
+
+
 class File(models.Model):
 
     """
@@ -13,6 +25,7 @@ class File(models.Model):
     public = models.BooleanField(default=False)
     registered_users = models.BooleanField(default=False)
     group = models.BooleanField(default=False)
+    tags = models.ManyToManyField(Tag)
 
     def extension(self):
         """
@@ -43,3 +56,4 @@ class YoutubeUrl(models.Model):
     url = models.CharField(max_length=128, null=False)
     video_id = models.CharField(max_length=128)
     user = models.ForeignKey(User)
+
