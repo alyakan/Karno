@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from main.models import YoutubeUrl
 
 
 class Authentication(TestCase):
@@ -47,3 +48,57 @@ class Authentication(TestCase):
                                               'new_password2': 'pass'})
         response = self.client.login(username='mostafa', password='pass')
         self.assertTrue(response)
+
+
+class YoutubeUrlTestCase(TestCase):
+    """
+    Tests YoutubeUrl model
+
+    Author: Aly Yakan
+    """
+    def test_access_add_url_page_not_signed_in(self):
+        """
+        Redirects to login for guests trying to embed a youtube video
+
+        Author: Aly Yakan
+        """
+        response = self.client.get(
+            reverse('youtubeurl-add'))
+        self.assertRedirects(
+            response, '/main/user/login/?next=/main/add/youtubeurl/')
+
+    def test_access_add_url_page_signed_in(self):
+        """
+        Results true for users trying to access the page for embedding
+        Youtube videos
+
+        Author: Aly Yakan
+        """
+        User.objects.create_user(username='johndoe', password='123456')
+        response = self.client.post(
+            reverse('user-login'),
+            {'username': u'johndoe', 'password': '123456'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.get(
+            reverse('youtubeurl-add'))
+        self.assertEqual(response.status_code, 200)
+
+    def test_add_url(self):
+        """
+        Results true for users embedding
+        Youtube videos
+
+        Author: Aly Yakan
+        """
+        User.objects.create_user(username='johndoe', password='123456')
+        response = self.client.post(
+            reverse('user-login'),
+            {'username': u'johndoe', 'password': '123456'})
+        self.assertEqual(response.status_code, 302)
+        response = self.client.post(
+            reverse('youtubeurl-add'),
+            {'url': 'https://www.youtube.com/watch?v=AdSdsdaZel8'})
+        self.assertRedirects(
+            response, reverse('youtube_video_list'))
+        urls = YoutubeUrl.objects.all().count()
+        self.assertEqual(urls, 1)

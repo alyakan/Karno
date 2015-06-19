@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import FormView, ListView
+from django.views.generic import FormView, ListView, DetailView
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm, AudioFileUploadForm
 from main.models import File, GroupPermission, AudioFile
@@ -11,6 +11,10 @@ from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
+from main.forms import YoutubeUrlForm
+from main.models import YoutubeUrl
+from filetransfers.api import serve_file
+from django.shortcuts import get_object_or_404
 
 
 class LoginRequiredMixin(object):
@@ -19,6 +23,15 @@ class LoginRequiredMixin(object):
     def as_view(cls, **initkwargs):
         view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
         return login_required(view)
+
+
+def download_handler(request, pk):
+    """
+    Function that handles a download request of a file
+    Author: Kareem Tarek , Moustafa Mahmoud
+    """
+    upload = get_object_or_404(File, pk=pk)
+    return serve_file(request, upload.file_uploaded, save_as=True)
 
 
 class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
@@ -145,6 +158,7 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             request, 'registration/user-change-password.html', {'form': form})
 
 
+<<<<<<< HEAD
 class AudioUpdate(LoginRequiredMixin, UpdateView):
 
     """
@@ -168,3 +182,50 @@ class AudioUpdate(LoginRequiredMixin, UpdateView):
     def form_valid(self, form):
         form.save()
         return HttpResponseRedirect(reverse('index'))
+=======
+class YoutubeUrlFormView(LoginRequiredMixin, FormView):
+
+    """
+    Creates a single Youtube Url to be embeded.
+
+    Author: Aly Yakan
+
+    **Template:**
+
+    :template:`main/youtubeurl_form.html`
+    """
+    model = YoutubeUrl
+    form_class = YoutubeUrlForm
+    template_name = 'main/youtubeurl_form.html'
+
+    def form_valid(self, form):
+        """
+        Gets the Video ID from the Url and the current logged in user
+        then saves an instance of YoutubeUrl using this information
+
+        Author: Aly Yakan
+        """
+        form.save(commit=False)
+        user = self.request.user
+        url = form.cleaned_data['url']
+        vid_id = url.split('?v=')[1]
+        YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
+        return HttpResponseRedirect(reverse_lazy('youtube_video_list'))
+<<<<<<< HEAD
+=======
+
+
+class FileDetailView(DetailView):
+    """
+    Views a single File's detials.
+
+    Author: Aly Yakan
+
+    **Template:**
+
+    :template:`main/file_detail.html`
+    """
+    model = File
+    template_name = "main/file_detail.html"
+>>>>>>> cbd3fe33350a59d346d6d7427595c8e6cd3bc3b4
+>>>>>>> 9fe24fc8c3e56ced85b1ccf8e42ff23cc647e03a
