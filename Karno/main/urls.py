@@ -6,6 +6,7 @@ from main.views import YoutubeUrlFormView, download_handler
 from django.contrib.auth.forms import PasswordResetForm
 from main.views import UploadFile, FileListView, FileDetailView
 
+
 urlpatterns = patterns(
     '',
     url(r'^$', TemplateView.as_view(template_name='main/index.html'),
@@ -41,11 +42,20 @@ urlpatterns = patterns(
         auth_views.password_reset_confirm,
         {'template_name': 'registration/confirm_reset.html'},
         name='password_reset_confirm'),
+    url(r'^$', TemplateView.as_view(template_name='main/index.html'),
+        name='index'),
+    url(r'^upload/$', UploadFile.as_view(), name='upload'),
+    url(r'^file/list$', FileListView.as_view(), name='file-list'),
     url(
         r'^reset/done/$', auth_views.login,
         name='password_reset_complete'),
+<<<<<<< HEAD
+    url(r'^file_download/(?P<pk>\d+)/$',
+        download_handler, name='download-file'),
+=======
     url(
         r'^file/list/(?P<pk>[0-9]+)/$',
         FileDetailView.as_view(), name="file-detail"),
     url(r'^file_download/(?P<pk>\d+)/$', download_handler, name='download-file'),
+>>>>>>> cbd3fe33350a59d346d6d7427595c8e6cd3bc3b4
 )

@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'postman',
     'my_youtube',
     'filetransfers',
 )
@@ -87,7 +88,7 @@ DATABASES = {
 
 YOUTUBE_AUTH_EMAIL = 'aly.yakan@gmail.com'
 YOUTUBE_AUTH_PASSWORD = 'kapaa100894'
-YOUTUBE_DEVELOPER_KEY = 'AI39si4zRoQ7hmj4OidAm2T0uXkizdqTqTIzgP0wkkUa39Cqqv5y09VL4iKlJGKTRV2GxvVbbNGlGChUnUCKXRgt_UmegUUkIA'
+YOUTUBE_DEVELOPER_KEY = ('AI39si4zRoQ7hmj4OidAm2T0uXkizdqTqTIzgP0wkkUa39Cqqv5y09VL4iKlJGKTRV2GxvVbbNGlGChUnUCKXRgt_UmegUUkIA')
 YOUTUBE_CLIENT_ID = '541524317759-5hdk9q5g64mhh4rf6b2jhj90b6oflcdu.apps.googleusercontent.com'
 YOUTUBE_UPLOAD_REDIRECT_URL = '/youtube/videos/'
 YOUTUBE_DELETE_REDIRECT_URL = '/main/file_list/'
@@ -128,6 +129,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+
+POSTMAN_DISALLOW_ANONYMOUS = True
+
+POSTMAN_AUTO_MODERATE_AS = True
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+WSGI_APPLICATION = 'Karno.wsgi.application'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
