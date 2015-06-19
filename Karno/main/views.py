@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import FormView, ListView
+from django.views.generic import FormView, ListView, DetailView
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm
 from main.models import File, GroupPermission
@@ -161,3 +161,20 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
         vid_id = url.split('?v=')[1]
         YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
         return HttpResponseRedirect(reverse_lazy('youtube_video_list'))
+<<<<<<< HEAD
+=======
+
+
+class FileDetailView(DetailView):
+    """
+    Views a single File's detials.
+
+    Author: Aly Yakan
+
+    **Template:**
+
+    :template:`main/file_detail.html`
+    """
+    model = File
+    template_name = "main/file_detail.html"
+>>>>>>> cbd3fe33350a59d346d6d7427595c8e6cd3bc3b4

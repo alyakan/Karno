@@ -2,16 +2,24 @@
 <html>
 <head>
 	<title></title>
+	<script type="text/javascript">var switchTo5x=true;</script>
+	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+	<script type="text/javascript">stLight.options({publisher: "19b54de1-bc03-466a-aca3-919232e87a2e", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
 </head>
 <body>
 	<a href="{% url "home" %}">Back Home</a><br>
 	<a href="{% url "youtube_upload" %}">Upload a video</a>
 	{% load i18n %}
+	<span class='st_sharethis_large' displayText='ShareThis'></span>
+	<span class='st_facebook_large' displayText='Facebook'></span>
+	<span class='st_twitter_large' displayText='Tweet'></span>
+	<span class='st_email_large' displayText='Email'></span>
 	{% block content %}
 		{% if video_params %}
 			    {% for params in video_params %}
 				    <section>
 				    	{% include "my_youtube/video.html" with video_id=params.video_id width=params.width height=params.height origin=params.origin %}
+				    	<a href="{% url "youtube_video" params.video_id %}">Share this</a>
 				    </section>
 			    {% endfor %}
 		{% endif %}
@@ -25,3 +33,4 @@
 	{% endblock %}
 </body>
 </html>
+	
