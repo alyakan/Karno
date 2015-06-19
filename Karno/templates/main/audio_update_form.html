@@ -1,0 +1,43 @@
+
+<form method="post" action="">
+
+{% csrf_token %}
+
+
+<h5>
+
+{%ifequal user.id object.source_file.user.id%}
+
+{% for hidden in form.hidden_fields %}
+
+{{ hidden }}
+
+{% endfor %}
+
+{# Include the visible fields #}
+
+{% for field in form.visible_fields %}
+
+<div class="fieldWrapper">
+
+ {{ field.errors }}
+
+{{ field.label_tag }} {{ field }} <br><br>
+
+ </div>
+
+{% endfor %}
+
+ <input type="submit" value="Update" />
+
+ </h5>
+
+ </form>
+
+ {%else%}
+
+You are not authorized to view this page 
+
+{% endifequal%}
+
+</h5>

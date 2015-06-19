@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
-from main.views import UploadFile, FileListView
+from main.views import UploadFile, FileListView, AudioUpdate
 
 
 urlpatterns = patterns(
@@ -42,6 +42,9 @@ urlpatterns = patterns(
     url(r'^file/list$', FileListView.as_view(), name='file-list'),
     url(
         r'^reset/done/$', auth_views.login,
-        name='password_reset_complete')
+        name='password_reset_complete'),
+    url(
+        r'audio/(?P<pk>[0-9]+)/update/$',
+        AudioUpdate.as_view(), name='audio-update')
 
 )

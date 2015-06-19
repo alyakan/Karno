@@ -12,7 +12,7 @@ class FileUploadForm(forms.ModelForm):
 
 
 class AudioFileUploadForm(forms.ModelForm):
-    title = forms.CharField(required=False)
+    title = forms.CharField(required=True)
     artist = forms.CharField(required=False)
     genre = forms.CharField(required=False)
 

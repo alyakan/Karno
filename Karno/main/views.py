@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import FormView, ListView
 from django.core.urlresolvers import reverse_lazy, reverse
-from main.forms import FileUploadForm
-from main.models import File, GroupPermission
+from main.forms import FileUploadForm, AudioFileUploadForm
+from main.models import File, GroupPermission, AudioFile
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -10,7 +10,7 @@ from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from forms import AudioFileUploadForm
+from django.views.generic.edit import UpdateView
 
 
 class LoginRequiredMixin(object):
@@ -55,6 +55,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         form1 = form.save(commit=True)
         #  Handling Extensions #
         extension = form1.file_uploaded.url.split(".")[-1]
+        print ("Extension", extension)
         if (extension == "mp3"
                 or extension == "mp4"
                 or extension == "ogg"
@@ -65,6 +66,8 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
                 aud = audio_form.save(commit=False)
                 aud.source_file = form1
                 audio_form.save()
+                print "Dada Saved"
+
             else:
                 pass
         ################
@@ -140,3 +143,28 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             return HttpResponseRedirect(reverse('home'))
         return render(
             request, 'registration/user-change-password.html', {'form': form})
+
+
+class AudioUpdate(LoginRequiredMixin, UpdateView):
+
+    """
+    Display a update form for :model:`main.AudioFile`.
+
+    **Context**
+
+    ``form``
+         form for :model:`main.AudioFile`.
+
+    **Template:**
+
+    :template:`main/audio_update_form.html`
+
+    """
+    model = AudioFile
+    form_class = AudioFileUploadForm
+    template_name = 'main/audio_update_form.html'
+
+    # TODO: possibly just use success_url?
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('index'))
