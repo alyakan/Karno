@@ -256,7 +256,7 @@ class Message(models.Model):
     """
 
     SUBJECT_MAX_LENGTH = 120
-    attachment = models.ForeignKey(File,null=True)
+    attachment = models.ForeignKey(File, null=True)
     subject = models.CharField(_("subject"), max_length=SUBJECT_MAX_LENGTH)
     body = models.TextField(_("body"), blank=True)
     sender = models.ForeignKey(

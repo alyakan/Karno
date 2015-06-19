@@ -1,20 +1,15 @@
 from django.shortcuts import render
-from django.views.generic import CreateView, FormView, ListView
 from django.views.generic import FormView, ListView
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm
 from main.models import File, GroupPermission
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import render
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from main.forms import FileUploadForm
-from main.models import File
-from django.contrib.messages.views import SuccessMessageMixin
 from main.forms import YoutubeUrlForm
 from main.models import YoutubeUrl
 from filetransfers.api import serve_file
@@ -32,12 +27,14 @@ class LoginRequiredMixin(object):
 def download_handler(request, pk):
     """
     Function that handles a download request of a file
+    Author: Kareem Tarek , Moustafa Mahmoud
     """
     upload = get_object_or_404(File, pk=pk)
     return serve_file(request, upload.file_uploaded, save_as=True)
 
 
 class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
+
     """
     A class responsible for uploading a file
     and creating an instance of Model:main.File
@@ -71,6 +68,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
 
 class FileListView(ListView):
+
     """
     A class for listing all instances of Model:main.File
     Author: Rana El-Garem
@@ -135,11 +133,8 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             request, 'registration/user-change-password.html', {'form': form})
 
 
-class FileListView(ListView):
-    model = File
-
-
 class YoutubeUrlFormView(LoginRequiredMixin, FormView):
+
     """
     Creates a single Youtube Url to be embeded.
 

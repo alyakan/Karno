@@ -18,7 +18,10 @@
 <br>
 {% if message.attachment.file_uploaded.url %}
 <h3> Attatched File </h3>
-<a href="{{  message.attachment.file_uploaded.url }}"> {{  message.attachment.file_uploaded.url }} </a>
+<a href="{{  message.attachment.file_uploaded.url }}"> {{  message.attachment.file_uploaded.url }} </a> <br><br>
+<form action="{% url 'download-file' message.attachment.id %}">
+    <input type="submit" value="Download">
+</form>
 {%  endif %}
 <br><br>
 </div>
