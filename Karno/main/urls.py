@@ -3,7 +3,6 @@ from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
 from main.views import YoutubeUrlFormView, download_handler
-from django.contrib.auth.forms import PasswordResetForm
 from main.views import UploadFile, FileListView, FileDetailView
 
 
