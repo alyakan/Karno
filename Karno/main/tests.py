@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from main.models import YoutubeUrl, GroupPermission, File
+from main.models import YoutubeUrl, GroupPermission, File, Tag
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
@@ -124,6 +124,19 @@ class FileUploadTestCase(TestCase):
                          {'username': 'rana',
                           'password': '123456'})
 
+    def test_create_file(self):
+        """
+        Tests File Model
+        Author: Rana El-Garem
+        """
+        uploadedfile = SimpleUploadedFile(
+            "file.mp4",
+            "file_content",
+            content_type="video/mp4")
+        File.objects.create(file_uploaded=uploadedfile,
+                            user=User.objects.all()[0],)
+        self.assertEqual(File.objects.count(), 1)
+
     def test_user_must_be_logged_in(self):
         """
         Checks redirection to login page
@@ -213,6 +226,40 @@ class FileUploadTestCase(TestCase):
                          init_group_permission)
 
 
+class TagTestCase(TestCase):
 
+    def setUp(self):
+        self.client = Client()
+        User.objects.create_user(username='rana',
+                                 password='123456')
+        self.client.post(reverse('user-login'),
+                         {'username': 'rana',
+                          'password': '123456'})
 
+    def test_create_tag(self):
+        """
+        Tests Tag Model
+        Author: Rana El-Garem
+        """
+        Tag.objects.create(tag='Great')
+        self.assertEqual(Tag.objects.count(), 1)
 
+    def test_add_tag_to_file(self):
+        """
+        Test to ensure Tag is added to File
+        Author: Rana El-Garem
+        """
+        Tag.objects.create(tag='Great')
+        uploadedfile = SimpleUploadedFile(
+            "file.mp4",
+            "file_content",
+            content_type="video/mp4")
+        response = self.client.post(reverse('upload'),
+                                    {
+            'file_uploaded': uploadedfile,
+            'user':
+            self.client.session['_auth_user_id'],
+            'tags': [u'1']
+        })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(File.tags.through.objects.count(), 1)

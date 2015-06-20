@@ -58,7 +58,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         when File.group is set to True
         Author: Rana El-Garem
         """
-        print self.request.POST.getlist('users')
+        print self.request.POST.getlist('tags')
         form1 = form.save(commit=True)
         if form.cleaned_data['group']:
             for user in self.request.POST.getlist('users'):
