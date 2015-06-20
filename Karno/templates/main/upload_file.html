@@ -5,22 +5,13 @@
 
 <link href="{% static 'css/select2.css'%}" rel="stylesheet"></link>
 <link href="{% static 'css/extra.css'%}" rel="stylesheet"></link>
+<link href="{% static 'css/upload_file.css'%}" rel="stylesheet"></link>
 
 
 <html>
 <head>
     <title>Share File</title>
-    <style type="text/css">
-    div.hidden {
-        display: none;
-    }
 
-    .radio {
-          -webkit-appearance: radio;
-          box-sizing: border-box;
-        }
-
-    </style>
 </head>
 <body>
     <h1>Share A File</h1>
@@ -32,7 +23,10 @@
                 {{ form.file_uploaded.errors }}
                 {{ form.file_uploaded }}
                 <input  type="hidden" name="user" value={{ user.id }}>
-                <br>
+                <br><br>
+                Add Tags To Your File: <br>
+                {{form.tags}}
+                <br><br>
                 <br> Share With: <br>
                 Public:
                 <input id="id_public" name="public" type="checkbox" class="radio">
@@ -40,9 +34,7 @@
                 <input id="id_registered_users" name="registered_users" type="checkbox" class="radio">
                 Group:
                 <input id="id_group" name="group" type="checkbox" class="radio" ><br><br>
-                Add Tags To Your File: <br>
-                {{form.tags}}
-                <br><br>
+
             </p>
                 <div id="hidden" class="hidden">
                 <h3> Select Users To Share File With </h3>
