@@ -1,0 +1,8 @@
+    div.hidden {
+        display: none;
+    }
+
+    .radio {
+          -webkit-appearance: radio;
+          box-sizing: border-box;
+        }
