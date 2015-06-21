@@ -14,7 +14,7 @@ class Video(models.Model):
                                 help_text=_("Comma seperated keywords"))
     youtube_url = models.URLField(max_length=255, null=True, blank=True)
     swf_url = models.URLField(max_length=255, null=True, blank=True)
-    access_control = models.SmallIntegerField(max_length=1,
+    access_control = models.SmallIntegerField(
                                               choices=(
                                                   (AccessControl.Public,
                                                    "Public"),

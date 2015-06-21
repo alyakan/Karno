@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'jquery',
     'postman',
     'my_youtube',
+    'django_select2',
     'filetransfers',
 )
 
