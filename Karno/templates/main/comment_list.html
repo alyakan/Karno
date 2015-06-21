@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>File Details</title>
+    </head>
+
+    <body>
+
+ 		<img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}">
+
+		<h2>Comments</h2>
+
+		<ul>
+
+		{% for comment in object_list %}
+
+        Description = {{ comment.description }}
+        <br>
+        Date = {{ comment.date }}
+        <br>
+        Comment Posted By = {{ comment.user }}
+        <br>
+
+        {% if comment.user == user %}
+        <form action="{% url 'delete-comment' comment.id %}" method="post"> {% csrf_token %}
+        <input type="submit" value="Delete Comment"></input>
+        </form>
+        {% endif %}
+
+        <hr>
+
+		{% empty %}
+
+    	<li>No Comments Currently Available.</li>
+
+		{% endfor %}
+		
+		</ul>
+
+        <br></br>
+
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                {% endif %}
+            </span>
+        </div>
+
+        <br>
+
+        <form action="{% url 'comment-list' file.id %}" method="post"> {% csrf_token %}
+
+        <textarea name="description" style="width:500px;height:100px;"> </textarea>
+        <br>
+        <input type="submit" value="Add Comment"></input>
+
+        </form>
+
+        <br>
+
+        <a href="{% url 'home' %}"> return to home page </a>
+
+    </body>
+</html>

@@ -12,13 +12,14 @@
    				{% endfor %}
 		</ul>
 	{% endif %}
-	<a href="{% url "upload" %}">Share a File</a>
-	<a href="{% url "youtube_video_list" %}">Youtube Videos</a><br>
-	<a href="{% url "youtube_upload" %}">Upload a video on Youtube</a><br>
-	<a href="{% url "youtubeurl-add" %}">Add an existing Youtube Video</a><br>
+	<a href="{% url 'upload' %}">Share a File</a>
+	<a href="{% url 'youtube_video_list' %}">Youtube Videos</a><br>
+	<a href="{% url 'youtube_upload' %}">Upload a video on Youtube</a><br>
+	<a href="{% url 'youtubeurl-add' %}">Add an existing Youtube Video</a><br>
 	{% if user.is_authenticated %}
 		<a href="{% url 'user-logout' %}">Log Out</a><br>
 		<a href="{% url 'user-manage' %}">Manage Account</a><br>
+		<a href="{% url 'notification-list' user.id %}">Notifications</a><br>
 		<!-- <a href="{% url 'user-reset' %}">reset</a> -->
 	{% else %}
 		<a href="{% url 'user-new' %}">Sign Up</a><br>
