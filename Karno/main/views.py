@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import FormView, ListView, DetailView
 from django.core.urlresolvers import reverse_lazy, reverse
-from main.forms import FileUploadForm
-from main.models import File, GroupPermission
+from main.forms import FileUploadForm, AudioFileUploadForm
+from main.models import File, GroupPermission, AudioFile
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import UpdateView
 from main.forms import YoutubeUrlForm
 from main.models import YoutubeUrl
 from filetransfers.api import serve_file
@@ -41,6 +42,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
     Author: Rana El-Garem
     """
     form_class = FileUploadForm
+    audio_form = AudioFileUploadForm(prefix="audioform")
     success_url = reverse_lazy('file-list')
     model = File
     template_name = 'main/upload_file.html'
@@ -49,6 +51,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super(UploadFile, self).get_context_data(**kwargs)
         context['users'] = User.objects.all()
+        context['audioform'] = self.audio_form
         return context
 
     def form_valid(self, form, **kwargs):
@@ -57,8 +60,30 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         Creates a GroupPermission instance for each user in 'users' list
         when File.group is set to True
         Author: Rana El-Garem
+
+        Creates an AudioFile instance if extension returned in
+        file_uploaded.url is supported.
+        Author: Kareem Tarek
         """
         form1 = form.save(commit=True)
+        #  Handling Extensions #
+        extension = form1.file_uploaded.url.split(".")[-1]
+        print ("Extension", extension)
+        if (extension == "mp3"
+                or extension == "mp4"
+                or extension == "ogg"
+                or extension == "wav"):
+            audio_form = AudioFileUploadForm(
+                self.request.POST, prefix='audioform')
+            if audio_form.is_valid():
+                aud = audio_form.save(commit=False)
+                aud.source_file = form1
+                audio_form.save()
+                print "Dada Saved"
+
+            else:
+                pass
+        ################
         if form.cleaned_data['group']:
             for user in self.request.POST.getlist('users'):
                 GroupPermission.objects.create(
@@ -133,6 +158,31 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             request, 'registration/user-change-password.html', {'form': form})
 
 
+class AudioUpdate(LoginRequiredMixin, UpdateView):
+
+    """
+    Display a update form for :model:`main.AudioFile`.
+
+    **Context**
+
+    ``form``
+         form for :model:`main.AudioFile`.
+
+    **Template:**
+
+    :template:`main/audio_update_form.html`
+
+    """
+    model = AudioFile
+    form_class = AudioFileUploadForm
+    template_name = 'main/audio_update_form.html'
+
+    # TODO: possibly just use success_url?
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('index'))
+
+
 class YoutubeUrlFormView(LoginRequiredMixin, FormView):
 
     """
@@ -164,6 +214,7 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
 
 
 class FileDetailView(DetailView):
+
     """
     Views a single File's detials.
 

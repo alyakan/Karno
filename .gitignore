@@ -71,7 +71,11 @@ main/migrations/
 Karno/main/migrations/
 Karno/db.sqlite3/
 
+<<<<<<< HEAD
+>>>>>>> 759beab7abf96979692f7974e0dab62cb6f3fb79
+=======
 migrations/
 *.sqlite3
 
 >>>>>>> fa47ecdfb40b5abce9ae6454e5fc49049d82b903
+>>>>>>> 9fe24fc8c3e56ced85b1ccf8e42ff23cc647e03a

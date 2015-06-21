@@ -36,6 +36,13 @@ class File(models.Model):
         return extension
 
 
+class AudioFile(models.Model):
+    title = models.CharField(max_length=32)
+    artist = models.CharField(max_length=12)
+    genre = models.CharField(max_length=12)
+    source_file = models.ForeignKey(File)
+
+
 class GroupPermission(models.Model):
 
     """

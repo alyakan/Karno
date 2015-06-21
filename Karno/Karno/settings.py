@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'main',
+    'jquery',
     'postman',
     'my_youtube',
     'django_select2',
@@ -100,6 +101,7 @@ PUBLIC_DOWNLOAD_URL_BACKEND = 'filetransfers.backends.default.public_download_ur
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 LOGIN_REDIRECT_URL = '/main'
+
 LOGIN_URL = '/main/user/login/'
 
 """
@@ -141,9 +143,12 @@ WSGI_APPLICATION = 'Karno.wsgi.application'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
 
 STATIC_PATH = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 STATICFILES_DIRS = (STATIC_PATH,)
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 MEDIA_URL = '/media/'
