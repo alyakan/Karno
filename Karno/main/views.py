@@ -1,19 +1,22 @@
-from django.views.generic import FormView, ListView, DeleteView
+from django.shortcuts import render
+from django.views.generic import FormView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse_lazy, reverse
-from main.forms import FileUploadForm
-from main.models import File, GroupPermission
+from main.forms import FileUploadForm, AudioFileUploadForm
+from main.models import File, GroupPermission, AudioFile
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import render
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.views.generic.edit import UpdateView
 from main.forms import YoutubeUrlForm
 from main.models import YoutubeUrl, Comment, CommentNotification
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from filetransfers.api import serve_file
+from django.shortcuts import get_object_or_404
 
 
 class LoginRequiredMixin(object):
@@ -24,13 +27,24 @@ class LoginRequiredMixin(object):
         return login_required(view)
 
 
+def download_handler(request, pk):
+    """
+    Function that handles a download request of a file
+    Author: Kareem Tarek , Moustafa Mahmoud
+    """
+    upload = get_object_or_404(File, pk=pk)
+    return serve_file(request, upload.file_uploaded, save_as=True)
+
+
 class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
+
     """
     A class responsible for uploading a file
     and creating an instance of Model:main.File
     Author: Rana El-Garem
     """
     form_class = FileUploadForm
+    audio_form = AudioFileUploadForm(prefix="audioform")
     success_url = reverse_lazy('file-list')
     model = File
     template_name = 'main/upload_file.html'
@@ -39,6 +53,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def get_context_data(self, **kwargs):
         context = super(UploadFile, self).get_context_data(**kwargs)
         context['users'] = User.objects.all()
+        context['audioform'] = self.audio_form
         return context
 
     def form_valid(self, form, **kwargs):
@@ -47,8 +62,30 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         Creates a GroupPermission instance for each user in 'users' list
         when File.group is set to True
         Author: Rana El-Garem
+
+        Creates an AudioFile instance if extension returned in
+        file_uploaded.url is supported.
+        Author: Kareem Tarek
         """
         form1 = form.save(commit=True)
+        #  Handling Extensions #
+        extension = form1.file_uploaded.url.split(".")[-1]
+        print ("Extension", extension)
+        if (extension == "mp3"
+                or extension == "mp4"
+                or extension == "ogg"
+                or extension == "wav"):
+            audio_form = AudioFileUploadForm(
+                self.request.POST, prefix='audioform')
+            if audio_form.is_valid():
+                aud = audio_form.save(commit=False)
+                aud.source_file = form1
+                audio_form.save()
+                print "Dada Saved"
+
+            else:
+                pass
+        ################
         if form.cleaned_data['group']:
             for user in self.request.POST.getlist('users'):
                 GroupPermission.objects.create(
@@ -58,6 +95,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
 
 class FileListView(ListView):
+
     """
     A class for listing all instances of Model:main.File
     Author: Rana El-Garem
@@ -66,6 +104,7 @@ class FileListView(ListView):
 
 
 class UserRegisteration(FormView):
+
     """
     Class to handle user Registeration
     Author: Moustafa
@@ -79,20 +118,22 @@ class UserRegisteration(FormView):
         """
         form.save()
         user = authenticate(
-                username=form.cleaned_data['username'],
-                password=form.cleaned_data['password1'])
+            username=form.cleaned_data['username'],
+            password=form.cleaned_data['password1'])
         login(self.request, user)
         messages.add_message(
-                self.request, messages.INFO,
-                'welcome ' + self.request.user.username + '.')
+            self.request, messages.INFO,
+            'welcome ' + self.request.user.username + '.')
         return HttpResponseRedirect(reverse_lazy('home'))
 
 
 class UserChangePassword(LoginRequiredMixin, FormView):
+
     """
     Class to allow user to change his/her password.
     Author: Moustafa
     """
+
     def get(self, request, *args, **kwargs):
         """
         Initializes form for user registeration
@@ -119,7 +160,33 @@ class UserChangePassword(LoginRequiredMixin, FormView):
             request, 'registration/user-change-password.html', {'form': form})
 
 
+class AudioUpdate(LoginRequiredMixin, UpdateView):
+
+    """
+    Display a update form for :model:`main.AudioFile`.
+
+    **Context**
+
+    ``form``
+         form for :model:`main.AudioFile`.
+
+    **Template:**
+
+    :template:`main/audio_update_form.html`
+
+    """
+    model = AudioFile
+    form_class = AudioFileUploadForm
+    template_name = 'main/audio_update_form.html'
+
+    # TODO: possibly just use success_url?
+    def form_valid(self, form):
+        form.save()
+        return HttpResponseRedirect(reverse('index'))
+
+
 class YoutubeUrlFormView(LoginRequiredMixin, FormView):
+
     """
     Creates a single Youtube Url to be embeded.
 
@@ -288,3 +355,18 @@ class CommentDelete(DeleteView):
             'comment-list',
             kwargs={'file_id': self.request.user.file_uploaded.id}
                        )
+
+
+class FileDetailView(DetailView):
+
+    """
+    Views a single File's detials.
+
+    Author: Aly Yakan
+
+    **Template:**
+
+    :template:`main/file_detail.html`
+    """
+    model = File
+    template_name = "main/file_detail.html"

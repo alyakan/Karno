@@ -5,6 +5,17 @@ from datetime import datetime
 from django.core.urlresolvers import reverse
 
 
+class Tag(models.Model):
+    """
+    A Single Tag Entry
+    Author: Rana El-Garem
+    """
+    tag = models.CharField(max_length=15, unique=True)
+
+    def __unicode__(self):
+        return unicode(self.tag)
+
+
 class File(models.Model):
 
     """
@@ -16,6 +27,7 @@ class File(models.Model):
     public = models.BooleanField(default=False)
     registered_users = models.BooleanField(default=False)
     group = models.BooleanField(default=False)
+    tags = models.ManyToManyField(Tag)
 
     def extension(self):
         """
@@ -24,6 +36,13 @@ class File(models.Model):
         """
         name, extension = self.file_uploaded.name.split(".")
         return extension
+
+
+class AudioFile(models.Model):
+    title = models.CharField(max_length=32)
+    artist = models.CharField(max_length=12)
+    genre = models.CharField(max_length=12)
+    source_file = models.ForeignKey(File)
 
 
 class GroupPermission(models.Model):

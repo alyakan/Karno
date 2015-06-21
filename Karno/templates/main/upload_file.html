@@ -1,35 +1,55 @@
+<!DOCTYPE html>
+
+{% load static %}
 {% load staticfiles %}
+
+
+<script src="{% static "js/jquery.js" %}"></script>
+
+<script src="{% static "js/main-jquery.js" %}"></script>
 <script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+    <script src="//code.jquery.com/jquery-latest.min.js"></script>
 <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
 <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+<link href="{% static 'css/select2.css'%}" rel="stylesheet"></link>
+<link href="{% static 'css/extra.css'%}" rel="stylesheet"></link>
+<link href="{% static 'css/upload_file.css'%}" rel="stylesheet"></link>
+
+
 <html>
 <head>
     <title>Share File</title>
-    <style type="text/css">
-    div.hidden {
-        display: none;
-    }
-    select.hidden{
-        display: none;
-    }
-    </style>
+
 </head>
 <body>
     <h1>Share A File</h1>
+
+
+
             <form id="myForm" action="" method="post" enctype="multipart/form-data">
             {% csrf_token %}
             <p>{{ form.non_field_errors }}</p>
             <p>{{ form.file_uploaded.label_tag }} {{ form.file_uploaded.help_text }}</p>
             <p>
                 {{ form.file_uploaded.errors }}
-                {{ form.file_uploaded }}
+
+                <input id="id_file_uploaded" name="file_uploaded" type="file">
+
                 <input  type="hidden" name="user" value={{ user.id }}>
-                <br>
-                <br> Share With: <br>
-                Public: {{form.public}}
-                Registered Users: {{form.registered_users}}
-                Group: {{form.group}}
                 <br><br>
+
+                Add Tags To Your File: <br>
+                {{form.tags}}
+                <br><br>
+                <br> Share With: <br>
+                Public:
+                <input id="id_public" name="public" type="checkbox" class="radio">
+                Registered Users:
+                <input id="id_registered_users" name="registered_users" type="checkbox" class="radio">
+                Group:
+                <input id="id_group" name="group" type="checkbox" class="radio" ><br><br>
+
             </p>
                 <div id="hidden" class="hidden">
                 <h3> Select Users To Share File With </h3>
@@ -39,9 +59,42 @@
                 {% endfor %}
                 </select>
                 </div>
-            <p><input type="submit" value="Upload" /></p>  
+
+                <div id="audioform" class="audioform">
+
+                  <h3> Plonk more details to your audio </h3>
+                {% for field in audioform.visible_fields %}
+                {{ field.errors }}
+                {{ field.name }}  {{ field }} <br><br>      
+                {% endfor %}  <br> </h6>
+
+                </div>
+            <p><input type="submit" value="Upload" /></p> 
+
         </form>
 
+
+
+<script type="text/javascript">
+$(document).ready( function() {
+ $("#audioform").hide();
+    $('input[type="file"]').change(function(){
+        var filename = $('input[type=file]').val().replace(/C:\\fakepath\\/i, '')
+        var extension = $('input[type=file]').val().split('.').pop();
+        if(extension ==='mp3' || extension ==='ogg'  || extension ==='wav' || extension ==='mp4') {
+            $("#audioform").show();
+          }
+        else {
+            $("#audioform").hide();
+        }
+    }) 
+
+}); 
+</script>
+
+</body>
+
+</html>
     <script type="text/javascript">
       $('select').select2();
 
@@ -49,24 +102,31 @@
       $(".js-example-basic-single").select2();
         });
 
-        // $(document).ready(function(){
-        // $('input[type="checkbox"][name="group"').click(function(){
-        //      $('div#hidden').toggle(this.checked);
-        //     });
-        // });
-
         $('input[type="checkbox"]').on('change', function() {
             $(this).siblings('input[type="checkbox"]').prop('checked', false);
+
             });
 
+               $(document).ready(function(){
+            $('input[type="checkbox"][name="group"').on('change', function(){
+                if(this.checked){
+                    $('div#hidden').removeClass("hidden");
+                }
+                else {
+                    $('div#hidden').addClass("hidden");
+                }
+            });
 
-        $(document).ready(function(){
-    $('input[type="checkbox"][name="group"').change(function(){
-        if(this.checked)
-            $('div#hidden').fadeIn('slow');
-        else
-            $('div#hidden').fadeOut('slow');
+            $('input[type="checkbox"][name="public"').on('change', function(){
+                if(this.checked){
+                    $('div#hidden').addClass("hidden");
+                }
+            });
 
+            $('input[type="checkbox"][name="registered_users"').on('change', function(){
+                if(this.checked){
+                    $('div#hidden').addClass("hidden");
+                }
             });
         });
     </script>
