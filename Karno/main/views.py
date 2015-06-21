@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.views.generic import FormView, ListView, DetailView
+from django.views.generic import FormView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm, AudioFileUploadForm
 from main.models import File, GroupPermission, AudioFile
@@ -12,7 +12,9 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
 from main.forms import YoutubeUrlForm
-from main.models import YoutubeUrl
+from main.models import YoutubeUrl, Comment, CommentNotification
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
 
@@ -211,6 +213,148 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
         vid_id = url.split('?v=')[1]
         YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
         return HttpResponseRedirect(reverse_lazy('youtube_video_list'))
+
+
+class PaginateMixin(object):
+    """
+    A Mixin used to paginate any object_list.
+    :author Nourhan Fawzy:
+    :param object:
+    :return:
+    """
+
+    paginate_by = 3
+
+
+# login is required to add comment, however not required to display comments
+
+
+class CommentListView(PaginateMixin, ListView):
+    """
+    A class for showing details of Model:main.Comment
+    Author: Nourhan Fawzy
+    """
+    model = Comment
+
+    def get_queryset(self):
+        """
+        Gets a queryset of comments for a certain file.
+        :author Nourhan Fawzy:
+        :param self:
+        :return Books list for certain library:
+        """
+        return Comment.objects.filter(
+            file_uploaded=File.objects.get(id=self.kwargs['file_id']))
+
+    def get_context_data(self, **kwargs):
+        """
+        Gets details of Model:main.Comment
+        :author Nourhan Fawzy:
+        """
+
+        context = super(CommentListView, self).get_context_data(**kwargs)
+        context['file'] = File.objects.get(id=self.kwargs['file_id'])
+        return context
+
+    def post(self, args, **kwargs):
+        """
+        Adds a new comment to the database and post it
+        :author Nourhan Fawzy:
+        """
+        file_uploaded = File.objects.get(id=self.kwargs['file_id'])
+        description = self.request.POST['description']
+        user = self.request.user
+        comment = Comment(
+            description=description, user=user,
+            file_uploaded=file_uploaded)
+        comment.save()
+        return HttpResponseRedirect(
+            reverse(
+                'comment-list',
+                kwargs={"file_id": file_uploaded.id}))
+
+
+class NotificationListView(PaginateMixin, ListView):
+    """
+    Lists all notifications when a new comment is added on a file I shared.
+    :author Nourhan Fawzy:
+    :param PaginateMixin, ListView:
+    :return:
+    """
+
+    model = CommentNotification
+
+    def get_context_data(self, **kwargs):
+        """
+        Gets a list of notifications for a given user.
+        :author Nourhan Fawzy:
+        :param self, keyword arguments:
+        :return context:
+        """
+
+        context = super(NotificationListView, self).get_context_data(**kwargs)
+
+        unread = CommentNotification.objects.filter(
+            status=0, user_notified=self.request.user.id)
+        print unread
+        read = CommentNotification.objects.filter(
+            status=1, user_notified=self.request.user.id)
+
+        for notification in unread:
+            notification.status = 1
+            notification.save()
+
+        context['read'] = read
+        context['unread'] = unread
+
+        return context
+
+
+@receiver(post_save, sender=Comment)
+def create_notification(sender, **kwargs):
+    """
+    A function that creates a new notification once a new
+    comment is added on a file I shared.
+    :author Nourhan Fawzy:
+    :param sender, keyword arguments:
+    :return:
+    """
+    print kwargs
+    if kwargs.get('created', False):
+        comment = kwargs.get('instance')
+        file_uploaded = comment.file_uploaded
+        comments = Comment.objects.all().filter(file_uploaded=file_uploaded)
+
+        # create a notification when others comment on file I commented on
+
+        for c in comments:
+            if c.user != comment.user and c.user != file_uploaded.user:
+                CommentNotification.objects.create(
+                    comment=comment,
+                    file_shared=file_uploaded,
+                    user_notified=c.user)
+
+        CommentNotification.objects.create(
+                comment=comment, file_shared=comment.file_uploaded,
+                user_notified=comment.file_uploaded.user)
+
+
+class CommentDelete(DeleteView):
+    """
+    Deletes a book model.
+    :author Nourhan Fawzy:
+    :param DeleteView:
+    :return:
+    """
+
+    model = Comment
+
+    def get_success_url(self):
+
+        return reverse(
+            'comment-list',
+            kwargs={'file_id': self.request.user.file_uploaded.id}
+                       )
 
 
 class FileDetailView(DetailView):

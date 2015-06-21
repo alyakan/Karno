@@ -5,7 +5,8 @@ from main.views import UserRegisteration, UserChangePassword
 from main.views import UploadFile, FileListView, AudioUpdate, FileDetailView
 from main.views import YoutubeUrlFormView, download_handler
 from django.contrib.auth.forms import PasswordResetForm
-from main.views import UploadFile, FileListView, FileDetailView
+from main.views import (
+    CommentListView, NotificationListView, CommentDelete)
 
 
 urlpatterns = patterns(
@@ -50,18 +51,18 @@ urlpatterns = patterns(
     url(
         r'^reset/done/$', auth_views.login,
         name='password_reset_complete'),
+    url(r'^file/comment-list/(?P<file_id>\d+)$',
+        CommentListView.as_view(), name='comment-list'),
+
+    url(r'^file/comment/delete/(?P<comment_id>\d+)$',
+        CommentDelete.as_view(), name='delete-comment'),
+
+    url(
+        r'^notification/list/(?P<user_id>\d+)/$',
+        NotificationListView.as_view(), name='notification-list'),
     url(
         r'audio/(?P<pk>[0-9]+)/update/$',
         AudioUpdate.as_view(), name='audio-update'),
-    url(r'^file_download/(?P<pk>\d+)/$',
-        download_handler, name='download-file'),
-
-    url(
-        r'^file/list/(?P<pk>[0-9]+)/$',
-        FileDetailView.as_view(), name="file-detail"),
-    url(r'^file_download/(?P<pk>\d+)/$',
-        download_handler, name='download-file'),
-
     url(r'^file_download/(?P<pk>\d+)/$',
         download_handler, name='download-file'),
     url(
