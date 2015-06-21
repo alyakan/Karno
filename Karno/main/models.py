@@ -1,6 +1,8 @@
 from django.db import models
 from main.RestrictedFileField import RestrictedFileField
 from django.contrib.auth.models import User
+import os
+from Karno import settings
 from datetime import datetime
 from django.core.urlresolvers import reverse
 
@@ -28,6 +30,7 @@ class File(models.Model):
     registered_users = models.BooleanField(default=False)
     group = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag)
+    tempId = models.IntegerField()
 
     def extension(self):
         """
@@ -65,6 +68,15 @@ class YoutubeUrl(models.Model):
     url = models.CharField(max_length=128, null=False)
     video_id = models.CharField(max_length=128)
     user = models.ForeignKey(User)
+
+
+class TempFile(models.Model):
+    file_uploaded = RestrictedFileField(upload_to='temp/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def delete(self, *args, **kwargs):
+        os.remove(os.path.join(settings.MEDIA_ROOT, self.file_uploaded.name))
+        super(TempFile, self).delete(*args, **kwargs)
 
 
 class Comment(models.Model):

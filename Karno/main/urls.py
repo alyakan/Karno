@@ -2,12 +2,17 @@ from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
-from main.views import UploadFile, FileListView, AudioUpdate, FileDetailView
-from main.views import YoutubeUrlFormView, download_handler
-from django.contrib.auth.forms import PasswordResetForm
 from main.views import (
-    CommentListView, NotificationListView, CommentDelete)
-
+    UploadFile,
+    FileListView,
+    AudioUpdate,
+    FileDetailView,
+    preview_image,
+    CommentListView,
+    NotificationListView,
+    CommentDelete,
+    YoutubeUrlFormView,
+    download_handler)
 
 urlpatterns = patterns(
     '',
@@ -68,4 +73,8 @@ urlpatterns = patterns(
     url(
         r'^file/list/(?P<pk>[0-9]+)/$',
         FileDetailView.as_view(), name="file-detail"),
+    url(
+        r'^preview/$', preview_image, name="preview"),
+
+
 )

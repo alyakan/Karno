@@ -5,16 +5,7 @@
 	<title>Files</title>
 </head>
 <body>
-<<<<<<< HEAD
-	<h1>Files</h1>
-		{% for file in object_list %}
-		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a></h1>
-			<a href="{% url 'comment-list' file.id %}">{{file.file_uploaded.name}}</a>
-		{% endfor %}
-		<br>
-		<a href="{% url 'upload'%}"> Share File</a>
-=======
->>>>>>> master
+
 
 	<h1>Files</h1><br>
 	{% for file in object_list %}
