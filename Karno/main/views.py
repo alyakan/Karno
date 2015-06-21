@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth import authenticate, login, update_session_auth_hash
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
@@ -15,6 +15,7 @@ from main.forms import YoutubeUrlForm
 from main.models import YoutubeUrl
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
+import json
 
 
 class LoginRequiredMixin(object):
@@ -90,6 +91,16 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
                     user=User.objects.get(id=user),
                     file_uploaded=form1)
         return super(UploadFile, self).form_valid(form)
+
+
+def preview_image(request):
+    if request.method == 'POST':
+        response_data = {}
+        response_data['file'] = request.FILES
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type="application/json"
+        )
 
 
 class FileListView(ListView):

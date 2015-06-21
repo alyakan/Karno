@@ -5,7 +5,7 @@ from main.views import UserRegisteration, UserChangePassword
 from main.views import UploadFile, FileListView, AudioUpdate, FileDetailView
 from main.views import YoutubeUrlFormView, download_handler
 from django.contrib.auth.forms import PasswordResetForm
-from main.views import UploadFile, FileListView, FileDetailView
+from main.views import UploadFile, FileListView, FileDetailView, preview_image
 
 
 urlpatterns = patterns(
@@ -67,4 +67,8 @@ urlpatterns = patterns(
     url(
         r'^file/list/(?P<pk>[0-9]+)/$',
         FileDetailView.as_view(), name="file-detail"),
+    url(
+        r'^preview/$', preview_image, name="preview"),
+
+
 )

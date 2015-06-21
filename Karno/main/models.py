@@ -1,6 +1,8 @@
 from django.db import models
 from main.RestrictedFileField import RestrictedFileField
 from django.contrib.auth.models import User
+import os
+import settings
 
 
 class Tag(models.Model):
@@ -64,3 +66,10 @@ class YoutubeUrl(models.Model):
     video_id = models.CharField(max_length=128)
     user = models.ForeignKey(User)
 
+
+class TempFile(models.Model):
+    file_uploaded = RestrictedFileField(upload_to='%Y/%m/%d')
+
+    def delete(self, *args, **kwargs):
+        os.remove(os.path.join(settings.MEDIA_ROOT, self.file_uploaded.name))
+        super(TempFile, self).delete(*args, **kwargs)
