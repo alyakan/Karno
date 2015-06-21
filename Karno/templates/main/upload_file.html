@@ -35,10 +35,11 @@
                 {{ form.file_uploaded.errors }}
 
                 <input id="id_file_uploaded" name="file_uploaded" type="file">
+                <input id="id_tempId" name="tempId" type="hidden">
 
                 <input  type="hidden" name="user" value={{ user.id }}>
                 <br><br>
-
+                <div id="image"></div>
                 Add Tags To Your File: <br>
                 {{form.tags}}
                 <br><br>
@@ -109,17 +110,20 @@
             var data = new FormData($('form').get(0));
 
             $.ajax({
-                url: '/main/preview/',
+                url: '{% url "preview" %}',
                 type: "POST",
                 data: data,
                 cache: false,
                 processData: false,
                 contentType: false,
-                success: function(data) {
-                    alert('success');
+                success: function(json) {
+                    $('#image').prepend("<img src="+json.url+" height='200'>");
+                    $('#id_tempId').val(json.tempId)
+                },
+                error: function(response) {
+                    $('#image').prepend("<p>Failed to preview image</p>");
                 }
             });
-            return false;
             }
 
 </script>
