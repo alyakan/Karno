@@ -1,8 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import FormView, ListView, DetailView
 from django.core.urlresolvers import reverse_lazy, reverse
-from main.forms import FileUploadForm, AudioFileUploadForm
-from main.models import File, GroupPermission, AudioFile
+from main.forms import FileUploadForm, AudioFileUploadForm, TempFileForm
+from main.models import File, GroupPermission, AudioFile, YoutubeUrl, TempFile
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -12,7 +12,6 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.views.generic.edit import UpdateView
 from main.forms import YoutubeUrlForm
-from main.models import YoutubeUrl
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
 import json
@@ -60,6 +59,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         Saves the form,
         Creates a GroupPermission instance for each user in 'users' list
         when File.group is set to True
+        Delete TempFile Associated with File instance
         Author: Rana El-Garem
 
         Creates an AudioFile instance if extension returned in
@@ -90,13 +90,23 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
                 GroupPermission.objects.create(
                     user=User.objects.get(id=user),
                     file_uploaded=form1)
+
+        TempFile.objects.get(id=form1.tempId).delete()
         return super(UploadFile, self).form_valid(form)
 
 
 def preview_image(request):
+    """
+    Creates an instance of TempFile and
+    Returns url and id of file
+    Author: Rana El-Garem
+    """
     if request.method == 'POST':
         response_data = {}
-        response_data['file'] = request.FILES
+        form = TempFileForm(request.POST, request.FILES)
+        tempfile = form.save()
+        response_data["url"] = tempfile.file_uploaded.url
+        response_data["tempId"] = tempfile.id
         return HttpResponse(
             json.dumps(response_data),
             content_type="application/json"
