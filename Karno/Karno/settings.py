@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'my_youtube',
     'django_select2',
     'filetransfers',
+    'django_crontab'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -87,6 +88,9 @@ DATABASES = {
     }
 }
 
+CRONJOBS = [
+    ('*/60 * * * *', 'Karno.cron.delete_temp_files')
+]
 
 YOUTUBE_AUTH_EMAIL = 'aly.yakan@gmail.com'
 YOUTUBE_AUTH_PASSWORD = 'kapaa100894'

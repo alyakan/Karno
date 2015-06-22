@@ -27,8 +27,6 @@
   <button type="button" name="documentdisplay" id="doc"> Doc </button>
 
 
-
-
 	<h1>Files</h1><br>
 	{% for file in object_list %}
 	    <a href="{{  file.file_uploaded.url}}">{{  file.file_uploaded.url}}</a><br><br>

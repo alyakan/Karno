@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Your Notifications List</title>
+    </head>
+
+    <body>
+
+		<h2>Your Notifications List</h2>
+
+		<ul>
+
+        {% for notification in unread %}
+
+        <p>New Notification:</p>
+
+        <a href= "{% url 'comment-list' notification.file_shared.id %}"><li>"{{ notification.comment.user }}" commented on your photo</li></a>
+
+        <br></br>
+
+        {% endfor %}
+
+
+        {% for notification in read %}
+
+        <p>Old Notification:</p>
+
+        <a href= "{% url 'comment-list' notification.file_shared.id %}"><li>"{{ notification.comment.user }}" commented on your photo</li></a>
+
+        <br></br>
+
+        {% endfor %}
+
+
+
+        <br></br>
+
+        <div class="pagination">
+            <span class="page-links">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                {% endif %}
+                <span class="page-current">
+                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                </span>
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                {% endif %}
+            </span>
+        </div>
+
+        <br>
+
+        <a href="{% url 'home' %}"> Go back</a>
+
+    </body>
+</html>
