@@ -100,8 +100,9 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
                 GroupPermission.objects.create(
                     user=User.objects.get(id=user),
                     file_uploaded=form1)
+        if form1.tempId != 0:
+            TempFile.objects.get(id=form1.tempId).delete()
 
-        TempFile.objects.get(id=form1.tempId).delete()
         return super(UploadFile, self).form_valid(form)
 
 
@@ -139,7 +140,6 @@ class FileListView(ListView):
         Author: Aly Yakan
         """
         context = super(FileListView, self).get_context_data(**kwargs)
-        context['video'] = File.objects.get(id=3)
         if self.request.user.is_authenticated():
             user = self.request.user
             files = File.objects.all()

@@ -29,6 +29,7 @@
             <p>{{ form.non_field_errors }}</p>
             <p>{{ form.file_uploaded.label_tag }} {{ form.file_uploaded.help_text }}</p>
             <p>
+                {{ form.errors }}
                 {{ form.file_uploaded.errors }}
 
                 <input id="id_file_uploaded" name="file_uploaded" type="file">
@@ -97,7 +98,7 @@
                         upload();       
                     }
                 else {
-                    $("#audioform").hide();
+                    $('#id_tempId').val(0)
                 }
             }) 
 

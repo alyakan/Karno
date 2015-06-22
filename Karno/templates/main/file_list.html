@@ -22,6 +22,7 @@
 
 
 	<h1>Files</h1><br>
+	<a href="{% url "index" %}">Home</a><br>
 		{% if user.is_authenticated %}
 			{% for file,liked in zipped_list %}
 					<iframe id="ytplayer" type="text/html" width="{{ 500 }}" height="{{ 400 }}"

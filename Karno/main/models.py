@@ -31,7 +31,7 @@ class File(models.Model):
     group = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag)
     likes_count = models.IntegerField(default=0)
-    tempId = models.IntegerField()
+    tempId = models.IntegerField(default=0)
 
     def extension(self):
         """
