@@ -1,8 +1,9 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from main.models import YoutubeUrl, GroupPermission, File, Tag, Like
+from main.models import YoutubeUrl, GroupPermission, File, Tag, TempFile, Like
 from django.core.files.uploadedfile import SimpleUploadedFile
+from main.forms import TempFileForm
 
 
 class Authentication(TestCase):
@@ -326,3 +327,59 @@ class LikeTestCase(TestCase):
             HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         self.assertEqual(Like.objects.count(), init_likes_count)
         self.assertEqual(response.status_code, 200)
+
+
+class ImagePreviewTestCase(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        User.objects.create_user(username='rana',
+                                 password='123456')
+        self.client.post(reverse('user-login'),
+                         {'username': 'rana',
+                          'password': '123456'})
+
+    def test_temp_file_created(self):
+        """
+        Ensures that a TempFile instance is created
+        when an ajax request to 'main/preview' is posted
+        Author: Rana El-Garem
+        """
+        init_temp_file_count = TempFile.objects.count()
+        uploadedfile = SimpleUploadedFile(
+            "file.png",
+            "file_content",
+            content_type="image/mp3")
+        form = TempFileForm()
+        form.file_uploaded = uploadedfile
+        response = self.client.post('/main/preview/',
+                                    {'file_uploaded': uploadedfile},
+                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(TempFile.objects.count(), init_temp_file_count + 1)
+
+    def test_temp_file_deleted(self):
+        """
+        Ensures TempFile instance is deleted when File is uploaded
+        Author: Rana El-Garem
+        """
+
+        uploadedfile = SimpleUploadedFile(
+            "file.png",
+            "file_content",
+            content_type="image/mp3")
+        form = TempFileForm()
+        form.file_uploaded = uploadedfile
+        self.client.post('/main/preview/',
+                         {'file_uploaded': uploadedfile},
+                         HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        temp_file_count = TempFile.objects.count()
+        self.client.post(reverse('upload'),
+                         {
+            'file_uploaded': uploadedfile,
+            'user':
+            self.client.session['_auth_user_id'],
+            'users': [u'1']
+        })
+        self.assertEqual(TempFile.objects.count(), temp_file_count)

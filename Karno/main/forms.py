@@ -1,5 +1,5 @@
 from django import forms
-from main.models import File, AudioFile, Tag
+from main.models import File, AudioFile, Tag, TempFile
 from main.models import YoutubeUrl
 from django_select2.fields import AutoModelSelect2TagField
 
@@ -28,7 +28,7 @@ class FileUploadForm(forms.ModelForm):
     class Meta:
         model = File
         fields = ['file_uploaded', 'user', 'public',
-                  'registered_users', 'group', 'tags']
+                  'registered_users', 'group', 'tags', 'tempId']
 
 
 class AudioFileUploadForm(forms.ModelForm):
@@ -39,3 +39,11 @@ class AudioFileUploadForm(forms.ModelForm):
     class Meta:
         model = AudioFile
         exclude = ['source_file', ]
+
+
+class TempFileForm(forms.ModelForm):
+    file_uploaded = forms.FileField(label='Select a file')
+
+    class Meta:
+        model = TempFile
+        fields = ['file_uploaded', ]

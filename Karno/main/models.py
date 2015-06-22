@@ -1,6 +1,10 @@
 from django.db import models
 from main.RestrictedFileField import RestrictedFileField
 from django.contrib.auth.models import User
+import os
+from Karno import settings
+from datetime import datetime
+from django.core.urlresolvers import reverse
 
 
 class Tag(models.Model):
@@ -21,12 +25,13 @@ class File(models.Model):
     Author: Rana El-Garem
     """
     file_uploaded = RestrictedFileField(upload_to='%Y/%m/%d')
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name="file")
     public = models.BooleanField(default=False)
     registered_users = models.BooleanField(default=False)
     group = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag)
     likes_count = models.IntegerField(default=0)
+    tempId = models.IntegerField()
 
     def extension(self):
         """
@@ -75,3 +80,45 @@ class Like(models.Model):
     """
     user = models.ForeignKey(User)
     source_file = models.ForeignKey(File)
+
+
+class TempFile(models.Model):
+    file_uploaded = RestrictedFileField(upload_to='temp/')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def delete(self, *args, **kwargs):
+        os.remove(os.path.join(settings.MEDIA_ROOT, self.file_uploaded.name))
+        super(TempFile, self).delete(*args, **kwargs)
+
+
+class Comment(models.Model):
+    """
+    A Single Comment Entry
+    Author: Nourhan Fawzy
+    """
+    description = models.CharField(max_length=512)
+    date = models.DateTimeField(default=datetime.now, blank=True)
+    user = models.ForeignKey(User, related_name="comment")
+    file_uploaded = models.ForeignKey(File)
+
+    def __unicode__(self):
+        return self.description
+
+    def get_absolute_url(self):
+        return reverse('comment-list', kwargs={'pk': self.pk})
+
+
+class CommentNotification(models.Model):
+    """
+    Represents a notification when a user makes a comment on a file I shared
+    Author: Nourhan Fawzy
+    """
+    comment = models.ForeignKey(Comment)
+    file_shared = models.ForeignKey(File, null=False)   # file I shared
+    user_notified = models.ForeignKey(User, null=False)
+    # user_commented = models.ForeignKey(User, null=False)
+    status = models.BooleanField(default=0)    # 0 means unread, 1 means read
+
+    def __unicode__(self):
+        return unicode(self.status)
+
