@@ -1,7 +1,20 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
+
+=======
 {% load static %}
 {% load staticfiles %}
+>>>>>>> d3cbb60e1b9f205952da75c345cff33fa55ed78f
 {% load filetransfers %}
+{% load static %}
+{% load staticfiles %}
+
+
+<script src="{% static "js/jquery.js" %}"></script>
+<script src="{% static "js/main-jquery.js" %}"></script>
+<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+ <script src="//code.jquery.com/jquery-latest.min.js"></script>
+<div id="filediv">
 <html>
 <head>
 	<title>Files</title>
@@ -19,6 +32,16 @@
 	<link href="{% static 'css/upload_file.css'%}" rel="stylesheet"></link>
 </head>
 <body>
+
+<h5>
+
+ <button type="button" name="audiodisplay" id="audi"> Audio </button>
+ 
+ <button type="button" name="imagedisplay" id="img"> Image </button> 
+
+ <button type="button" name="videodisplay" id="vid"> Video </button>
+
+  <button type="button" name="documentdisplay" id="doc"> Doc </button>
 
 
 	<h1>Files</h1><br>
@@ -68,3 +91,95 @@
 	{% endif %}
 </body>
 </html>
+
+<br><br>
+
+
+<script type="text/javascript">
+
+$(document).ready( function() {
+    $('#audi').on('click',function(){   
+    
+$.ajax({
+    url:"/main/file/list",
+    type: "GET",
+    data: {'category': "audio"},
+    success:function(newData){
+    $('#filediv').empty();
+    $('#filediv').append(newData);
+
+},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+
+         });
+
+    });
+
+    $('#vid').on('click',function(){   
+    
+$.ajax({
+    url:"/main/file/list",
+    type: "GET",
+    data: {'category': "videos"},
+    success:function(newData){
+    $('#filediv').empty();
+    $('#filediv').append(newData);
+
+},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+
+         });
+
+    });
+
+    $('#img').on('click',function(){   
+    
+$.ajax({
+    url:"/main/file/list",
+    type: "GET",
+    data: {'category': "images"},
+    success:function(newData){
+    $('#filediv').empty();
+    $('#filediv').append(newData);
+
+},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+
+         });
+
+    });
+
+    $('#doc').on('click',function(){   
+    
+$.ajax({
+    url:"/main/file/list",
+    type: "GET",
+    data: {'category': "documents"},
+    success:function(newData){
+    $('#filediv').empty();
+    $('#filediv').append(newData);
+
+},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+
+         });
+
+    }); 
+
+});
+</script>
+
+
+</div>

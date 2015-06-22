@@ -9,8 +9,7 @@ from main.models import (
     YoutubeUrl,
     TempFile,
     Comment,
-    CommentNotification,
-    Like)
+    CommentNotification)
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -24,6 +23,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.views.generic import View
 import json
 
 
@@ -38,7 +40,7 @@ class LoginRequiredMixin(object):
 def download_handler(request, pk):
     """
     Function that handles a download request of a file
-    Author: Kareem Tarek , Moustafa Mahmoud
+    Author: Kareem Tarek , Moustafa Mahmoud`
     """
     upload = get_object_or_404(File, pk=pk)
     return serve_file(request, upload.file_uploaded, save_as=True)
@@ -77,9 +79,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         Author: Kareem Tarek
         """
         form1 = form.save(commit=True)
-        #  Handling Extensions #
         extension = form1.file_uploaded.url.split(".")[-1]
-        print ("Extension", extension)
         if (extension == "mp3"
                 or extension == "mp4"
                 or extension == "ogg"
@@ -90,19 +90,15 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
                 aud = audio_form.save(commit=False)
                 aud.source_file = form1
                 audio_form.save()
-                print "Dada Saved"
-
             else:
                 pass
-        ################
         if form.cleaned_data['group']:
             for user in self.request.POST.getlist('users'):
                 GroupPermission.objects.create(
                     user=User.objects.get(id=user),
                     file_uploaded=form1)
-        if form1.tempId != 0:
-            TempFile.objects.get(id=form1.tempId).delete()
 
+        TempFile.objects.get(id=form1.tempId).delete()
         return super(UploadFile, self).form_valid(form)
 
 
@@ -124,35 +120,49 @@ def preview_image(request):
         )
 
 
-class FileListView(ListView):
+class FileListView(View):
 
     """
-    A class for listing all instances of Model:main.File
-    Author: Rana El-Garem
+    A class responsible for listing files with respect to their category
+    Author: Kareem Tarek .
+
     """
-    model = File
 
-    def get_context_data(self, **kwargs):
-        """
-        Sends a zipped list of (File, Boolean). The boolean represents wether
-        the current user liked this file or not.
-
-        Author: Aly Yakan
-        """
-        context = super(FileListView, self).get_context_data(**kwargs)
-        if self.request.user.is_authenticated():
-            user = self.request.user
+    def get(self, request):
+        if request.is_ajax():
+            context = {}
+            object_list = []
+            category = request.GET['category']
             files = File.objects.all()
-            liked_or_not = []
-            for f in files:
-                try:
-                    Like.objects.get(source_file=f.id, user=user)
-                    liked_or_not.append(True)
-                except:
-                    liked_or_not.append(False)
-            zipped_list = zip(files, liked_or_not)
-            context['zipped_list'] = zipped_list
-        return context
+            for file in files:
+                extension = file.file_uploaded.url.split(".")[-1]
+                if ((extension == "mp3"
+                     or extension == "ogg"
+                     or extension == "wav")
+                        and category == "audio"):
+                    object_list.append(file)
+                elif ((extension == "jpeg"
+                       or extension == "jpg"
+                       or extension == "png")
+                        and category == "images"):
+                    object_list.append(file)
+                elif ((extension == "mov"
+                        and category == "videos")):
+                    object_list.append(file)
+                elif ((extension == "pdf"
+                        and category == "documents")):
+                    object_list.append(file)
+            context['object_list'] = object_list
+
+            return HttpResponse(render_to_response('main/file_list.html',
+                                                   context,
+                                                   context_instance=RequestContext(request)))
+        else:
+            context = {}
+            context['object_list'] = File.objects.all()
+            return render_to_response('main/file_list.html',
+                                      context,
+                                      context_instance=RequestContext(request))
 
 
 class UserRegisteration(FormView):
@@ -268,6 +278,7 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
 
 
 class PaginateMixin(object):
+
     """
     A Mixin used to paginate any object_list.
     :author Nourhan Fawzy:
@@ -282,6 +293,7 @@ class PaginateMixin(object):
 
 
 class CommentListView(PaginateMixin, ListView):
+
     """
     A class for showing details of Model:main.Comment
     Author: Nourhan Fawzy
@@ -327,6 +339,7 @@ class CommentListView(PaginateMixin, ListView):
 
 
 class NotificationListView(PaginateMixin, ListView):
+
     """
     Lists all notifications when a new comment is added on a file I shared.
     :author Nourhan Fawzy:
@@ -387,11 +400,12 @@ def create_notification(sender, **kwargs):
                     user_notified=c.user)
 
         CommentNotification.objects.create(
-                comment=comment, file_shared=comment.file_uploaded,
-                user_notified=comment.file_uploaded.user)
+            comment=comment, file_shared=comment.file_uploaded,
+            user_notified=comment.file_uploaded.user)
 
 
 class CommentDelete(DeleteView):
+
     """
     Deletes a book model.
     :author Nourhan Fawzy:
@@ -406,7 +420,7 @@ class CommentDelete(DeleteView):
         return reverse(
             'comment-list',
             kwargs={'file_id': self.request.user.file_uploaded.id}
-                       )
+        )
 
 
 class FileDetailView(DetailView):
@@ -422,88 +436,3 @@ class FileDetailView(DetailView):
     """
     model = File
     template_name = "main/file_detail.html"
-
-    def get_context_data(self, **kwargs):
-        """
-        Sends the users that liked a certain file.
-
-        Author: Aly Yakan
-        """
-        context = super(FileDetailView, self).get_context_data(**kwargs)
-        try:
-            user = self.request.user
-            like = Like.objects.get(user=user, source_file=self.object)
-            if like:
-                context['liked'] = True
-            else:
-                context['liked'] = False
-        except:
-            pass
-        return context
-
-
-class LikeFile(LoginRequiredMixin, FormView):
-
-    def get(self, request, *args, **kwargs):
-        """
-        Creates a like for a user on a file
-
-        Author: Aly Yakan
-        """
-        file_id = request.GET['file_id']
-        source_file = File.objects.get(id=file_id)
-        likes = 0
-        if source_file:
-            user = request.user
-            like = Like.objects.create(source_file=source_file, user=user)
-            like.save()
-            likes = source_file.likes_count + 1
-            source_file.likes_count = likes
-            source_file.save()
-        return HttpResponse(likes)
-
-
-class UnlikeFile(LoginRequiredMixin, FormView):
-
-    def get(self, request, *args, **kwargs):
-        """
-        Unlikes a file for a user only if the user liked it already
-
-        Author: Aly Yakan
-        """
-        file_id = request.GET['file_id']
-        source_file = File.objects.get(id=file_id)
-        likes = source_file.likes_count
-        if source_file:
-            user = request.user
-            try:
-                like = Like.objects.get(source_file=source_file, user=user)
-            except:
-                like = False
-            if like:
-                like.delete()
-                likes = source_file.likes_count - 1
-                source_file.likes_count = likes
-                source_file.save()
-        return HttpResponse(likes)
-
-
-class LikesListView(ListView):
-    """
-    A class for listing users that liked a single file of Model:main.Like
-
-    Author: Aly Yakan
-    """
-    model = Like
-
-    def get_context_data(self, **kwargs):
-        """
-        Sends the users that liked a certain file.
-
-        Author: Aly Yakan
-        """
-        context = super(LikesListView, self).get_context_data(**kwargs)
-        file_id = self.kwargs['pk']
-        likes = Like.objects.filter(source_file_id=file_id)
-        context['likes'] = likes
-        return context
