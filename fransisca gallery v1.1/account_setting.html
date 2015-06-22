@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="jessica awesome bootstrap responsive one page resume theme">
+    <meta name="keywords" content="bootstrap, responsive, curriculum vitae, cv, one page, parallax, resume theme">
+    <meta name="author" content="templateninja">
+    <link rel="shortcut icon" href="img/favicon.ico">
+
+    <title>Fransisca Gallery</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700,600" rel="stylesheet" type="text/css">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/colorbox.css" rel="stylesheet">
+    <link href="css/style.min.css" rel="stylesheet">
+    <link href="css/responsive.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+      <script src="js/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+    <!-- begin:navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html"><span>Fransisca</span> Gallery</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="about.html">About</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pages <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="detail.html">Detail</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="account_setting.html">Account Setting</a></li>
+                <li><a href="signin.html">Signin</a></li>
+                <li><a href="signup.html">Signup</a></li>
+                <li class="divider"></li>
+                <li><a href="portfolio.html">Portfolio</a></li>
+                <li><a href="portfolio-single.html">Portfolio Single</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="blog-single.html">Blog Single</a></li>
+              </ul>
+            </li>
+            <li class="fsearch hidden-xs"><a class="btn-search"></a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><img src="img/avatar-thumbnail.jpg" class="img-responsive img-avatar" alt="avatar"> <strong>Jane Doe</strong> <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="account_setting.html"><i class="fa fa-cogs"></i> Account Settings</a></li>
+                <li class="divider"></li>
+                <li><a href="#"><i class="fa fa-power-off"></i> Sign Out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+        <ul class="nav navbar-nav navbar-right nav-search visible-xs">
+          <li class="fsearch"><a class="btn-search"></a></li>
+        </ul>
+      </div><!-- /.container-fluid -->
+    </nav>
+    <!-- end:navbar -->
+
+    <!-- begin:search -->
+    <div id="searchbox">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <!-- <form role="form"> -->
+              <div class="form-group">
+                <label for="inputSearch" class="sr-only">Search</label>
+                <input type="text" class="form-control input-lg" placeholder="Enter your keyword">
+              </div>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:search -->
+
+    <!-- begin:content -->
+    <div id="content">
+      <div class="container">
+        <div class="row">
+          <!-- begin:profile-account -->
+          <div class="col-md-3 col-sm-4 col-xs-12">
+            <div class="post-container">
+              <div class="post-content">
+                <div class="profile-account">
+                  <img src="img/avatar.jpg" class="img-responsive img-thumbnail">
+                  <h3>Jane Doe</h3>
+                  <p><strong>Sign up :</strong></p>
+                  <p>3 weeks a go</p>
+                  <p><strong>Location : </strong></p>
+                  <p>California</p>
+                  <p><strong>Website : </strong></p>
+                  <p><a href="#">http://janedoe.com</a></p>
+                  <hr>
+                  <a href="profile.html">View Public Profile</a>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end:profile-account -->
+
+          <!-- begin:profile-content -->
+          <div class="col-md-9 col-sm-8 col-xs-12">
+            <div class="post-container">
+              <div class="post-content">
+                <!-- begin:nav-tab -->
+                <ul id="myTab" class="nav nav-tabs" role="tablist">
+                  <li class="active"><a href="#profile" role="tab" data-toggle="tab">Profile</a></li>
+                  <li class=""><a href="#password" role="tab" data-toggle="tab">Password</a></li>
+                </ul>
+                <!-- end:nav-tab -->
+
+                <!-- begin:tab-content -->
+                <div id="myTabContent" class="tab-content">
+                  <!-- begin:profile -->
+                  <div class="tab-pane fade active in" id="profile">
+                    <form class="form-horizontal" role="form">
+                      <div class="form-group">
+                        <label for="name" class="col-sm-3 control-label">Your Name</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="Your Name" value="Jane Doe">
+                          <p class="help-block">Your Public Profile : http://domain.com/profile/janedoe</p>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="username" class="col-sm-3 control-label">Username</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="Username" value="janedoe">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="email" class="col-sm-3 control-label">Email</label>
+                        <div class="col-sm-9">
+                          <input type="email" class="form-control" placeholder="Email" value="janedoe@domain.com">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="website" class="col-sm-3 control-label">Website</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" placeholder="Website" value="http://janedoe.com">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="website" class="col-sm-3 control-label">About</label>
+                        <div class="col-sm-9">
+                          <textarea class="form-control" rows="5" placeholder="About">lorem ipsum dolor sit amet</textarea>
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="website" class="col-sm-3 control-label">Avatar</label>
+                        <div class="col-sm-9">
+                          <input type="file">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                          <button type="submit" class="btn btn-default">Save Change</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <!-- end:profile -->
+
+                  <!-- begin:password -->
+                  <div class="tab-pane fade" id="password">
+                    <form class="form-horizontal" role="form">
+                      <div class="form-group">
+                        <label for="oldpassword" class="col-sm-3 control-label">Enter Old Password</label>
+                        <div class="col-sm-9">
+                          <input type="password" class="form-control" placeholder="Enter Old Password">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="newpassword" class="col-sm-3 control-label">Enter New Password</label>
+                        <div class="col-sm-9">
+                          <input type="password" class="form-control" placeholder="Enter New Password">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <label for="confirmpassword" class="col-sm-3 control-label">Confirm New Password</label>
+                        <div class="col-sm-9">
+                          <input type="password" class="form-control" placeholder="Confirm New Password">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-offset-3 col-sm-9">
+                          <button type="submit" class="btn btn-default">Save Change</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <!-- end:password -->
+                </div>
+                <!-- end:tab-content -->
+              </div>
+            </div>
+          </div>
+          <!-- end:profile-content -->
+          
+        </div>
+      </div>
+    </div>
+    <!-- end:content -->
+
+    <!-- begin:footer -->
+    <div class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <hr>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <p>Copyright &copy; 2014 All Right Reserved.</p>
+            <ul class="list-inline">
+                <li><a href="#">Terms Of Service</a></li>
+                <li><a href="#">Privacy</a></li>
+            </ul>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <ul class="list-social">
+              <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+              <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:footer -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="js/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.easing.js"></script>
+    <script src="js/imagesloaded.pkgd.min.js"></script>
+    <script src="js/masonry.pkgd.min.js"></script>
+    <script src="js/jquery.colorbox.min.js"></script>
+    <script src="js/jquery.isotope.min.js"></script>
+    <script src="js/script.min.js"></script>
+  </body>
+</html>
