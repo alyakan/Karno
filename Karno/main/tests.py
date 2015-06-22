@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from main.models import YoutubeUrl, GroupPermission, File, Tag
+from main.models import YoutubeUrl, GroupPermission, File, Tag, AudioFile
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 

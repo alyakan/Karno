@@ -71,7 +71,6 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         Author: Kareem Tarek
         """
         form1 = form.save(commit=True)
-        #  Handling Extensions #
         extension = form1.file_uploaded.url.split(".")[-1]
         if (extension == "mp3"
                 or extension == "mp4"
@@ -85,7 +84,6 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
                 audio_form.save()
             else:
                 pass
-        ################
         if form.cleaned_data['group']:
             for user in self.request.POST.getlist('users'):
                 GroupPermission.objects.create(
