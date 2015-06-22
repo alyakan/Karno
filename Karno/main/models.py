@@ -30,7 +30,8 @@ class File(models.Model):
     registered_users = models.BooleanField(default=False)
     group = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag)
-    tempId = models.IntegerField()
+    likes_count = models.IntegerField(default=0)
+    tempId = models.IntegerField(default=0)
 
     def extension(self):
         """
@@ -68,6 +69,17 @@ class YoutubeUrl(models.Model):
     url = models.CharField(max_length=128, null=False)
     video_id = models.CharField(max_length=128)
     user = models.ForeignKey(User)
+
+
+class Like(models.Model):
+    """
+    Represents a single Like on a file
+
+    Author: Aly Yakan
+
+    """
+    user = models.ForeignKey(User)
+    source_file = models.ForeignKey(File)
 
 
 class TempFile(models.Model):
@@ -109,3 +121,4 @@ class CommentNotification(models.Model):
 
     def __unicode__(self):
         return unicode(self.status)
+

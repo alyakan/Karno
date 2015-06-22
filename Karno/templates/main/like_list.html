@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Likes</title>
+</head>
+<body>
+	{% for like in likes %}
+		<li>{{ like.user.username }}</li>
+	{% endfor %}
+</body>
+</html>
