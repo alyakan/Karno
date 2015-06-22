@@ -9,7 +9,8 @@ from main.models import (
     YoutubeUrl,
     TempFile,
     Comment,
-    CommentNotification)
+    CommentNotification,
+    Like)
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -97,8 +98,8 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
                 GroupPermission.objects.create(
                     user=User.objects.get(id=user),
                     file_uploaded=form1)
-
-        TempFile.objects.get(id=form1.tempId).delete()
+        if form1.tempId != 0:
+            TempFile.objects.get(id=form1.tempId).delete()
         return super(UploadFile, self).form_valid(form)
 
 
@@ -153,13 +154,36 @@ class FileListView(View):
                         and category == "documents")):
                     object_list.append(file)
             context['object_list'] = object_list
+            if self.request.user.is_authenticated():
+                user = self.request.user
+                files = object_list
+                liked_or_not = []
+                for f in files:
+                    try:
+                        Like.objects.get(source_file=f.id, user=user)
+                        liked_or_not.append(True)
+                    except:
+                        liked_or_not.append(False)
+                zipped_list = zip(files, liked_or_not)
+                context['zipped_list'] = zipped_list
 
             return HttpResponse(render_to_response('main/file_list.html',
                                                    context,
                                                    context_instance=RequestContext(request)))
         else:
             context = {}
-            context['object_list'] = File.objects.all()
+            if self.request.user.is_authenticated():
+                user = self.request.user
+                files = File.objects.all()
+                liked_or_not = []
+                for f in files:
+                    try:
+                        Like.objects.get(source_file=f.id, user=user)
+                        liked_or_not.append(True)
+                    except:
+                        liked_or_not.append(False)
+                zipped_list = zip(files, liked_or_not)
+                context['zipped_list'] = zipped_list
             return render_to_response('main/file_list.html',
                                       context,
                                       context_instance=RequestContext(request))
@@ -407,7 +431,7 @@ def create_notification(sender, **kwargs):
 class CommentDelete(DeleteView):
 
     """
-    Deletes a book model.
+    Deletes a comment model.
     :author Nourhan Fawzy:
     :param DeleteView:
     :return:
@@ -436,3 +460,83 @@ class FileDetailView(DetailView):
     """
     model = File
     template_name = "main/file_detail.html"
+
+    def get_context_data(self, **kwargs):
+        """
+        Sends the users that liked a certain file.
+        Author: Aly Yakan
+        """
+        context = super(FileDetailView, self).get_context_data(**kwargs)
+        try:
+            user = self.request.user
+            like = Like.objects.get(user=user, source_file=self.object)
+            if like:
+                context['liked'] = True
+            else:
+                context['liked'] = False
+        except:
+            pass
+        return context
+
+
+class LikeFile(LoginRequiredMixin, FormView):
+
+    def get(self, request, *args, **kwargs):
+        """
+        Creates a like for a user on a file
+        Author: Aly Yakan
+        """
+        file_id = request.GET['file_id']
+        source_file = File.objects.get(id=file_id)
+        likes = 0
+        if source_file:
+            user = request.user
+            like = Like.objects.create(source_file=source_file, user=user)
+            like.save()
+            likes = source_file.likes_count + 1
+            source_file.likes_count = likes
+            source_file.save()
+        return HttpResponse(likes)
+
+
+class UnlikeFile(LoginRequiredMixin, FormView):
+
+    def get(self, request, *args, **kwargs):
+        """
+        Unlikes a file for a user only if the user liked it already
+        Author: Aly Yakan
+        """
+        file_id = request.GET['file_id']
+        source_file = File.objects.get(id=file_id)
+        likes = source_file.likes_count
+        if source_file:
+            user = request.user
+            try:
+                like = Like.objects.get(source_file=source_file, user=user)
+            except:
+                like = False
+            if like:
+                like.delete()
+                likes = source_file.likes_count - 1
+                source_file.likes_count = likes
+                source_file.save()
+        return HttpResponse(likes)
+
+
+class LikesListView(ListView):
+    """
+    A class for listing users that liked a single file of Model:main.Like
+    Author: Aly Yakan
+    """
+    model = Like
+
+    def get_context_data(self, **kwargs):
+        """
+        Sends the users that liked a certain file.
+        Author: Aly Yakan
+        """
+        context = super(LikesListView, self).get_context_data(**kwargs)
+        file_id = self.kwargs['pk']
+        likes = Like.objects.filter(source_file_id=file_id)
+        context['likes'] = likes
+        return context
