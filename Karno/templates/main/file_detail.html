@@ -1,13 +1,30 @@
 <!DOCTYPE html>
+{% load static %}
+{% load staticfiles %}
 <html>
 <head>
 	<title>File</title>
+	<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
 	<script type="text/javascript">var switchTo5x=true;</script>
 	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
 	<script type="text/javascript">stLight.options({publisher: "19b54de1-bc03-466a-aca3-919232e87a2e", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+	<script src="{% static "js/likes.js" %}"></script>
 </head>
 <body>
 	<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
+	<a href="{% url "likes-list" file.id %}"><b id="like_count{{file.id}}" class="popover">{{ file.likes_count }}</b> Users like this file</a>
+	{% if user.is_authenticated %}
+		{% if liked %}
+			<h3 id="like-success{{file.id}}" class="success-message">You liked this file</h3>
+			<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button">Unlike</button><br>
+			<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button" hidden>Like</button><br>
+		{% else %}
+			<h3 id="like-success{{file.id}}" class="success-message" hidden>You liked this file</h3>
+			<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button" hidden>Unlike</button><br>
+			<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button><br>
+		{% endif %}
+	{% endif %}
+
 	<span class='st_sharethis_large' displayText='ShareThis'></span>
 	<span class='st_facebook_large' displayText='Facebook'></span>
 	<span class='st_twitter_large' displayText='Tweet'></span>

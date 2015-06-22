@@ -1,5 +1,10 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
 
+=======
+{% load static %}
+{% load staticfiles %}
+>>>>>>> d3cbb60e1b9f205952da75c345cff33fa55ed78f
 {% load filetransfers %}
 {% load static %}
 {% load staticfiles %}
@@ -13,6 +18,18 @@
 <html>
 <head>
 	<title>Files</title>
+	<script src="{% static "js/jquery.js" %}"></script>
+	<script src="{% static "js/main-jquery.js" %}"></script>
+	<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+	<script src="//code.jquery.com/jquery-latest.min.js"></script>
+	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+	<script src="{% static "js/likes.js" %}"></script>
+
+
+	<link href="{% static 'css/select2.css'%}" rel="stylesheet"></link>
+	<link href="{% static 'css/extra.css'%}" rel="stylesheet"></link>
+	<link href="{% static 'css/upload_file.css'%}" rel="stylesheet"></link>
 </head>
 <body>
 
@@ -28,12 +45,40 @@
 
 
 	<h1>Files</h1><br>
-	{% for file in object_list %}
-	    <a href="{{  file.file_uploaded.url}}">{{  file.file_uploaded.url}}</a><br><br>
-		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
-		<a href="{% url "file-detail" file.id %}">Share this file</a>
-		<a href="{% url 'download-file' file.id %}">Download</a><br><br><br><br>
-	{% endfor %}
+	<a href="{% url "index" %}">Home</a><br>
+		{% if user.is_authenticated %}
+			{% for file,liked in zipped_list %}
+					<iframe id="ytplayer" type="text/html" width="{{ 500 }}" height="{{ 400 }}"
+		            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
+		            <a href="{% url "file-detail" file.id %}">View this file</a>
+					<a href="{% url "file-detail" file.id %}">Share this file</a>
+					<a href="{% url "download-file" file.id %}">Download</a><br><br>
+					<a href="{% url "likes-list" file.id %}"><b id="like_count{{file.id}}" class="popover">{{ file.likes_count }}</b> Users like this file</a>	
+					{% if liked %}
+						<h3 id="like-success{{file.id}}" class="success-message">You liked this file</h3>
+						<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button">Unlike</button><br>
+						<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button" hidden>Like</button><br>
+					{% else %}
+						<h3 id="like-success{{file.id}}" class="success-message" hidden>You liked this file</h3>
+						<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button" hidden>Unlike</button><br>
+        				<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button><br>
+        			{% endif %}
+        	{% endfor %}
+        {% else %}
+	        {% for file in object_list %}
+			    <a href="{{  file.file_uploaded.url}}">{{  file.file_uploaded.url}}</a><br><br>
+				<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
+				<a href="{% url "file-detail" file.id %}">Share this file</a>
+				<a href="{% url 'download-file' file.id %}">Download</a><br><br>
+				<b id="like_count">{{ file.likes_count }}</b>
+				{% if file.likes_count = 1 %} 
+					User likes
+				{% else %} 
+					Users like
+				{% endif %}
+				this file
+			{% endfor %}
+		{% endif %}
 	<br>
 	<a href="{% url 'upload'%}"> Upload</a>
 	{% if messages %}

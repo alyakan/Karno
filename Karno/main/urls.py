@@ -2,6 +2,7 @@ from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
+from django.contrib.auth.forms import PasswordResetForm
 from main.views import (
     UploadFile,
     FileListView,
@@ -12,7 +13,9 @@ from main.views import (
     NotificationListView,
     CommentDelete,
     YoutubeUrlFormView,
-    download_handler)
+    download_handler,
+    LikeFile, UnlikeFile,
+    LikesListView)
 
 urlpatterns = patterns(
     '',
@@ -74,7 +77,14 @@ urlpatterns = patterns(
         r'^file/list/(?P<pk>[0-9]+)/$',
         FileDetailView.as_view(), name="file-detail"),
     url(
+        r'^like/file/$',
+        LikeFile.as_view(), name="like-file"),
+    url(
+        r'^unlike/file/$',
+        UnlikeFile.as_view(), name="unlike-file"),
+    url(
+        r'^likes/list/(?P<pk>[0-9]+)$',
+        LikesListView.as_view(), name="likes-list"),
+    url(
         r'^preview/$', preview_image, name="preview"),
-
-
 )

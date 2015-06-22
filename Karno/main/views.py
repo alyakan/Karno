@@ -102,9 +102,6 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return super(UploadFile, self).form_valid(form)
 
 
-<<<<<<< HEAD
-class FileListView(View):
-=======
 def preview_image(request):
     """
     Creates an instance of TempFile and
@@ -123,8 +120,7 @@ def preview_image(request):
         )
 
 
-class FileListView(ListView):
->>>>>>> 7b80d32a8db09f820e962a12e944c45f856ab371
+class FileListView(View):
 
     """
     A class responsible for listing files with respect to their category
@@ -282,6 +278,7 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
 
 
 class PaginateMixin(object):
+
     """
     A Mixin used to paginate any object_list.
     :author Nourhan Fawzy:
@@ -296,6 +293,7 @@ class PaginateMixin(object):
 
 
 class CommentListView(PaginateMixin, ListView):
+
     """
     A class for showing details of Model:main.Comment
     Author: Nourhan Fawzy
@@ -341,6 +339,7 @@ class CommentListView(PaginateMixin, ListView):
 
 
 class NotificationListView(PaginateMixin, ListView):
+
     """
     Lists all notifications when a new comment is added on a file I shared.
     :author Nourhan Fawzy:
@@ -401,11 +400,12 @@ def create_notification(sender, **kwargs):
                     user_notified=c.user)
 
         CommentNotification.objects.create(
-                comment=comment, file_shared=comment.file_uploaded,
-                user_notified=comment.file_uploaded.user)
+            comment=comment, file_shared=comment.file_uploaded,
+            user_notified=comment.file_uploaded.user)
 
 
 class CommentDelete(DeleteView):
+
     """
     Deletes a book model.
     :author Nourhan Fawzy:
@@ -420,7 +420,7 @@ class CommentDelete(DeleteView):
         return reverse(
             'comment-list',
             kwargs={'file_id': self.request.user.file_uploaded.id}
-                       )
+        )
 
 
 class FileDetailView(DetailView):
