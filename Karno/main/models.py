@@ -8,6 +8,7 @@ from django.core.urlresolvers import reverse
 
 
 class Tag(models.Model):
+
     """
     A Single Tag Entry
     Author: Rana El-Garem
@@ -41,6 +42,13 @@ class File(models.Model):
         name, extension = self.file_uploaded.name.split(".")
         return extension
 
+    def type(self):
+        if (self.extension() == "png" or
+                self.extension() == "jpeg" or self.extension() == "jpg"):
+            return 'image'
+        else:
+            return 'video'
+
 
 class AudioFile(models.Model):
     title = models.CharField(max_length=32)
@@ -60,6 +68,7 @@ class GroupPermission(models.Model):
 
 
 class YoutubeUrl(models.Model):
+
     """
     Represents a single existing Youtube Url to be embeded
 
@@ -72,6 +81,7 @@ class YoutubeUrl(models.Model):
 
 
 class Like(models.Model):
+
     """
     Represents a single Like on a file
 
@@ -92,6 +102,7 @@ class TempFile(models.Model):
 
 
 class Comment(models.Model):
+
     """
     A Single Comment Entry
     Author: Nourhan Fawzy
@@ -109,6 +120,7 @@ class Comment(models.Model):
 
 
 class CommentNotification(models.Model):
+
     """
     Represents a notification when a user makes a comment on a file I shared
     Author: Nourhan Fawzy
@@ -121,4 +133,3 @@ class CommentNotification(models.Model):
 
     def __unicode__(self):
         return unicode(self.status)
-

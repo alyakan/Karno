@@ -342,6 +342,15 @@ class CommentListView(PaginateMixin, ListView):
 
         context = super(CommentListView, self).get_context_data(**kwargs)
         context['file'] = File.objects.get(id=self.kwargs['file_id'])
+        try:
+            user = self.request.user
+            like = Like.objects.get(user=user, source_file=self.object)
+            if like:
+                context['liked'] = True
+            else:
+                context['liked'] = False
+        except:
+            pass
         return context
 
     def post(self, args, **kwargs):
@@ -465,6 +474,8 @@ class FileDetailView(DetailView):
         """
         Sends the users that liked a certain file.
         Author: Aly Yakan
+        Sends Tags belonging to a certain file
+        Author: Rana El-Garem
         """
         context = super(FileDetailView, self).get_context_data(**kwargs)
         try:
@@ -476,6 +487,10 @@ class FileDetailView(DetailView):
                 context['liked'] = False
         except:
             pass
+
+        context['tags'] = self.object.tags.all()
+        context['comments'] = Comment.objects.filter(
+                            file_uploaded=self.object.id)
         return context
 
 
