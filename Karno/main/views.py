@@ -15,6 +15,11 @@ from main.forms import YoutubeUrlForm
 from main.models import YoutubeUrl
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.views.generic import View
+import json
+from django.http import HttpResponse
 
 
 class LoginRequiredMixin(object):
@@ -28,7 +33,7 @@ class LoginRequiredMixin(object):
 def download_handler(request, pk):
     """
     Function that handles a download request of a file
-    Author: Kareem Tarek , Moustafa Mahmoud
+    Author: Kareem Tarek , Moustafa Mahmoud`
     """
     upload = get_object_or_404(File, pk=pk)
     return serve_file(request, upload.file_uploaded, save_as=True)
@@ -68,7 +73,6 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         form1 = form.save(commit=True)
         #  Handling Extensions #
         extension = form1.file_uploaded.url.split(".")[-1]
-        print ("Extension", extension)
         if (extension == "mp3"
                 or extension == "mp4"
                 or extension == "ogg"
@@ -79,8 +83,6 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
                 aud = audio_form.save(commit=False)
                 aud.source_file = form1
                 audio_form.save()
-                print "Dada Saved"
-
             else:
                 pass
         ################
@@ -92,13 +94,49 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return super(UploadFile, self).form_valid(form)
 
 
-class FileListView(ListView):
+class FileListView(View):
 
     """
-    A class for listing all instances of Model:main.File
-    Author: Rana El-Garem
+    A class responsible for listing files with respect to their category
+    Author: Kareem Tarek .
+
     """
-    model = File
+
+    def get(self, request):
+        if request.is_ajax():
+            context = {}
+            object_list = []
+            category = request.GET['category']
+            files = File.objects.all()
+            for file in files:
+                extension = file.file_uploaded.url.split(".")[-1]
+                if ((extension == "mp3"
+                     or extension == "ogg"
+                     or extension == "wav")
+                        and category == "audio"):
+                    object_list.append(file)
+                elif ((extension == "jpeg"
+                       or extension == "jpg"
+                       or extension == "png")
+                        and category == "images"):
+                    object_list.append(file)
+                elif ((extension == "mov"
+                        and category == "videos")):
+                    object_list.append(file)
+                elif ((extension == "pdf"
+                        and category == "documents")):
+                    object_list.append(file)
+            context['object_list'] = object_list
+
+            return HttpResponse(render_to_response('main/file_list.html',
+                                                   context,
+                                                   context_instance=RequestContext(request)))
+        else:
+            context = {}
+            context['object_list'] = File.objects.all()
+            return render_to_response('main/file_list.html',
+                                      context,
+                                      context_instance=RequestContext(request))
 
 
 class UserRegisteration(FormView):

@@ -1,17 +1,40 @@
 <!DOCTYPE html>
+
 {% load filetransfers %}
+{% load static %}
+{% load staticfiles %}
+
+
+<script src="{% static "js/jquery.js" %}"></script>
+<script src="{% static "js/main-jquery.js" %}"></script>
+<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+ <script src="//code.jquery.com/jquery-latest.min.js"></script>
+<div id="filediv">
 <html>
 <head>
 	<title>Files</title>
 </head>
 <body>
 
+<h5>
+
+ <button type="button" name="audiodisplay" id="audi"> Audio </button>
+ 
+ <button type="button" name="imagedisplay" id="img"> Image </button> 
+
+ <button type="button" name="videodisplay" id="vid"> Video </button>
+
+  <button type="button" name="documentdisplay" id="doc"> Doc </button>
+
+
+
+
 	<h1>Files</h1><br>
 	{% for file in object_list %}
 	    <a href="{{  file.file_uploaded.url}}">{{  file.file_uploaded.url}}</a><br><br>
 		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
 		<a href="{% url "file-detail" file.id %}">Share this file</a>
-		<a href="{% url 'download-file' file.id %}">Download</a><br><br>
+		<a href="{% url 'download-file' file.id %}">Download</a><br><br><br><br>
 	{% endfor %}
 	<br>
 	<a href="{% url 'upload'%}"> Upload</a>
@@ -25,3 +48,95 @@
 	{% endif %}
 </body>
 </html>
+
+<br><br>
+
+
+<script type="text/javascript">
+
+$(document).ready( function() {
+    $('#audi').on('click',function(){   
+    
+$.ajax({
+    url:"/main/file/list",
+    type: "GET",
+    data: {'category': "audio"},
+    success:function(newData){
+    $('#filediv').empty();
+    $('#filediv').append(newData);
+
+},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+
+         });
+
+    });
+
+    $('#vid').on('click',function(){   
+    
+$.ajax({
+    url:"/main/file/list",
+    type: "GET",
+    data: {'category': "videos"},
+    success:function(newData){
+    $('#filediv').empty();
+    $('#filediv').append(newData);
+
+},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+
+         });
+
+    });
+
+    $('#img').on('click',function(){   
+    
+$.ajax({
+    url:"/main/file/list",
+    type: "GET",
+    data: {'category': "images"},
+    success:function(newData){
+    $('#filediv').empty();
+    $('#filediv').append(newData);
+
+},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+
+         });
+
+    });
+
+    $('#doc').on('click',function(){   
+    
+$.ajax({
+    url:"/main/file/list",
+    type: "GET",
+    data: {'category': "documents"},
+    success:function(newData){
+    $('#filediv').empty();
+    $('#filediv').append(newData);
+
+},
+    complete:function(){},
+    error:function (xhr, textStatus, thrownError){
+        alert("error doing something");
+    }
+
+         });
+
+    }); 
+
+});
+</script>
+
+
+</div>
