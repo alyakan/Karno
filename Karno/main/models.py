@@ -26,6 +26,7 @@ class File(models.Model):
     registered_users = models.BooleanField(default=False)
     group = models.BooleanField(default=False)
     tags = models.ManyToManyField(Tag)
+    likes_count = models.IntegerField(default=0)
 
     def extension(self):
         """
@@ -64,3 +65,13 @@ class YoutubeUrl(models.Model):
     video_id = models.CharField(max_length=128)
     user = models.ForeignKey(User)
 
+
+class Like(models.Model):
+    """
+    Represents a single Like on a file
+
+    Author: Aly Yakan
+
+    """
+    user = models.ForeignKey(User)
+    source_file = models.ForeignKey(File)

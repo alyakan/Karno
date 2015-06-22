@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from main.models import YoutubeUrl, GroupPermission, File, Tag
+from main.models import YoutubeUrl, GroupPermission, File, Tag, Like
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 
@@ -21,7 +21,6 @@ class Authentication(TestCase):
             reverse('user-new'), {'username': 'mostafa',
                                   'password1': 'thekey',
                                   'password2': 'thekey'})
-        print response
         self.assertTrue(User.objects.get(username='mostafa'))
         self.assertRedirects(response, reverse('home'))
 
@@ -263,3 +262,67 @@ class TagTestCase(TestCase):
         })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(File.tags.through.objects.count(), 1)
+
+
+class LikeTestCase(TestCase):
+    """
+    Tests Like model
+
+    Author: Aly Yakan
+    """
+
+    def setUp(self):
+        self.client = Client()
+        User.objects.create_user(username='aly',
+                                 password='123456')
+        self.client.post(reverse('user-login'),
+                         {'username': 'aly',
+                          'password': '123456'})
+        uploadedfile = SimpleUploadedFile(
+            "file.mp4",
+            "file_content",
+            content_type="video/mp4")
+
+        self.client.post(
+            reverse('upload'),
+            {
+                'file_uploaded': uploadedfile,
+                'user':
+                self.client.session['_auth_user_id']
+            })
+
+    def test_ensure_like_works(self):
+        """
+        Ensures that the like count for a file increases after
+        liking that file, also an entry is made in the Like model
+
+        Author: Aly Yakan
+        """
+        init_likes_count = Like.objects.all().count()
+        response = self.client.get(
+            '/main/like/file/',
+            {'file_id': 1},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(Like.objects.count(), init_likes_count + 1)
+        self.assertEqual(response.status_code, 200)
+
+    def test_ensure_unlike_after_like(self):
+        """
+        Ensures the likes count is decremented after disliking a liked
+        file, also that its entry is removed from the Like model
+
+        Author: Aly Yakan
+        """
+        init_likes_count = Like.objects.all().count()
+        response = self.client.get(
+            '/main/like/file/',
+            {'file_id': 1},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(Like.objects.count(), init_likes_count + 1)
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get(
+            '/main/unlike/file/',
+            {'file_id': 1},
+            HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertEqual(Like.objects.count(), init_likes_count)
+        self.assertEqual(response.status_code, 200)
