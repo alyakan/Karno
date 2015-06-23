@@ -50,7 +50,7 @@ class TempFileForm(forms.ModelForm):
 
 
 class ProfileImageForm(forms.ModelForm):
-    file_uploaded = forms.ImageField(label='Select a profile image')
+    file_uploaded = forms.FileField(label='Select a profile image')
 
     class Meta:
         model = ProfileImage

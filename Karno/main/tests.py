@@ -1,7 +1,8 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
-from main.models import YoutubeUrl, GroupPermission, File, Tag, TempFile, Like
+from main.models import (YoutubeUrl, GroupPermission, File, Tag,
+                         TempFile, Like, ProfileImage)
 from django.core.files.uploadedfile import SimpleUploadedFile
 from main.forms import TempFileForm
 
@@ -23,7 +24,7 @@ class Authentication(TestCase):
                                   'password1': 'thekey',
                                   'password2': 'thekey'})
         self.assertTrue(User.objects.get(username='mostafa'))
-        self.assertRedirects(response, reverse('home'))
+        self.assertRedirects(response, reverse('file-list'))
 
     def test_sign_up_missmatcing_password(self):
         """
@@ -162,7 +163,8 @@ class FileUploadTestCase(TestCase):
                                     {
                                     'file_uploaded': uploadedfile,
                                     'user':
-                                    self.client.session['_auth_user_id']
+                                    self.client.session['_auth_user_id'],
+                                    'tempId': 0
                                     })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(File.objects.count(), 1)
@@ -194,6 +196,7 @@ class FileUploadTestCase(TestCase):
                                     'file_uploaded': uploadedfile,
                                     'user':
                                     self.client.session['_auth_user_id'],
+                                    'tempId': 0,
                                     'group': 1,
                                     'users': [u'1']
                                     })
@@ -218,9 +221,9 @@ class FileUploadTestCase(TestCase):
                                     'file_uploaded': uploadedfile,
                                     'user':
                                     self.client.session['_auth_user_id'],
-                                    'users': [u'1']
+                                    'users': [u'1'],
+                                    'tempId': 0,
                                     })
-
         self.assertEqual(response.status_code, 302)
         self.assertEqual(GroupPermission.objects.count(),
                          init_group_permission)
@@ -259,13 +262,15 @@ class TagTestCase(TestCase):
             'file_uploaded': uploadedfile,
             'user':
             self.client.session['_auth_user_id'],
-            'tags': [u'1']
+            'tags': [u'1'],
+            'tempId': 0
         })
         self.assertEqual(response.status_code, 302)
         self.assertEqual(File.tags.through.objects.count(), 1)
 
 
 class LikeTestCase(TestCase):
+
     """
     Tests Like model
 
@@ -289,7 +294,8 @@ class LikeTestCase(TestCase):
             {
                 'file_uploaded': uploadedfile,
                 'user':
-                self.client.session['_auth_user_id']
+                self.client.session['_auth_user_id'],
+                'tempId': 0
             })
 
     def test_ensure_like_works(self):
@@ -383,3 +389,73 @@ class ImagePreviewTestCase(TestCase):
             'users': [u'1']
         })
         self.assertEqual(TempFile.objects.count(), temp_file_count)
+
+
+class ProfileImageTestCase(TestCase):
+
+    def setUp(self):
+        self.client = Client()
+        User.objects.create_user(username='rana',
+                                 password='123456')
+        self.client.post(reverse('user-login'),
+                         {'username': 'rana',
+                          'password': '123456'})
+
+    def test_upload_image(self):
+        """
+        Ensure profile image is uploaded
+        Author: Rana El-Garem
+        """
+        uploadedfile = SimpleUploadedFile(
+            "file.jpeg",
+            "file_content",
+            content_type="image/jpeg")
+        init_profile_pic_count = ProfileImage.objects.count()
+        response = self.client.post(reverse('profile-upload'),
+                                    {
+                                    'file_uploaded': uploadedfile,
+                                    'user':
+                                    self.client.session['_auth_user_id'],
+                                    'tempId': 0,
+                                    })
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(ProfileImage.objects.count(),
+                         init_profile_pic_count + 1)
+
+    def test_ensure_image_exists(self):
+        """
+        Ensure Image must be provided for upload
+        Author: Rana El-Garem
+        """
+        init_profile_pic_count = ProfileImage.objects.count()
+        response = self.client.post(reverse('profile-upload'),
+                                    {
+                                    'user':
+                                    self.client.session['_auth_user_id'],
+                                    'tempId': 0,
+                                    })
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(ProfileImage.objects.count(),
+                         init_profile_pic_count)
+
+    def test_delete_profile_image(self):
+        """
+        Ensure ProfileImage is deleted
+        Author: Rana El-Garem
+        """
+        uploadedfile = SimpleUploadedFile(
+            "file.jpeg",
+            "file_content",
+            content_type="image/jpeg")
+        self.client.post(reverse('profile-upload'),
+                         {
+            'file_uploaded': uploadedfile,
+            'user':
+            self.client.session['_auth_user_id'],
+            'tempId': 0,
+        })
+        init_profile_pic_count = ProfileImage.objects.count()
+        response = self.client.post(reverse('image-delete', kwargs={'pk': 1}),)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(
+            init_profile_pic_count - 1, ProfileImage.objects.count())
