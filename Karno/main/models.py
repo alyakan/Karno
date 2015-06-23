@@ -41,6 +41,23 @@ class File(models.Model):
         name, extension = self.file_uploaded.name.split(".")
         return extension
 
+    def type(self):
+        if (self.extension() == "png" or
+                self.extension() == "jpeg" or self.extension() == "jpg"
+                or self.extension() == "bmp"):
+            return 'Image'
+        elif (self.extension() == "mp4" or
+                self.extension() == "mov"):
+            return 'Video'
+        elif (self.extension() == "mp3"
+              or self.extension() == "ogg"
+              or self.extension() == "wav"):
+            return 'Audio'
+        elif (self.extension() == "pdf"):
+            return 'Document'
+        else:
+            return 'File'
+
 
 class AudioFile(models.Model):
     title = models.CharField(max_length=32)
