@@ -182,7 +182,7 @@
                       			{% else %}
                       				<a href="{% url 'profile' user.id %}">{{ user.username}}</a>, 
                       			{% endif %}
-				            {% empty%}
+				            {% empty %}
 				                      		Only You
 				            {% endfor%}
 
@@ -194,7 +194,9 @@
                 </div>
 	        {% empty %}
 	        <br>
-	           <p>    <br>No Uploaded Files Yet </p>  
+          <div class="post-desc">
+	           <h3>No Uploaded Files Yet </h3> 
+          </div> 
 	        {% endfor %}
               </div>
             </div>
