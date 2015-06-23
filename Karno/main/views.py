@@ -161,36 +161,45 @@ class FileListView(View):
                 user = self.request.user
                 files = object_list
                 liked_or_not = []
+                all_tags = []
                 for f in files:
+                    all_tags.append(f.tags.all())
                     try:
                         Like.objects.get(source_file=f.id, user=user)
                         liked_or_not.append(True)
                     except:
                         liked_or_not.append(False)
-                zipped_list = zip(files, liked_or_not)
+                zipped_list = zip(files, liked_or_not, all_tags)
                 context['zipped_list'] = zipped_list
             else:
-                context['object_list'] = File.objects.all()
-
+                for f in files:
+                    all_tags.append(f.tags.all())
+                zipped_list = zip(files, all_tags)
+                context['zipped_list'] = zipped_list
             return HttpResponse(render_to_response('main/file_list.html',
                                                    context,
                                                    context_instance=RequestContext(request)))
         else:
             context = {}
+            files = File.objects.all()
+            all_tags = []
             if self.request.user.is_authenticated():
                 user = self.request.user
-                files = File.objects.all()
                 liked_or_not = []
                 for f in files:
+                    all_tags.append(f.tags.all())
                     try:
                         Like.objects.get(source_file=f.id, user=user)
                         liked_or_not.append(True)
                     except:
                         liked_or_not.append(False)
-                zipped_list = zip(files, liked_or_not)
+                zipped_list = zip(files, liked_or_not, all_tags)
                 context['zipped_list'] = zipped_list
             else:
-                context['object_list'] = File.objects.all()
+                for f in files:
+                    all_tags.append(f.tags.all())
+                zipped_list = zip(files, all_tags)
+                context['zipped_list'] = zipped_list
             return render_to_response('main/file_list.html',
                                       context,
                                       context_instance=RequestContext(request))
@@ -307,6 +316,10 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
         YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
         return HttpResponseRedirect(reverse_lazy('youtube_video_list'))
 
+    def form_invalid(self, form):
+        messages.error(self.request, "Enter a Valid Url!")
+        return self.render_to_response(self.get_context_data(form=form))
+
 
 class PaginateMixin(object):
 
@@ -317,7 +330,7 @@ class PaginateMixin(object):
     :return:
     """
 
-    paginate_by = 3
+    paginate_by = 7
 
 
 # login is required to add comment, however not required to display comments
