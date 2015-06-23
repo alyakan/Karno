@@ -140,30 +140,48 @@
     <div id="content">
       <div class="container">
         <div class="row container-gallery">
-          <div class="col-md-12">
-            <div class="post-container">
-                <div class="post-desc">
-                    <h2><i class="fa fa-clock-o fa-lg"></i> Old Notifications</h2>
-                <!-- <a href="#" class="btn btn-default btn-sm">Learn More &rarr;</a> -->
+            <div class="col-md-12">
+                <div class="post-container">
+                    <div class="post-desc">
+                        <h2><i class="fa fa-clock-o fa-lg"></i> Old Notifications</h2>
+                    <!-- <a href="#" class="btn btn-default btn-sm">Learn More &rarr;</a> -->
+                    </div>
+                    <div class="sidebar-menu">
+                    <ul class="nav nav-pills nav-stacked">
+                    {% block content %}
+                    {% if read %}
+                        {% for notification in read %}
+
+                            <li><a href= "{% url 'comment-list' notification.file_shared.id %}"><i class="fa fa-flag"></i> <strong>{{ notification.comment.user }}:</strong> commented on your photo</a></li>
+
+                        {% endfor %} 
+                    {% else %}
+                        <li><i class="fa fa-flag"></i><strong>No Notifications</strong></li>
+                    {% endif %}  
+                    {% endblock %}             
+                    </ul>
+                  </div>
                 </div>
-                <div class="sidebar-menu">
-                <ul class="nav nav-pills nav-stacked">
-                {% if read %}
-                    {% for notification in read %}
-
-                        <li><a href= "{% url 'comment-list' notification.file_shared.id %}"><i class="fa fa-flag"></i> <strong>{{ notification.comment.user }}:</strong> commented on your photo</a></li>
-
-                    {% endfor %} 
-                {% else %}
-                    <li><i class="fa fa-flag"></i><strong>No Notifications</strong></li>
-                {% endif %}               
-                </ul>
-              </div>
             </div>
-          </div>
+            <div class="col-md-12">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+                    {% endif %}
+
+                    <li><span class="current">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                    </span></li>
+
+                    {% if page_obj.has_next %}
+                        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+                    {% endif %}
+                </ul>
+            </div>
         </div>
       </div>
     </div>
+
     <!-- end:content -->
 
     <!-- begin:footer -->

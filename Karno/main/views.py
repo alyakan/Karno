@@ -320,7 +320,7 @@ class PaginateMixin(object):
     :return:
     """
 
-    paginate_by = 3
+    paginate_by = 7
 
 
 # login is required to add comment, however not required to display comments
