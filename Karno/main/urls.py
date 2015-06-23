@@ -2,12 +2,12 @@ from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
-from main.views import UploadFile, FileListView, AudioUpdate, FileDetailView
-from main.views import YoutubeUrlFormView, download_handler
 from django.contrib.auth.forms import PasswordResetForm
 from main.views import (
     CommentListView, NotificationListView, CommentDelete,
-    FileDelete)
+    FileDelete, UploadFile, FileListView, AudioUpdate,
+    FileDetailView, preview_image, YoutubeUrlFormView,
+    download_handler, LikeFile, UnlikeFile, LikesListView)
 
 
 urlpatterns = patterns(
@@ -45,10 +45,13 @@ urlpatterns = patterns(
         auth_views.password_reset_confirm,
         {'template_name': 'registration/confirm_reset.html'},
         name='password_reset_confirm'),
+
     url(r'^$', TemplateView.as_view(template_name='main/index.html'),
         name='index'),
+
     url(r'^upload/$', UploadFile.as_view(), name='upload'),
     url(r'^file/list$', FileListView.as_view(), name='file-list'),
+
     url(
         r'^reset/done/$', auth_views.login,
         name='password_reset_complete'),
@@ -72,4 +75,17 @@ urlpatterns = patterns(
 
     url(r'^file/delete/(?P<pk>[-\w]+)$',
         FileDelete.as_view(), name='delete-file'),
+
+    url(
+        r'^like/file/$',
+        LikeFile.as_view(), name="like-file"),
+    url(
+        r'^unlike/file/$',
+        UnlikeFile.as_view(), name="unlike-file"),
+    url(
+        r'^likes/list/(?P<pk>[0-9]+)$',
+        LikesListView.as_view(), name="likes-list"),
+    url(
+        r'^preview/$', preview_image, name="preview"),
+
 )
