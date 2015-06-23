@@ -124,12 +124,11 @@
                 {% if unread %}
                     {% for notification in unread %}
 
-                        <li><a href= "{% url 'comment-list' notification.file_shared.id %}"><i class="fa fa-flag"></i><strong>{{ notification.comment.user }}:</strong> commented on your photo</a></li>
+                        <li><a href= "{% url 'file-detail' notification.file_shared.id %}"><i class="fa fa-flag"></i><strong>{{ notification.comment.user }}:</strong> commented on your photo</a></li>
 
                     {% endfor %}
                 {% else %}
                     <li><a href=""><strong>No New Notifications</strong></a></li>
-
                 {% endif %}
                 </ul>
               </div>
@@ -153,7 +152,7 @@
                     {% if read %}
                         {% for notification in read %}
 
-                            <li><a href= "{% url 'comment-list' notification.file_shared.id %}"><i class="fa fa-flag"></i> <strong>{{ notification.comment.user }}:</strong> commented on your photo</a></li>
+                            <li><a href= "{% url 'file-detail' notification.file_shared.id %}"><i class="fa fa-flag"></i> <strong>{{ notification.comment.user }}:</strong> commented on your photo</a></li>
 
                         {% endfor %} 
                     {% else %}
