@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from django.views.generic import FormView, ListView, DetailView, DeleteView
+from django.views.generic import FormView, ListView, DetailView, DeleteView, TemplateView
 from django.core.urlresolvers import reverse_lazy, reverse
-from main.forms import FileUploadForm, AudioFileUploadForm, TempFileForm
+from main.forms import FileUploadForm, AudioFileUploadForm, TempFileForm, ProfileImageForm
 from main.models import (
     File,
     GroupPermission,
@@ -10,7 +10,8 @@ from main.models import (
     TempFile,
     Comment,
     CommentNotification,
-    Like)
+    Like,
+    ProfileImage)
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -208,7 +209,7 @@ class UserRegisteration(FormView):
         """
         Saves user and automatically logs him/her in
         """
-        form.save()
+        form1 = form.save()
         user = authenticate(
             username=form.cleaned_data['username'],
             password=form.cleaned_data['password1'])
@@ -501,7 +502,7 @@ class FileDetailView(DetailView):
 
         context['tags'] = self.object.tags.all()
         comments = Comment.objects.filter(
-                            file_uploaded=self.object.id)
+            file_uploaded=self.object.id)
         context['count'] = comments.count()
         context['comments'] = comments
         return context
@@ -552,6 +553,7 @@ class UnlikeFile(LoginRequiredMixin, FormView):
 
 
 class LikesListView(ListView):
+
     """
     A class for listing users that liked a single file of Model:main.Like
     Author: Aly Yakan
@@ -568,3 +570,56 @@ class LikesListView(ListView):
         likes = Like.objects.filter(source_file_id=file_id)
         context['likes'] = likes
         return context
+
+
+class ProfileView(DetailView):
+    model = User
+    template_name = 'main/profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        try:
+            context['user_profile'] = User.objects.get(id=self.request.user.id)
+            context['current_user'] = self.request.user
+        except:
+            pass
+
+        files = File.objects.filter(user_id=self.object.id)
+        if self.request.user:
+            if self.request.user == self.object:
+                context['files'] = files
+
+            else:
+                print "hi"
+                object_list = []
+                for file in files:
+                    if (file.privacy() == "Public" or
+                        file.privacy() == "Registered Users" or
+                            self.request.user in file.group_users()):
+                        object_list.append(file)
+                context['files'] = object_list
+
+        else:
+            context['files'] = files.filter(public=1)
+
+        try:
+            context['image'] = ProfileImage.objects.get(user=self.object.id)
+        except:
+            pass
+        return context
+
+
+class UploadProfileImage(FormView):
+    template_name = 'main/upload-profile-image.html'
+    form_class = ProfileImageForm
+
+    def get_success_url(self):
+        """
+        Redirects to the library page
+        """
+        user_profile = User.objects.get(id=self.request.user.id).pk
+        return reverse('profile', args=(user_profile,))
+
+    def form_valid(self, form, **kwargs):
+        form.save()
+        return super(UploadProfileImage, self).form_valid(form)

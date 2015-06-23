@@ -15,7 +15,10 @@ from main.views import (
     YoutubeUrlFormView,
     download_handler,
     LikeFile, UnlikeFile,
-    LikesListView)
+    LikesListView,
+    ProfileView,
+    UploadProfileImage
+    )
 
 urlpatterns = patterns(
     '',
@@ -87,4 +90,6 @@ urlpatterns = patterns(
         LikesListView.as_view(), name="likes-list"),
     url(
         r'^preview/$', preview_image, name="preview"),
+    url(r'^profile/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="profile"),
+    url(r'^profile/upload/$', UploadProfileImage.as_view(), name="profile-upload"),
 )
