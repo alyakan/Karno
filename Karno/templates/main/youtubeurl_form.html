@@ -3,29 +3,39 @@
 {% load staticfiles %}
 <html>
 <head>
-	<title>Share a Youtube Video</title>
-    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <title>Youtube Share</title>
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
     <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700,600" rel="stylesheet" type="text/css">
     <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/colorbox.css' %}" rel="stylesheet">
     <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
     <link href="{% static 'css/responsive.min.css' %}" rel="stylesheet">
 
-    <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script src="{% static 'js/jquery.easing.js' %}"></script>
-    <script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
-    <script src="{% static 'js/masonry.pkgd.min.js' %}"></script>
-    <script src="{% static 'js/jquery.colorbox.min.js' %}"></script>
-    <script src="{% static 'js/jquery.isotope.min.js' %}"></script>
-    <script src="{% static 'js/script.min.js' %}"></script>
-    <!---->
+  <script src="{% static "js/jquery.js" %}"></script>
+  <script src="{% static "js/main-jquery.js" %}"></script>
+  <script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+  <script src="{% static 'js/jquery.min.js' %}"></script>
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="{% static 'js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'js/jquery.easing.js' %}"></script>
+  <script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
+  <script src="{% static 'js/masonry.pkgd.min.js' %}"></script>
+  <script src="{% static 'js/jquery.colorbox.min.js' %}"></script>
+  <script src="{% static 'js/jquery.isotope.min.js' %}"></script>
+  <script src="{% static 'js/script.min.js' %}"></script>
+  <!---->
 
 
-    <script type="text/javascript">var switchTo5x=true;</script>
-    <!--<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>-->
-    <script type="text/javascript">stLight.options({publisher: "19b54de1-bc03-466a-aca3-919232e87a2e", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
-    <script src="{% static "js/likes.js" %}"></script>
+  <script type="text/javascript">var switchTo5x=true;</script>
+  <!--<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>-->
+  <script type="text/javascript">stLight.options({publisher: "19b54de1-bc03-466a-aca3-919232e87a2e", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+  <script src="{% static "js/likes.js" %}"></script>
+
+  <style type="text/css">
+    .hidden {
+        display: none;
+        }
+  </style>
 </head>
 <body>
 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -38,37 +48,39 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url "index" %}"><span>Karno</span></a>
+          <a class="navbar-brand" href="{% url "index" %}"><i class="fa fa-share-alt"> <span>Karno</span></i></a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
-          	 <li><a href="{% url "file-list" %}"><i class="fa fa-home"></i> Home</a></li>
+            <li><a href="{% url "file-list" %}"><i class="fa fa-home"></i> Home</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="{% url "upload" %}"><i class="fa fa-file"></i> File</a></li>
-                <li><a href="{% url "youtubeurl-add" %}"><i class="fa fa-youtube"></i> Video</a></li>
+                <li><a href="{% url 'upload' %}"><i class="fa fa-file"></i> File</a></li>
+                <li><a href="{% url 'upload' %}"><i class="fa fa-youtube"></i> Video</a></li>
               </ul>
             </li>
             <li class="fsearch hidden-xs"><a class="btn-search"></a></li>
-            {% if not user.is_authenticated %}
-                <li><a href="{% url "user-login" %}"><i class="fa fa-lock"></i> Sign-in</a></li>
-                <li><a href="{% url "user-new" %}"><i class="fa fa-edit"></i> Sign-up</a></li>
+            {% if user.is_authenticated %}
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <strong>{{ user.username }}</strong> <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="{% url 'user-manage' %}"><i class="fa fa-user"></i> Profile</a></li>
+                  <li><a href="{% url 'notification-list' user.id %}"> <i class="fa fa-flag"></i> Notifications</a></li>
+                  <li><a href="/messages/"><i class="fa fa-inbox"></i> Messages</a></li>
+                  <li class="divider"></li>
+                  <li><a href="{% url 'user-manage' %}"><i class="fa fa-cog fa-spin"></i> Account Settings</a></li>
+                  <li><a href="{% url 'user-logout' %}"><i class="fa fa-power-off"></i> Sign Out</a></li>
+                </ul>
+              </li>
             {% else %}
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <strong>{{ user.username }}</strong> <span class="caret"></span></a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li><a href=""><i class="fa fa-user"></i> Profile</a></li>
-                        <li><a href=""><i class="fa fa-flag"></i> Notifications</a></li>
-                        <li><a href=""><i class="fa fa-inbox"></i> Inbox</a></li>
-                        <li class="divider"></li>
-                        <li><a href="account_setting.html"><i class="fa fa-cog fa-spin"></i> Account Settings</a></li>
-                        <li><a href="{% url "user-logout" %}"><i class="fa fa-power-off"></i> Sign Out</a></li>
-                    </ul>
-                </li>
-            {% endif %}
+                <li><a href="{% url 'user-login' %}"><i class="fa fa-lock"></i> Signin</a></li>
+                <li><a href="{% url 'user-new' %}"><i class="fa fa-edit"></i> Signup</a></li>
+            {% endif%}
+
+
           </ul>
         </div><!-- /.navbar-collapse -->
         <ul class="nav navbar-nav navbar-right nav-search visible-xs">
@@ -115,7 +127,7 @@
                 	{% endif %}
                   <p>Share a Youtube Video Url</p>
                   <form class="form-horizontal" role="form" method="post">
-                  	<input type="hidden" name="csrfmiddlewaretoken" value="bAbQQmOirVMf6mgWleqr0gRuTnhsy7Wa">
+                    {% csrf_token %}
                     <div class="input-group">
                       <span class="input-group-addon"><i class="fa fa-youtube"></i></span>
                       <input id="id_url" name="url" type="url" placeholder="Youtube Url" class="form-control input-md">
