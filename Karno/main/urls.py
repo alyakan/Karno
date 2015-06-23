@@ -2,28 +2,12 @@ from django.conf.urls import patterns, url
 from django.views.generic import TemplateView
 from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
-from django.contrib.auth.forms import PasswordResetForm
 from main.views import (
-#     UploadFile,
-#     FileListView,
-#     AudioUpdate,
-#     FileDetailView,
-#     preview_image,
-#     CommentListView,
-#     NotificationListView,
-#     CommentDelete,
-#     YoutubeUrlFormView,
-#     download_handler,
-#     LikeFile, UnlikeFile,
-#     LikesListView,
-#     ProfileView,
-#     UploadProfileImage
-# )
     CommentListView, NotificationListView, CommentDelete,
     FileDelete, UploadFile, FileListView, AudioUpdate,
     FileDetailView, preview_image, YoutubeUrlFormView,
     download_handler, LikeFile, UnlikeFile, LikesListView,
-    ProfileView, UploadProfileImage)
+    ProfileView, UploadProfileImage, ProfileImageDelete)
 
 
 urlpatterns = patterns(
@@ -107,5 +91,8 @@ urlpatterns = patterns(
 
     url(r'^profile/upload/$', UploadProfileImage.as_view(),
         name="profile-upload"),
+
+    url(r'^profile/image/delete/(?P<pk>[-\w]+)/$',
+        ProfileImageDelete.as_view(), name='image-delete'),
 
 )

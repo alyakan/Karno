@@ -181,7 +181,7 @@
                         </ul>
                       </div>
                       <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% endfor %}
+                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% empty%} NO TAGS {% endfor %}
                       </div>
                     </div>
                 </div>

@@ -130,6 +130,7 @@ def preview_image(request):
     if request.method == 'POST':
         response_data = {}
         form = TempFileForm(request.POST, request.FILES)
+        print form.errors
         tempfile = form.save()
         response_data["url"] = tempfile.file_uploaded.url
         response_data["tempId"] = tempfile.id
@@ -512,11 +513,21 @@ class CommentDelete(DeleteView):
     """
     model = Comment
 
+    def get_context_data(self, **kwargs):
+        """
+        Returns file associated with instance comment
+        Author: Rana El-Garem
+        """
+        context = super(CommentDelete, self).get_context_data(**kwargs)
+        file = File.objects.get(id=self.object.file_uploaded_id)
+        context['file'] = file
+        return context
+
     def get_success_url(self):
 
         return reverse_lazy(
-            'comment-list',
-            kwargs={'file_id': self.object.file_uploaded.id}
+            'file-detail',
+            kwargs={'pk': self.object.file_uploaded.id}
         )
 
 
@@ -721,3 +732,28 @@ class UploadProfileImage(LoginRequiredMixin, SuccessMessageMixin, FormView):
     def form_valid(self, form, **kwargs):
         form.save()
         return super(UploadProfileImage, self).form_valid(form)
+
+
+class ProfileImageDelete(DeleteView):
+
+    """
+    Deletes a ProfileImage model.
+    Author: Rana El-Garem
+    """
+    model = ProfileImage
+
+    def get_context_data(self, **kwargs):
+        """
+        Returns profile associated with instance ProfileImage
+        Author: Rana El-Garem
+        """
+        context = super(ProfileImageDelete, self).get_context_data(**kwargs)
+        context['user'] = User.objects.get(id=self.object.user.id)
+        return context
+
+    def get_success_url(self):
+
+        return reverse_lazy(
+            'profile',
+            kwargs={'pk': self.object.user.id}
+        )

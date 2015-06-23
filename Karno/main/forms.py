@@ -50,8 +50,8 @@ class TempFileForm(forms.ModelForm):
 
 
 class ProfileImageForm(forms.ModelForm):
-    image = forms.ImageField(label='Select a profile image')
+    file_uploaded = forms.ImageField(label='Select a profile image')
 
     class Meta:
         model = ProfileImage
-        fields = ['image', 'user']
+        fields = ['file_uploaded', 'user', 'tempId']
