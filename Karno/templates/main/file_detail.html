@@ -3,7 +3,8 @@
 {% load staticfiles %}
 <html>
 <head>
-	<title>File</title>
+	<title>File Details</title>
+
 	<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
 	<script type="text/javascript">var switchTo5x=true;</script>
 	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
@@ -29,5 +30,47 @@
 	<span class='st_facebook_large' displayText='Facebook'></span>
 	<span class='st_twitter_large' displayText='Tweet'></span>
 	<span class='st_email_large' displayText='Email'></span>
+
+	<br><br>
+		<h2>Comments</h2>
+
+		<ul>
+
+		{% for comment in comments %}
+
+        Description = {{ comment.description }}
+        <br>
+        Date = {{ comment.date }}
+        <br>
+        Comment Posted By = {{ comment.user }}
+        <br>
+
+        {% if comment.user == user or comment.file_uploaded.user == user %}
+        <form action="{% url 'delete-comment' comment.id %}" method="get"> {% csrf_token %}
+        <input type="submit" value="Delete Comment"></input>
+        </form>
+        {% endif %}
+
+        <hr>
+
+		{% empty %}
+
+    	<li>No Comments Currently Available.</li>
+
+		{% endfor %}
+		
+		</ul>
+
+        <br></br>
+
+        <form action="{% url 'file-detail' file.id %}" method="post"> {% csrf_token %}
+
+        <textarea name="description" style="width:500px;height:100px;"> </textarea>
+        <br>
+        <input type="submit" value="Add Comment"></input>
+
+        </form>
+
+        <br>
 </body>
 </html>

@@ -21,8 +21,8 @@
         Comment Posted By = {{ comment.user }}
         <br>
 
-        {% if comment.user == user %}
-        <form action="{% url 'delete-comment' comment.id %}" method="post"> {% csrf_token %}
+        {% if comment.user == user or comment.file_uploaded.user == user %}
+        <form action="{% url 'delete-comment' comment.id %}" method="get"> {% csrf_token %}
         <input type="submit" value="Delete Comment"></input>
         </form>
         {% endif %}
@@ -38,22 +38,6 @@
 		</ul>
 
         <br></br>
-
-        <div class="pagination">
-            <span class="page-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                {% endif %}
-                <span class="page-current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                </span>
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
-                {% endif %}
-            </span>
-        </div>
-
-        <br>
 
         <form action="{% url 'comment-list' file.id %}" method="post"> {% csrf_token %}
 

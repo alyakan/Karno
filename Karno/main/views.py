@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.views.generic import FormView, ListView, DetailView, DeleteView
+from django.views.generic import (
+    FormView, ListView, DeleteView, DetailView)
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm, AudioFileUploadForm, TempFileForm
 from main.models import (
@@ -24,6 +25,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.generic import View
@@ -167,9 +169,9 @@ class FileListView(View):
                 zipped_list = zip(files, liked_or_not)
                 context['zipped_list'] = zipped_list
 
-            return HttpResponse(render_to_response('main/file_list.html',
-                                                   context,
-                                                   context_instance=RequestContext(request)))
+            return HttpResponse(
+                render_to_response('main/file_list.html', context,
+                                   context_instance=RequestContext(request)))
         else:
             context = {}
             if self.request.user.is_authenticated():
@@ -187,6 +189,22 @@ class FileListView(View):
             return render_to_response('main/file_list.html',
                                       context,
                                       context_instance=RequestContext(request))
+
+    def get_queryset(self):
+        """
+        Gets a queryset of files only that I can access/view
+        :author Nourhan Fawzy:
+        :param self:
+        :return File list for certain privacy condition:
+        """
+        if self.request.user.is_authenticated():
+            return File.objects.filter(
+                Q(public=True) | Q(registered_users=True))
+            # add extra check to see if signed in user is
+            # within a group of a file shared or not
+            # displaying to group users is not done yet
+        else:
+            return File.objects.filter(public=True)
 
 
 class UserRegisteration(FormView):
@@ -313,9 +331,6 @@ class PaginateMixin(object):
     paginate_by = 3
 
 
-# login is required to add comment, however not required to display comments
-
-
 class CommentListView(PaginateMixin, ListView):
 
     """
@@ -436,14 +451,13 @@ class CommentDelete(DeleteView):
     :param DeleteView:
     :return:
     """
-
     model = Comment
 
     def get_success_url(self):
 
-        return reverse(
+        return reverse_lazy(
             'comment-list',
-            kwargs={'file_id': self.request.user.file_uploaded.id}
+            kwargs={'file_id': self.object.file_uploaded.id}
         )
 
 
@@ -467,6 +481,8 @@ class FileDetailView(DetailView):
         Author: Aly Yakan
         """
         context = super(FileDetailView, self).get_context_data(**kwargs)
+        context['comments'] = Comment.objects.filter(
+            file_uploaded=File.objects.get(id=self.kwargs['pk']))
         try:
             user = self.request.user
             like = Like.objects.get(user=user, source_file=self.object)
@@ -477,6 +493,38 @@ class FileDetailView(DetailView):
         except:
             pass
         return context
+
+    def post(self, args, **kwargs):
+        """
+        Adds a new comment to the database and post it
+        :author Nourhan Fawzy:
+        """
+
+        print "comment not saved"
+        file_uploaded = File.objects.get(id=self.kwargs['pk'])
+        description = self.request.POST['description']
+        user = self.request.user
+        comment = Comment(
+            description=description, user=user,
+            file_uploaded=file_uploaded)
+        comment.save()
+        print "comment saved"
+        return HttpResponseRedirect(
+            reverse(
+                'file-detail',
+                kwargs={"pk": file_uploaded.id}))
+
+
+class FileDelete(DeleteView):
+
+    """
+    Deletes a file model.
+    :author Nourhan Fawzy:
+    :param DeleteView:
+    :return:
+    """
+    model = File
+    success_url = reverse_lazy('file-list')
 
 
 class LikeFile(LoginRequiredMixin, FormView):
@@ -524,6 +572,7 @@ class UnlikeFile(LoginRequiredMixin, FormView):
 
 
 class LikesListView(ListView):
+
     """
     A class for listing users that liked a single file of Model:main.Like
     Author: Aly Yakan
