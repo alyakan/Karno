@@ -121,11 +121,12 @@
                     <form class="form-horizontal" role="form" action="{% url "profile-upload" %}" method="post" enctype="multipart/form-data">
                         {% csrf_token %}
                         {{ form.errors }}
+                        <div id="image"></div>
                         <p>{{ form.non_field_errors }}</p>
-                        <p>{{ form.image.label_tag }} </p>
+                        <p>{{ form.file_uploaded.label_tag }} </p>
                         <p>
-                            {{ form.image }}
-                        </p>
+                        <input id="id_tempId" name="tempId" type="hidden" value="0">                        
+                        {{form.file_uploaded}}
 
                         <input  id="user_id" size="20" type="hidden" name="user" value={{ user.id }}  ><br>
                         <input type="submit" class="btn btn-primary btn-sm" value="Upload">
@@ -167,6 +168,34 @@
         </div>
       </div>
     </div>
+    <script type="text/javascript">
+            $(document).ready( function() {
+            $('input[type="file"]').change(function(){
+              upload();
+            }) 
+
+        });
+
+        function upload(event) {
+            var data = new FormData($('form').get(0));
+
+            $.ajax({
+                url: '{% url "preview" %}',
+                type: "POST",
+                data: data,
+                cache: false,
+                processData: false,
+                contentType: false,
+                success: function(json) {
+                    $('#image').prepend("<img src="+json.url+" height='200'>");
+                    $('#id_tempId').val(json.tempId)
+                },
+                error: function(response) {
+                    $('#image').prepend("<p>Failed to preview image</p>");
+                }
+            });
+            }
+    </script>
 </body>
 </html>
 

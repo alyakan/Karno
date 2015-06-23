@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<<<<<<< HEAD
 {% load static %}
 {% load staticfiles %}
 <html lang="en">
@@ -117,7 +116,7 @@
           <div class="col-md-12">
             <div class="post-container">
               <div class="post-desc">
-                <h2><i class="fa fa-clock-o fa-lg"></i> Newest Notifications</h2>
+                <h2><i class="fa fa-clock-o fa-lg"></i> New Notifications</h2>
                 <!-- <a href="#" class="btn btn-default btn-sm">Learn More &rarr;</a> -->
               </div>
               <div class="sidebar-menu">
@@ -130,69 +129,7 @@
                     {% endfor %}
                 {% else %}
                     <li><a href=""><strong>No New Notifications</strong></a></li>
-=======
-<html>
-    <head>
-        <title>Your Notifications List</title>
-    </head>
 
-    <body>
-
-		<h2>Your Notifications List</h2>
-        <p>New Notifications:</p>
-		<ul>
-
-        {% for notification in unread %}
-
-        <a href= "{% url 'comment-list' notification.file_shared.id %}"><li>"{{ notification.comment.user }}" commented on your photo</li></a>
-
-        <br></br>
-
-        {% endfor %}
-
-        {% for notification in share_notifications_unread %}
-
-        <li>{{ notification.file_shared.user.username }} {{ notification.message }}
-        <a href= "{% url 'file-detail' notification.file_shared.id %}"> click here to view it</a></li>
-
-        <br></br>
-
-        {% endfor %}
-        </ul>
-
-         <p>Old Notification:</p>
-         <ul>
-        {% for notification in read %}
-
-       
-
-        <a href= "{% url 'comment-list' notification.file_shared.id %}"><li>"{{ notification.comment.user }}" commented on your photo</li></a>
-
-        <br></br>
-
-        {% endfor %}
-
-        {% for notification in share_notifications_read %}
-
-        <li>{{ notification.file_shared.user.username }} {{ notification.message }}
-        <a href= "{% url 'file-detail' notification.file_shared.id %}"> click here to view it</a></li>
-
-        <br></br>
-
-        {% endfor %}
-
-
-        <div class="pagination">
-            <span class="page-links">
-                {% if page_obj.has_previous %}
-                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a>
-                {% endif %}
-                <span class="page-current">
-                    Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
-                </span>
-                {% if page_obj.has_next %}
-                    <a href="?page={{ page_obj.next_page_number }}">Next</a>
->>>>>>> master
                 {% endif %}
                 </ul>
               </div>
@@ -220,7 +157,7 @@
 
                         {% endfor %} 
                     {% else %}
-                        <li><i class="fa fa-flag"></i><strong>No Notifications</strong></li>
+                        <li><a href=""><i class="fa fa-flag"></i> <strong>No Notifications</strong></a></li>
                     {% endif %}  
                     {% endblock %}             
                     </ul>

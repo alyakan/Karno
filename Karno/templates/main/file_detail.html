@@ -198,7 +198,11 @@
                           <span><em>in</em> <a href="#">{{file.type}}s</a></span>
                           <span><em>by</em> <a href="{% url 'profile' file.user.id %}">{{ file.user }}</a></span>
                           <span><em>{{ file.date }}</em></span>
-                          <span><a href="#">{{ count }} comments</a></span>
+                            {% if count == 1%}
+                            <span><a href="#">{{ count }} comment</a></span>
+                            {% else %}
+                            <span><a href="#">{{ count }} comments</a></span>
+                            {% endif %}
                         </div>
                         <div class="detail-heading-title">
                           <h2></h2>
@@ -222,9 +226,16 @@
                           <span><em>Tags : </em>
                         {% for tag in tags %}
                         	 {{ tag }},
+                        {% empty %}
+                        No Tags
                         {% endfor %} 
                         <br>
                         <a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}"> <strong>{{ file.likes_count }}</strong> </span>
+                          {% if user.id == file.user.id %}
+                            <form action="{% url 'delete-file' file.id %}" method="get"> {% csrf_token %}
+                              <input type="submit" class="btn btn-primary btn-sm" value="Delete This File"></input>
+                            </form>
+                          {% endif %}
                         </div>
                       </div>
                     </div>
@@ -240,7 +251,11 @@
                 <div class="post-container">
                   <div class="post-content">
                     <div class="heading-title">
+                      {% if count == 1%}
+                      <h3>{{ count }} Comment On This {{ file.type }}</h3>
+                      {% else %}
                       <h3>{{ count }} Comments On This {{ file.type }}</h3>
+                      {% endif %}
                     </div>
 
                     <!-- begin:comment-list -->
@@ -252,6 +267,11 @@
                             <div class="comment-meta">
                               <span class="comment-author"><a href="#">{{ comment.user }}</a></span>
                               <span class="comment-date">{{ comment.date }}</span>
+                                    {% if comment.user == user or comment.file_uploaded.user == user %}
+                                    <form action="{% url 'delete-comment' comment.id %}" method="get"> {% csrf_token %}
+                                    <input type="submit" class="comment-reply btn btn-primary btn-sm" value="Delete Comment"></input>
+                                    </form>
+                                    {% endif %}
                             </div>
                             <div class="comment-text">
                                 <p>{{ comment.description }}</p>

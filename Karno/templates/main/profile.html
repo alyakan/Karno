@@ -110,16 +110,18 @@
                 <div class="profile-account">
                 {% if current_user.username == user_profile.username %}
                  {% if image %}
-                    <img src="{{image.image.url}}" class="img-responsive img-thumbnail">
+                    <img src="{{image.file_uploaded.url}}" class="img-responsive img-thumbnail">
                     <h3> {{ user.username }}</h3>
+                    <form action="{% url 'image-delete' image.id %}" method="get"> {% csrf_token %}
+                      <input type="submit" class=" btn btn-primary btn-sm" value="Remove Profile Picture"></input>
+                      </form>
                   {% else %}
                     <img src="{% static 'img/profile.png' %}" class="img-responsive img-thumbnail">
-                    <h3> {{ user.username }}</h3>
                     <a href="{% url "profile-upload"%}"> Upload Profile Picture </a>
                   {% endif %}
                 {% else %}
 					{% if image %}
-	                    <img src="{{image.image.url}}" class="img-responsive img-thumbnail">
+	                    <img src="{{image.file_uploaded.url}}" class="img-responsive img-thumbnail">
 	                    <h3> {{ user.username }}</h3>
                   {% else %}
                     <img src="{% static 'img/profile.png' %}" class="img-responsive img-thumbnail">

@@ -190,8 +190,13 @@ class ProfileImage(models.Model):
     Author: Rana El-Garem
     """
 
-    image = models.ImageField(upload_to='profile/', null=True)
+    file_uploaded = models.ImageField(upload_to='profile/', null=True)
     user = models.ForeignKey(User)
+    tempId = models.IntegerField(default=0)
+
+    def delete(self, *args, **kwargs):
+        os.remove(os.path.join(settings.MEDIA_ROOT, self.file_uploaded.name))
+        super(ProfileImage, self).delete(*args, **kwargs)
 
 
 class Notification(models.Model):

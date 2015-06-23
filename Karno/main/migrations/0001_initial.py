@@ -49,6 +49,7 @@ class Migration(migrations.Migration):
                 ('group', models.BooleanField(default=False)),
                 ('likes_count', models.IntegerField(default=0)),
                 ('tempId', models.IntegerField(default=0)),
+                ('date', models.DateTimeField(default=datetime.datetime.now, blank=True)),
             ],
         ),
         migrations.CreateModel(
@@ -75,6 +76,15 @@ class Migration(migrations.Migration):
                 ('status', models.BooleanField(default=0)),
                 ('file_shared', models.ForeignKey(to='main.File')),
                 ('user_notified', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='ProfileImage',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('file_uploaded', models.ImageField(null=True, upload_to=b'profile/')),
+                ('tempId', models.IntegerField(default=0)),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
