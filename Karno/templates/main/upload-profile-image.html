@@ -1,0 +1,12 @@
+            <form action="{% url "profile-upload" %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.errors }}
+                <p>{{ form.non_field_errors }}</p>
+                <p>{{ form.image.label_tag }} </p>
+                <p>
+                    {{ form.image }}
+                </p>
+
+                <input  id="user_id" size="20" type="hidden" name="user" value={{ user.id }}  >
+                <p><input type="submit" value="Upload" class="btn md" /></p>
+            </form>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+{% load static %}
+{% load staticfiles %}
+<html>
+<head>
+	<title>{{user.username}}</title>
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700,600" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/colorbox.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/responsive.min.css' %}" rel="stylesheet">
+
+	<script src="{% static "js/jquery.js" %}"></script>
+	<script src="{% static "js/main-jquery.js" %}"></script>
+	<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/jquery.easing.js' %}"></script>
+	<script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
+	<script src="{% static 'js/masonry.pkgd.min.js' %}"></script>
+	<script src="{% static 'js/jquery.colorbox.min.js' %}"></script>
+	<script src="{% static 'js/jquery.isotope.min.js' %}"></script>
+	<script src="{% static 'js/script.min.js' %}"></script>
+	<!---->
+	<script type="text/javascript">var switchTo5x=true;</script>
+	<!--<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>-->
+	<script type="text/javascript">stLight.options({publisher: "19b54de1-bc03-466a-aca3-919232e87a2e", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+	<script src="{% static "js/likes.js" %}"></script>
+</head>
+  <body>
+
+    <!-- begin:navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url 'file-list'%}"><span>Karno</span></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url "file-list" %}">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'upload' %}"><i class="fa fa-file"></i> File</a></li>
+                <li><a href="{% url 'upload' %}"><i class="fa fa-youtube"></i> Video</a></li>
+              </ul>
+            </li>
+            <li class="fsearch hidden-xs"><a class="btn-search"></a></li>
+            {% if current_user %}
+	            <li class="dropdown">
+	              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <strong>{{ current_user.username }}</strong> <span class="caret"></span></a>
+	              <ul class="dropdown-menu" role="menu">
+	                <li><a href="{% url 'profile' current_user.id %}"><i class="fa fa-user"></i> Profile</a></li>
+	                <li><a href="{% url 'notification-list' user.id %}"> <i class="fa fa-flag"></i> Notifications</a></li>
+	                <li><a href="/messages/"><i class="fa fa-inbox"></i> Messages</a></li>
+	                <li class="divider"></li>
+	                <li><a href="{% url 'user-manage' %}"><i class="fa fa-cogs"></i> Account Settings</a></li>
+	                <li><a href="{% url 'user-logout' %}"><i class="fa fa-power-off"></i> Sign Out</a></li>
+	              </ul>
+	            </li>
+            {% else %}
+		            <li><a href="{% url 'user-login' %}"><i class="fa fa-lock"></i> Signin</a></li>
+		            <li><a href="{% url 'user-new' %}"><i class="fa fa-edit"></i> Signup</a></li>
+            {% endif%}
+
+
+          </ul>
+        </div><!-- /.navbar-collapse -->
+        <ul class="nav navbar-nav navbar-right nav-search visible-xs">
+          <li class="fsearch"><a class="btn-search"></a></li>
+        </ul>
+      </div><!-- /.container-fluid -->
+    </nav>
+
+    <!-- begin:search -->
+    <div id="searchbox">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <!-- <form role="form"> -->
+              <div class="form-group">
+                <label for="inputSearch" class="sr-only">Search</label>
+                <input type="text" class="form-control input-lg" placeholder="Enter your keyword">
+              </div>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:search -->
+
+    <!-- begin:content -->
+    <div id="content">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3 col-sm-4 col-xs-12">
+            <div class="post-container">
+              <div class="post-content">
+                <div class="profile-account">
+                 {% if image %}
+                    <img src="{{image.image.url}}" class="img-responsive img-thumbnail">
+                    <h3> {{ user.username }}</h3>
+                  {% else %}
+                    <img src="{% static 'img/profile.png' %}" class="img-responsive img-thumbnail">
+                    <h3> {{ user.username }}</h3>
+                    <a href="{% url "profile-upload"%}"> Upload Profile Picture </a>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- break -->
+          <div class="col-md-9 col-sm-8 col-xs-12">
+            <div class="post-container">
+              <div class="post-content">
+                <div class="row">
+                  <div class="col-md-12">
+                    <div class="heading-title">
+                      <h2><a href="#">{{ user.username}}'s</a> History</h2>
+                </div>
+                <!-- break -->
+                <hr>
+                <div class="row">
+                  <div class="col-md-12">
+                  </div>
+                </div>
+
+                  <div class="col-md-12">
+                  </div>
+                  <!-- break -->
+                </div>
+			{% for file in files %}
+                <div class="col-md-3 col-sm-6 col-xs-12">
+                    <div class="post-container">
+                      <div class="post-option">
+                        <ul class="list-options">
+                          <li><a href="{% url "file-detail" file.id %}"><i class="fa fa-plus"></i> <span>Detail</span></a></li>
+                          <li><a href="{% url "download-file" file.id %}"><i class="fa fa-cloud-download"></i> <span>Download</span></a></li>
+                        </ul>
+                      </div>
+                      <div class="portfolio-img">
+						{% if file.type = "Image" %}
+                            <img src="{{ file.file_uploaded.url }}" class="img-responsive" alt="fransisca gallery">
+                          {% elif file.type = "Video" %}
+                            <iframe id="ytplayer" type="text/html" width="{{ 230 }}" height="{{ 300 }}"
+                            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
+                          {% elif file.type = "Audio" %}
+                          <br><br><br>
+                            <audio controls="true" width="230" height="300">
+                                <source src="{{ file.file_uploaded.url }}" type="audio/mp3"/>
+                            </audio>
+                          {% else %}
+                            <iframe id="ytplayer" type="text/html" width="{{ 230 }}" height="{{ 300 }}"
+                            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
+                          {% endif %}
+                      </div>
+                      <div class="post-meta">
+                        <ul class="list-meta list-inline">
+<!--                           <li><i class="fa fa-eye"></i> 117</li>
+                          <li><i class="fa fa-comment"></i> 7</li>
+                          <li><i class="fa fa-cloud-download"></i> 8</li> -->
+                          <li><a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}"> <strong>{{ file.likes_count }}</strong></span></li>, {{file.date}}
+                        </ul>
+                      </div>
+                      <div class="post-desc">
+                      	{% if file.privacy == "Group" %}
+                        	<i class="fa fa-tags"></i> Shared With:
+                      		{% for user in file.group_users %}
+                      			{% if user.username == current_user.username %}
+                      				<a href="{% url 'profile' user.id %}"> you</a>, 
+                      			{% else %}
+                      				<a href="{% url 'profile' user.id %}">{{ user.username}}</a>, 
+                      			{% endif %}
+				            {% empty%}
+				                      		Only You
+				            {% endfor%}
+
+                      {% else %} 
+                      <i class="fa fa-tags"></i> Shared With: {{file.privacy}}
+                      {% endif %}
+                      </div>
+                    </div>
+                </div>
+	        {% empty %}
+	         No Uploaded Files Yet   
+	        {% endfor %}
+              </div>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    <!-- end:content -->
+
+    <!-- begin:footer -->
+    <div class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <hr>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <p>Copyright &copy; 2014 All Right Reserved.</p>
+            <ul class="list-inline">
+            </ul>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <ul class="list-social">
+              <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+              <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
