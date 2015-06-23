@@ -148,6 +148,7 @@ class FileListView(View):
                         and category == "images"):
                     object_list.append(file)
                 elif ((extension == "mov"
+                        or extension == "mp4"
                         and category == "videos")):
                     object_list.append(file)
                 elif ((extension == "pdf"
@@ -166,6 +167,8 @@ class FileListView(View):
                         liked_or_not.append(False)
                 zipped_list = zip(files, liked_or_not)
                 context['zipped_list'] = zipped_list
+            else:
+                context['object_list'] = File.objects.all()
 
             return HttpResponse(render_to_response('main/file_list.html',
                                                    context,
@@ -184,6 +187,8 @@ class FileListView(View):
                         liked_or_not.append(False)
                 zipped_list = zip(files, liked_or_not)
                 context['zipped_list'] = zipped_list
+            else:
+                context['object_list'] = File.objects.all()
             return render_to_response('main/file_list.html',
                                       context,
                                       context_instance=RequestContext(request))
