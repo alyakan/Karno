@@ -122,3 +122,13 @@ class CommentNotification(models.Model):
     def __unicode__(self):
         return unicode(self.status)
 
+
+class Notification(models.Model):
+    """
+    Notification for A user
+    Author: Moustafa
+    """
+    message = models.CharField(max_length=128)
+    file_shared = models.ForeignKey(File)
+    user_notified = models.ForeignKey(User)
+    status = models.BooleanField(default=0)

@@ -10,7 +10,8 @@ from main.models import (
     TempFile,
     Comment,
     CommentNotification,
-    Like)
+    Like,
+    Notification)
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -28,6 +29,20 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.generic import View
 import json
+
+
+@receiver(post_save, sender=GroupPermission)
+def notify_shared_with_user(sender, instance, **kwargs):
+    """
+    Sends a notification to the user when another user shares a file with the earlier
+    Author: Moustafa
+    """
+    message = 'has shared a file with you'
+    File = instance.file_uploaded
+    user = instance.user
+    if kwargs.get('created', False):
+        Notification.objects.create(
+            message=message, file_shared=File, user_notified=user)
 
 
 class LoginRequiredMixin(object):
@@ -144,7 +159,8 @@ class FileListView(View):
                     object_list.append(file)
                 elif ((extension == "jpeg"
                        or extension == "jpg"
-                       or extension == "png")
+                       or extension == "png"
+                       or extension == "JPG")
                         and category == "images"):
                     object_list.append(file)
                 elif ((extension == "mov"
@@ -383,9 +399,12 @@ class NotificationListView(PaginateMixin, ListView):
 
         context = super(NotificationListView, self).get_context_data(**kwargs)
 
+        share_notifications_unread = Notification.objects.filter(
+            status=0, user_notified=self.request.user.id)
+        share_notifications_read = Notification.objects.filter(
+            status=1, user_notified=self.request.user.id)
         unread = CommentNotification.objects.filter(
             status=0, user_notified=self.request.user.id)
-        print unread
         read = CommentNotification.objects.filter(
             status=1, user_notified=self.request.user.id)
 
@@ -393,6 +412,12 @@ class NotificationListView(PaginateMixin, ListView):
             notification.status = 1
             notification.save()
 
+        for n in share_notifications_unread:
+            n.status = 1
+            n.save()
+
+        context['share_notifications_unread'] = share_notifications_unread
+        context['share_notifications_read'] = share_notifications_read
         context['read'] = read
         context['unread'] = unread
 

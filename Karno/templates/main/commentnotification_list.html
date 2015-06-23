@@ -7,23 +7,32 @@
     <body>
 
 		<h2>Your Notifications List</h2>
-
+        <p>New Notifications:</p>
 		<ul>
 
         {% for notification in unread %}
 
-        <p>New Notification:</p>
-
         <a href= "{% url 'comment-list' notification.file_shared.id %}"><li>"{{ notification.comment.user }}" commented on your photo</li></a>
 
         <br></br>
 
         {% endfor %}
 
+        {% for notification in share_notifications_unread %}
 
+        <li>{{ notification.file_shared.user.username }} {{ notification.message }}
+        <a href= "{% url 'file-detail' notification.file_shared.id %}"> click here to view it</a></li>
+
+        <br></br>
+
+        {% endfor %}
+        </ul>
+
+         <p>Old Notification:</p>
+         <ul>
         {% for notification in read %}
 
-        <p>Old Notification:</p>
+       
 
         <a href= "{% url 'comment-list' notification.file_shared.id %}"><li>"{{ notification.comment.user }}" commented on your photo</li></a>
 
@@ -31,9 +40,15 @@
 
         {% endfor %}
 
+        {% for notification in share_notifications_read %}
 
+        <li>{{ notification.file_shared.user.username }} {{ notification.message }}
+        <a href= "{% url 'file-detail' notification.file_shared.id %}"> click here to view it</a></li>
 
         <br></br>
+
+        {% endfor %}
+
 
         <div class="pagination">
             <span class="page-links">
