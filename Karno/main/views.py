@@ -305,6 +305,10 @@ class YoutubeUrlFormView(LoginRequiredMixin, FormView):
         YoutubeUrl.objects.create(user=user, url=url, video_id=vid_id)
         return HttpResponseRedirect(reverse_lazy('youtube_video_list'))
 
+    def form_invalid(self, form):
+        messages.error(self.request, "Enter a Valid Url!")
+        return self.render_to_response(self.get_context_data(form=form))
+
 
 class PaginateMixin(object):
 
