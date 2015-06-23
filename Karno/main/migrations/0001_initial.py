@@ -47,6 +47,8 @@ class Migration(migrations.Migration):
                 ('public', models.BooleanField(default=False)),
                 ('registered_users', models.BooleanField(default=False)),
                 ('group', models.BooleanField(default=False)),
+                ('likes_count', models.IntegerField(default=0)),
+                ('tempId', models.IntegerField(default=0)),
             ],
         ),
         migrations.CreateModel(
@@ -58,10 +60,36 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Like',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('source_file', models.ForeignKey(to='main.File')),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Notification',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('message', models.CharField(max_length=128)),
+                ('status', models.BooleanField(default=0)),
+                ('file_shared', models.ForeignKey(to='main.File')),
+                ('user_notified', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+        ),
+        migrations.CreateModel(
             name='Tag',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('tag', models.CharField(unique=True, max_length=15)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='TempFile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('file_uploaded', main.RestrictedFileField.RestrictedFileField(upload_to=b'temp/')),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
