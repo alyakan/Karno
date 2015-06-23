@@ -35,6 +35,10 @@ class File(models.Model):
     tempId = models.IntegerField(default=0)
     date = models.DateTimeField(default=datetime.now, blank=True)
 
+    def delete(self, *args, **kwargs):
+        os.remove(os.path.join(settings.MEDIA_ROOT, self.file_uploaded.name))
+        super(File, self).delete(*args, **kwargs)
+
     def extension(self):
         """
         Returns extension of file_uploaded
@@ -44,6 +48,10 @@ class File(models.Model):
         return extension
 
     def type(self):
+        """
+        Returns type of file_uploaded
+        Author: Rana El-Garem
+        """
         if (self.extension() == "png" or
                 self.extension() == "jpeg" or self.extension() == "jpg"
                 or self.extension() == "bmp"):
@@ -61,6 +69,10 @@ class File(models.Model):
             return 'File'
 
     def privacy(self):
+        """
+        Returns level of privacy of File
+        Author: Rana El-Garem
+        """
         if self.public:
             return "Public"
         elif self.registered_users:
@@ -71,6 +83,10 @@ class File(models.Model):
             return "Only You"
 
     def group_users(self):
+        """
+        Returns list of users that have permission to view the File
+        Author: Rana El-Garem
+        """
         users = []
         groups = GroupPermission.objects.filter(file_uploaded=self)
         for group in groups:
@@ -122,6 +138,10 @@ class Like(models.Model):
 
 
 class TempFile(models.Model):
+    """
+    A TempFile created when an image is being uploaded for preview
+    Author: Rana El-Garem
+    """
     file_uploaded = RestrictedFileField(upload_to='temp/')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -165,6 +185,21 @@ class CommentNotification(models.Model):
 
 
 class ProfileImage(models.Model):
+    """
+    A single ProfileImage Entry belonging to a certain User
+    Author: Rana El-Garem
+    """
 
     image = models.ImageField(upload_to='profile/', null=True)
     user = models.ForeignKey(User)
+
+
+class Notification(models.Model):
+    """
+    Notification for A user
+    Author: Moustafa
+    """
+    message = models.CharField(max_length=128)
+    file_shared = models.ForeignKey(File)
+    user_notified = models.ForeignKey(User)
+    status = models.BooleanField(default=0)

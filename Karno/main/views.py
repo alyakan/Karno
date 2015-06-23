@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.views.generic import FormView, ListView, DetailView, DeleteView, TemplateView
+from django.views.generic import (
+    FormView, ListView, DeleteView, DetailView, TemplateView)
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm, AudioFileUploadForm, TempFileForm, ProfileImageForm
 from main.models import (
@@ -11,7 +12,8 @@ from main.models import (
     Comment,
     CommentNotification,
     Like,
-    ProfileImage)
+    ProfileImage,
+    Notification)
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -25,10 +27,25 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.views.generic import View
 import json
+
+
+@receiver(post_save, sender=GroupPermission)
+def notify_shared_with_user(sender, instance, **kwargs):
+    """
+    Sends a notification to the user when another user shares a file with the earlier
+    Author: Moustafa
+    """
+    message = 'has shared a file with you'
+    File = instance.file_uploaded
+    user = instance.user
+    if kwargs.get('created', False):
+        Notification.objects.create(
+            message=message, file_shared=File, user_notified=user)
 
 
 class LoginRequiredMixin(object):
@@ -146,7 +163,8 @@ class FileListView(View):
                 elif ((extension == "jpeg"
                        or extension == "jpg"
                        or extension == "png"
-                       or extension == "bmp")
+                       or extension == "bmp"
+                       or extension == "JPG")
                         and category == "images"):
                     object_list.append(file)
                 elif ((extension == "mov"
@@ -204,6 +222,22 @@ class FileListView(View):
                                       context,
                                       context_instance=RequestContext(request))
 
+    def get_queryset(self):
+        """
+        Gets a queryset of files only that I can access/view
+        :author Nourhan Fawzy:
+        :param self:
+        :return File list for certain privacy condition:
+        """
+        if self.request.user.is_authenticated():
+            return File.objects.filter(
+                Q(public=True) | Q(registered_users=True))
+            # add extra check to see if signed in user is
+            # within a group of a file shared or not
+            # displaying to group users is not done yet
+        else:
+            return File.objects.filter(public=True)
+
 
 class UserRegisteration(FormView):
 
@@ -218,7 +252,7 @@ class UserRegisteration(FormView):
         """
         Saves user and automatically logs him/her in
         """
-        form1 = form.save()
+        form.save()
         user = authenticate(
             username=form.cleaned_data['username'],
             password=form.cleaned_data['password1'])
@@ -226,7 +260,7 @@ class UserRegisteration(FormView):
         messages.add_message(
             self.request, messages.INFO,
             'welcome ' + self.request.user.username + '.')
-        return HttpResponseRedirect(reverse_lazy('home'))
+        return HttpResponseRedirect(reverse_lazy('file-list'))
 
 
 class UserChangePassword(LoginRequiredMixin, FormView):
@@ -333,9 +367,6 @@ class PaginateMixin(object):
     paginate_by = 7
 
 
-# login is required to add comment, however not required to display comments
-
-
 class CommentListView(PaginateMixin, ListView):
 
     """
@@ -417,9 +448,12 @@ class NotificationListView(PaginateMixin, ListView):
 
         context = super(NotificationListView, self).get_context_data(**kwargs)
 
+        share_notifications_unread = Notification.objects.filter(
+            status=0, user_notified=self.request.user.id)
+        share_notifications_read = Notification.objects.filter(
+            status=1, user_notified=self.request.user.id)
         unread = CommentNotification.objects.filter(
             status=0, user_notified=self.request.user.id)
-        print unread
         read = CommentNotification.objects.filter(
             status=1, user_notified=self.request.user.id)
 
@@ -427,6 +461,12 @@ class NotificationListView(PaginateMixin, ListView):
             notification.status = 1
             notification.save()
 
+        for n in share_notifications_unread:
+            n.status = 1
+            n.save()
+
+        context['share_notifications_unread'] = share_notifications_unread
+        context['share_notifications_read'] = share_notifications_read
         context['read'] = read
         context['unread'] = unread
 
@@ -470,14 +510,13 @@ class CommentDelete(DeleteView):
     :param DeleteView:
     :return:
     """
-
     model = Comment
 
     def get_success_url(self):
 
-        return reverse(
+        return reverse_lazy(
             'comment-list',
-            kwargs={'file_id': self.request.user.file_uploaded.id}
+            kwargs={'file_id': self.object.file_uploaded.id}
         )
 
 
@@ -503,6 +542,8 @@ class FileDetailView(DetailView):
         Author: Rana El-Garem
         """
         context = super(FileDetailView, self).get_context_data(**kwargs)
+        context['comments'] = Comment.objects.filter(
+            file_uploaded=File.objects.get(id=self.kwargs['pk']))
         try:
             user = self.request.user
             like = Like.objects.get(user=user, source_file=self.object)
@@ -519,6 +560,38 @@ class FileDetailView(DetailView):
         context['count'] = comments.count()
         context['comments'] = comments
         return context
+
+    def post(self, args, **kwargs):
+        """
+        Adds a new comment to the database and post it
+        :author Nourhan Fawzy:
+        """
+
+        print "comment not saved"
+        file_uploaded = File.objects.get(id=self.kwargs['pk'])
+        description = self.request.POST['description']
+        user = self.request.user
+        comment = Comment(
+            description=description, user=user,
+            file_uploaded=file_uploaded)
+        comment.save()
+        print "comment saved"
+        return HttpResponseRedirect(
+            reverse(
+                'file-detail',
+                kwargs={"pk": file_uploaded.id}))
+
+
+class FileDelete(DeleteView):
+
+    """
+    Deletes a file model.
+    :author Nourhan Fawzy:
+    :param DeleteView:
+    :return:
+    """
+    model = File
+    success_url = reverse_lazy('file-list')
 
 
 class LikeFile(LoginRequiredMixin, FormView):
@@ -586,13 +659,21 @@ class LikesListView(ListView):
 
 
 class ProfileView(DetailView):
+    """
+    A class that lists details of a User (Profile Image and Files Uploaded)
+    Author: Rana El-Garem
+    """
     model = User
     template_name = 'main/profile.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Returns files that the current_user can view
+        Author: Rana El-Garem
+        """
         context = super(ProfileView, self).get_context_data(**kwargs)
         try:
-            context['user_profile'] = User.objects.get(id=self.request.user.id)
+            context['user_profile'] = User.objects.get(id=self.object.id)
             context['current_user'] = self.request.user
         except:
             pass
@@ -603,7 +684,6 @@ class ProfileView(DetailView):
                 context['files'] = files
 
             else:
-                print "hi"
                 object_list = []
                 for file in files:
                     if (file.privacy() == "Public" or
@@ -622,16 +702,21 @@ class ProfileView(DetailView):
         return context
 
 
-class UploadProfileImage(FormView):
+class UploadProfileImage(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    """
+    A class that allows a User to Upload a ProfileImage
+    Author: Rana El-Garem
+    """
     template_name = 'main/upload-profile-image.html'
     form_class = ProfileImageForm
+    success_message = 'File was Uploaded Successfully'
 
     def get_success_url(self):
         """
-        Redirects to the library page
+        Redirects to user's profile
         """
-        user_profile = User.objects.get(id=self.request.user.id).pk
-        return reverse('profile', args=(user_profile,))
+        user = User.objects.get(id=self.request.user.id).pk
+        return reverse('profile', args=(user,))
 
     def form_valid(self, form, **kwargs):
         form.save()

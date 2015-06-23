@@ -13,6 +13,7 @@
 
 	<script src="{% static "js/jquery.js" %}"></script>
 	<script src="{% static "js/main-jquery.js" %}"></script>
+
 	<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
 	<script src="{% static 'js/jquery.min.js' %}"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
@@ -61,7 +62,7 @@
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
                 <li><a href="{% url 'upload' %}"><i class="fa fa-file"></i> File</a></li>
-                <li><a href="{% url 'upload' %}"><i class="fa fa-youtube"></i> Video</a></li>
+                <li><a href="{% url "youtubeurl-add" %}"><i class="fa fa-youtube"></i> Video</a></li>
               </ul>
             </li>
             <li class="fsearch hidden-xs"><a class="btn-search"></a></li>
@@ -71,7 +72,7 @@
 	              <ul class="dropdown-menu" role="menu">
 	                <li><a href="{% url 'profile' user.id %}"><i class="fa fa-user"></i> Profile</a></li>
 	                <li><a href="{% url 'notification-list' user.id %}"> <i class="fa fa-flag"></i> Notifications</a></li>
-	                <li><a href="/messages/"><i class="fa fa-inbox"></i> Messages</a></li>
+	                <li><a href="/messages/"><i class="fa fa-inbox"></i> Inbox</a></li>
 	                <li class="divider"></li>
 	                <li><a href="{% url 'user-manage' %}"><i class="fa fa-cog fa-spin"></i> Account Settings</a></li>
 	                <li><a href="{% url 'user-logout' %}"><i class="fa fa-power-off"></i> Sign Out</a></li>
@@ -195,7 +196,7 @@
                       <div class="col-md-12">
                         <div class="detail-meta">
                           <span><em>in</em> <a href="#">{{file.type}}s</a></span>
-                          <span><em>by</em> <a href="#">{{ user.username }}</a></span>
+                          <span><em>by</em> <a href="{% url 'profile' file.user.id %}">{{ file.user }}</a></span>
                           <span><em>{{ file.date }}</em></span>
                           <span><a href="#">{{ count }} comments</a></span>
                         </div>
