@@ -1,13 +1,31 @@
+{% load staticfiles %}
+
 <!DOCTYPE html>
 <html>
     <head>
         <title>File Details</title>
+
+    <script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+            <script src="{% static "js/likes.js" %}"></script>
+
     </head>
 
     <body>
 
  		<img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}">
+        <a href="{% url "likes-list" file.id %}"><b id="like_count{{file.id}}" class="popover">{{ file.likes_count }}</b> Users like this file</a>
 
+    {% if user.is_authenticated %}
+        {% if liked %}
+            <h3 id="like-success{{file.id}}" class="success-message">You liked this file</h3>
+            <button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button">Unlike</button><br>
+            <button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button" hidden>Like</button><br>
+        {% else %}
+            <h3 id="like-success{{file.id}}" class="success-message" hidden>You liked this file</h3>
+            <button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button" hidden>Unlike</button><br>
+            <button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button><br>
+        {% endif %}
+    {% endif %}
 		<h2>Comments</h2>
 
 		<ul>
