@@ -1,5 +1,5 @@
 from django import forms
-from main.models import File, AudioFile, Tag, TempFile
+from main.models import File, AudioFile, Tag, TempFile, ProfileImage
 from main.models import YoutubeUrl
 from django_select2.fields import AutoModelSelect2TagField
 
@@ -47,3 +47,11 @@ class TempFileForm(forms.ModelForm):
     class Meta:
         model = TempFile
         fields = ['file_uploaded', ]
+
+
+class ProfileImageForm(forms.ModelForm):
+    image = forms.ImageField(label='Select a profile image')
+
+    class Meta:
+        model = ProfileImage
+        fields = ['image', 'user']
