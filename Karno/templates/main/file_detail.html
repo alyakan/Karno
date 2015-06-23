@@ -3,31 +3,327 @@
 {% load staticfiles %}
 <html>
 <head>
-	<title>File</title>
+	<title>{{file.name}}</title>
+	<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,700,600" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/colorbox.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/responsive.min.css' %}" rel="stylesheet">
+
+	<script src="{% static "js/jquery.js" %}"></script>
+	<script src="{% static "js/main-jquery.js" %}"></script>
 	<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/jquery.easing.js' %}"></script>
+	<script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
+	<script src="{% static 'js/masonry.pkgd.min.js' %}"></script>
+	<script src="{% static 'js/jquery.colorbox.min.js' %}"></script>
+	<script src="{% static 'js/jquery.isotope.min.js' %}"></script>
+	<script src="{% static 'js/script.min.js' %}"></script>
+	<!---->
+
+
 	<script type="text/javascript">var switchTo5x=true;</script>
-	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+	<!--<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>-->
 	<script type="text/javascript">stLight.options({publisher: "19b54de1-bc03-466a-aca3-919232e87a2e", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
 	<script src="{% static "js/likes.js" %}"></script>
+
+	<style type="text/css">
+		.hidden {
+        display: none;
+    		}
+	</style>
 </head>
 <body>
-	<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
-	<a href="{% url "likes-list" file.id %}"><b id="like_count{{file.id}}" class="popover">{{ file.likes_count }}</b> Users like this file</a>
-	{% if user.is_authenticated %}
-		{% if liked %}
-			<h3 id="like-success{{file.id}}" class="success-message">You liked this file</h3>
-			<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button">Unlike</button><br>
-			<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button" hidden>Like</button><br>
-		{% else %}
-			<h3 id="like-success{{file.id}}" class="success-message" hidden>You liked this file</h3>
-			<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button" hidden>Unlike</button><br>
-			<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button><br>
-		{% endif %}
-	{% endif %}
 
-	<span class='st_sharethis_large' displayText='ShareThis'></span>
-	<span class='st_facebook_large' displayText='Facebook'></span>
-	<span class='st_twitter_large' displayText='Tweet'></span>
-	<span class='st_email_large' displayText='Email'></span>
-</body>
-</html>
+    <!-- begin:navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html"><span>Karno</span></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url "file-list" %}">Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'upload' %}"><i class="fa fa-file"></i> File</a></li>
+                <li><a href="{% url 'upload' %}"><i class="fa fa-youtube"></i> Video</a></li>
+              </ul>
+            </li>
+            <li class="fsearch hidden-xs"><a class="btn-search"></a></li>
+            {% if user.is_authenticated %}
+	            <li class="dropdown">
+	              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <strong>{{ user.username }}</strong> <span class="caret"></span></a>
+	              <ul class="dropdown-menu" role="menu">
+	                <li><a href="{% url 'user-manage' %}"><i class="fa fa-user"></i> Profile</a></li>
+	                <li><a href="{% url 'notification-list' user.id %}"> <i class="fa fa-flag"></i> Notifications</a></li>
+	                <li><a href="/messages/"><i class="fa fa-inbox"></i> Messages</a></li>
+	                <li class="divider"></li>
+	                <li><a href="{% url 'user-manage' %}"><i class="fa fa-cogs"></i> Account Settings</a></li>
+	                <li><a href="{% url 'user-logout' %}"><i class="fa fa-power-off"></i> Sign Out</a></li>
+	              </ul>
+	            </li>
+            {% else %}
+		            <li><a href="{% url 'user-login' %}"><i class="fa fa-lock"></i> Signin</a></li>
+		            <li><a href="{% url 'user-new' %}"><i class="fa fa-edit"></i> Signup</a></li>
+            {% endif%}
+
+
+          </ul>
+        </div><!-- /.navbar-collapse -->
+        <ul class="nav navbar-nav navbar-right nav-search visible-xs">
+          <li class="fsearch"><a class="btn-search"></a></li>
+        </ul>
+      </div><!-- /.container-fluid -->
+    </nav>
+    <!-- end:navbar -->
+
+    <!-- begin:search -->
+    <div id="searchbox">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <!-- <form role="form"> -->
+              <div class="form-group">
+                <label for="inputSearch" class="sr-only">Search</label>
+                <input type="text" class="form-control input-lg" placeholder="Enter your keyword">
+              </div>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:search -->
+
+    <!-- begin:content -->
+    <div id="content">
+      <div class="container">
+        <div class="row">
+          <!-- begin:sidebar -->
+          <div class="col-md-3 col-md-push-9 col-sm-4 col-sm-push-8 col-xs-12">
+            <!-- begin:detail-option -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="post-container">
+                  <div class="post-content">
+                    <div class="detail-option">
+                      <ul class="list-options">
+                        <!--<li><a href="#"><i class="fa fa-comment"></i> <span>Comment</span></a></li>-->
+                        <li><a href="{% url "download-file" file.id %}"><i class="fa fa-cloud-download"></i> <span>Download</span></a></li>
+						{% if user.is_authenticated %}
+							{% if liked %}
+								<li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button"><i class="fa fa-heart"></i> <span>UnLike</span></a>
+								<a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn hidden" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a><li>
+							{% else %}
+								<li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn hidden" type="button" ><i class="fa fa-heart"></i> <span>Unlike</span></a>
+								<a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a></li>
+							{% endif %}
+						{% endif %}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="post-container">
+                  <div class="post-content">
+                    <div class="detail-option">
+                      <ul class="list-options">
+                        <div class="widget-title">
+	                      <h3>Share</h3>
+	                    </div>
+                        <!--<li><a href="#"><i class="fa fa-comment"></i> <span>Comment</span></a></li>-->
+						<span class='st_sharethis_large' displayText='ShareThis'></span>
+						<span class='st_facebook_large' displayText='Facebook'></span>
+						<span class='st_twitter_large' displayText='Tweet'></span>
+						<span class='st_email_large' displayText='Email'></span>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end:detail-option -->
+
+            <!-- begin:recent-images -->
+
+            <!-- end:recent-images -->
+
+            <!-- begin:similiar-images -->
+
+            <!-- end:similiar-images -->
+
+            <!-- begin:tags -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="post-container">
+                  <div class="post-content">
+                    <div class="widget-title">
+                      <h3>Tags</h3>
+                    </div>
+                    <ul class="tags">
+                    	{% for tag in tags%}
+                      <li><a href="#">{{ tag }}</a></li>
+                      {% empty%}
+                      <p>No Tags</p>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end:tags -->
+          </div>
+          <!-- end:sidebar -->
+
+          <!-- begin:article -->
+          <div class="col-md-9 col-md-pull-3 col-sm-8 col-sm-pull-4 col-xs-12">
+            <!-- begin:article-content -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="post-container">
+                  <div class="post-content">
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="detail-meta">
+                          <span><em>in</em> <a href="#">{{file.type}}s</a></span>
+                          <span><em>by</em> <a href="#">{{ user.username }}</a></span>
+                          <span><em>{{ file.date }}</em></span>
+                          <span><a href="#">{{ count }} comments</a></span>
+                        </div>
+                        <div class="detail-heading-title">
+                          <h2></h2>
+                        </div>
+                        {% if file.type == 'Image' %}
+                         	<img src="{{  file.file_uploaded.url}}" width="500" height="r" alt="{{ file.file_uploaded.name }}">
+                         {% elif file.type == 'Video' %}
+                         <video controls="true" width="700">
+                            <source src="{{ file.file_uploaded.url }}" type="video/mp4"/>
+                        </video>
+                         {% elif file.type == 'Audio' %}
+                         <audio controls="true" width="700">
+                            <source src="{{ file.file_uploaded.url }}" type="video/mp4"/>
+                        </audio>
+                         {% else %}
+							<iframe id="ytplayer" type="text/html" width="{{ 600 }}" height="{{ 400 }}"
+				            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
+				         {% endif %}
+                        <div class="detail-meta">
+
+                          <span><em>Tags : </em>
+                        {% for tag in tags %}
+                        	 {{ tag }},
+                        {% endfor %} 
+                        <a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}">{{ file.likes_count }} </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end:article-content -->
+
+            <!-- begin:comments -->
+            <div class="row">
+              <div class="col-md-12">
+                <div class="post-container">
+                  <div class="post-content">
+                    <div class="heading-title">
+                      <h3>{{ count }} Comments On This {{ file.type }}</h3>
+                    </div>
+
+                    <!-- begin:comment-list -->
+                    <div class="comments">
+                    {% for comment in comments %}
+                      <ul>
+                        <li>
+                          <div class="comment-container">
+                            <div class="comment-meta">
+                              <span class="comment-author"><a href="#">{{ comment.user }}</a></span>
+                              <span class="comment-date">{{ comment.date }}</span>
+                            </div>
+                            <div class="comment-text">
+                                <p>{{ comment.description }}</p>
+
+                            </div>
+                          </div>
+                        </li>
+                        <!-- break -->
+                        <!-- break -->
+                      </ul>
+         			{% empty %}
+							{% endfor %}
+                    </div>
+                    <!-- end:comment-list -->
+
+
+                    <!-- begin:post-comment -->
+                    <div class="post-comment">
+                      <div class="heading-title">
+                        <h3>Post Comment</h3>
+                      </div> 
+
+				        <form role="form" action="{% url 'comment-list' file.id %}" method="post"> {% csrf_token %}
+                        <div class="form-group">
+                          <label for="comment" class="sr-only">Comment</label>
+                          <textarea name= "description"class="form-control" rows="5" placeholder="Enter Comment:"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                      </form>
+                    </div>
+                    <!-- end:post-comment -->
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- end:comments -->
+
+          </div>
+          <!-- end:article -->
+          
+        </div>
+      </div>
+    </div>
+    <!-- end:content -->
+
+    <!-- begin:footer -->
+    <div class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <hr>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <p>Copyright &copy; 2015 All Right Reserved.</p>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <ul class="list-social">
+              <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+              <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
