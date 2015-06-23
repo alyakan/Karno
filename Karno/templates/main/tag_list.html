@@ -57,6 +57,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url "file-list" %}">Home</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
@@ -114,77 +115,20 @@
           <div class="col-md-3 col-sm-6 col-xs-12">
             <div class="post-container">
               <div class="post-desc">
-                <h2>Filter by &rarr;</h2>
-                <!-- <a href="#" class="btn btn-default btn-sm">Learn More &rarr;</a> -->
-                <button type="button" name="audiodisplay" id="audi" class="btn btn-default btn-sm"> Audio </button>
-
-                <button type="button" name="imagedisplay" id="img" class="btn btn-default btn-sm"> Image </button> 
-
-                <button type="button" name="videodisplay" id="vid" class="btn btn-default btn-sm"> Video </button>
-
-                <button type="button" name="documentdisplay" id="doc" class="btn btn-default btn-sm"> Doc </button>
+                <h2>All Tags</h2>
 
               </div>
               <div class="sidebar-menu">
                 <ul class="nav nav-pills nav-stacked">
-                  <li><a href="{% url "tag-list" %}"><i class="fa fa-tags"></i> Tags</a></li>
-                  <li><a href="#"><i class="fa fa-bookmark"></i> Most Viewed</a></li>
-                  <li><a href="#"><i class="fa fa-arrow-circle-o-down"></i> Most Download</a></li>
-                  <li><a href="#"><i class="fa fa-heart-o"></i> Recomended</a></li>
+                {% for tag in object_list %}
+                  <li><a href="{% url "tag-detail" tag.pk %}"><i class="fa fa-tags"></i> {{ tag }}</a></li>
+                {% endfor %}
                 </ul>
               </div>
             </div>
           </div>
           <!-- break -->
-          {% if user.is_authenticated %}
-            {% for file,liked,tags in zipped_list %}
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="post-container">
-                      <div class="post-option">
-                        <ul class="list-options">
-                          <li><a href="{% url "file-detail" file.id %}"><i class="fa fa-plus"></i> <span>Detail</span></a></li>
-                          <li><a href="{% url "file-detail" file.id %}"><i class="fa fa-comment"></i> <span>Comment</span></a></li>
-                          <li><a href="{% url "download-file" file.id %}"><i class="fa fa-cloud-download"></i> <span>Download</span></a></li>
-                          {% if user.is_authenticated %}
-                            {% if liked %}
-                                <li><a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn hidden" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a>
-                                <a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button"><i class="fa fa-heart"></i> <span>UnLike</span></a></li>
-                            {% else %}
-                                <li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn hidden" type="button" ><i class="fa fa-heart"></i> <span>Unlike</span></a>
-                                <a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a></li>
-                            {% endif %}
-                          {% endif %}
-                          
-                        </ul>
-                      </div>
-                      <div class="post-image">
-                          {% if file.type = "Image" %}
-                            <img src="{{ file.file_uploaded.url }}" class="img-responsive" alt="fransisca gallery"></a>
-                          {% elif file.type = "Video" %}
-                            <iframe id="ytplayer" type="text/html" width="{{ 230 }}" height="{{ 300 }}"
-                            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
-                          {% elif file.type = "Audio" %}
-                            <audio controls="true" width="230" height="300">
-                                <source src="{{ file.file_uploaded.url }}" type="audio/mp3"/>
-                            </audio>
-                          {% else %}
-                            <iframe id="ytplayer" type="text/html" width="{{ 230 }}" height="{{ 300 }}"
-                            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
-                          {% endif %}
-                      </div>
-                      <div class="post-meta">
-                        <ul class="list-meta list-inline">
-                          <li><a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}"> <strong>{{ file.likes_count }}</strong></span></li>
-                        </ul>
-                      </div>
-                      <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% empty%} NO TAGS {% endfor %}
-                      </div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            {% for file,tags in zipped_list %}
+            {% for file  in files %}
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="post-container">
                       <div class="post-option">
@@ -209,25 +153,14 @@
                           <li><a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}"> <strong>{{ file.likes_count }}</strong></span></li>
                         </ul>
                       </div>
-                      <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% endfor %}
-                      </div>
+
                     </div>
                 </div>
             {% endfor %}
-        {% endif %}
 
           <!-- begin:pagination -->
           <div class="col-md-12">
-            <ul class="pagination">
-              <li><a href="#">&laquo;</a></li>
-              <li><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">4</a></li>
-              <li><a href="#">5</a></li>
-              <li><a href="#">&raquo;</a></li>
-            </ul>
+
           </div>
           <!-- end:pagination -->
         </div>
@@ -352,20 +285,20 @@
 <!-- <div id="filediv">
 <html>
 <head>
-	<title>Files</title>
+  <title>Files</title>
 
-	<script src="{% static "js/jquery.js" %}"></script>
-	<script src="{% static "js/main-jquery.js" %}"></script>
-	<script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
-	<script src="//code.jquery.com/jquery-latest.min.js"></script>
-	<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
-	<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
-	<script src="{% static "js/likes.js" %}"></script>
+  <script src="{% static "js/jquery.js" %}"></script>
+  <script src="{% static "js/main-jquery.js" %}"></script>
+  <script src="{% static 'js/jquery-1.11.3.js'%}" ></script>
+  <script src="//code.jquery.com/jquery-latest.min.js"></script>
+  <link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+  <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+  <script src="{% static "js/likes.js" %}"></script>
 
 
-	<link href="{% static 'css/select2.css'%}" rel="stylesheet"></link>
-	<link href="{% static 'css/extra.css'%}" rel="stylesheet"></link>
-	<link href="{% static 'css/upload_file.css'%}" rel="stylesheet"></link>
+  <link href="{% static 'css/select2.css'%}" rel="stylesheet"></link>
+  <link href="{% static 'css/extra.css'%}" rel="stylesheet"></link>
+  <link href="{% static 'css/upload_file.css'%}" rel="stylesheet"></link>
 </head>
 <body>
 <h5>
@@ -379,109 +312,109 @@
   <button type="button" name="documentdisplay" id="doc"> Doc </button>
 
 
-	<h1>Files</h1><br>
-	<a href="{% url "index" %}">Home</a><br>
-		{% if user.is_authenticated %}
-			{% for file,liked in zipped_list %}
-					<iframe id="ytplayer" type="text/html" width="{{ 500 }}" height="{{ 400 }}"
-		            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
-		            <br><br>
-		            <a href="{% url 'file-detail' file.id %}">View this file</a>
-					<a href="{% url 'file-detail' file.id %}">Share this file</a>
-					<a href="{% url 'download-file' file.id %}">Download</a><br><br>
-					<a href="{% url 'likes-list' file.id %}"><b id="like_count{{file.id}}" class="popover">
-				Uploaded By: {{ file.user.username }} <br><br>
+  <h1>Files</h1><br>
+  <a href="{% url "index" %}">Home</a><br>
+    {% if user.is_authenticated %}
+      {% for file,liked in zipped_list %}
+          <iframe id="ytplayer" type="text/html" width="{{ 500 }}" height="{{ 400 }}"
+                src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
+                <br><br>
+                <a href="{% url 'file-detail' file.id %}">View this file</a>
+          <a href="{% url 'file-detail' file.id %}">Share this file</a>
+          <a href="{% url 'download-file' file.id %}">Download</a><br><br>
+          <a href="{% url 'likes-list' file.id %}"><b id="like_count{{file.id}}" class="popover">
+        Uploaded By: {{ file.user.username }} <br><br>
 
-				{% if file.public %}
-				Privacy: Public
-				{% endif %}
+        {% if file.public %}
+        Privacy: Public
+        {% endif %}
 
-				{% if file.registered_users %}
-				Privacy: Registered Users
-				{% endif %}
+        {% if file.registered_users %}
+        Privacy: Registered Users
+        {% endif %}
 
-				{% if file.group %}
-				Privacy: Group
-				{% endif %}
+        {% if file.group %}
+        Privacy: Group
+        {% endif %}
 
-				<br><br>
+        <br><br>
 
-					{{ file.likes_count }}</b> Users like this file</a>	
-					{% if liked %}
-						<h3 id="like-success{{file.id}}" class="success-message">You liked this file</h3>
-						<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button">Unlike</button><br>
-						<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button" hidden>Like</button><br>
-						Uploaded By: {{ file.user.username }} <br><br>
+          {{ file.likes_count }}</b> Users like this file</a> 
+          {% if liked %}
+            <h3 id="like-success{{file.id}}" class="success-message">You liked this file</h3>
+            <button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button">Unlike</button><br>
+            <button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button" hidden>Like</button><br>
+            Uploaded By: {{ file.user.username }} <br><br>
 
-						{% if file.public %}
-						Privacy: Public
-						{% endif %}
+            {% if file.public %}
+            Privacy: Public
+            {% endif %}
 
-						{% if file.registered_users %}
-						Privacy: Registered Users
-						{% endif %}
+            {% if file.registered_users %}
+            Privacy: Registered Users
+            {% endif %}
 
-						{% if file.group %}
-						Privacy: Group
-						{% endif %}
-					{% else %}
-						<h3 id="like-success{{file.id}}" class="success-message" hidden>You liked this file</h3>
-						<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button" hidden>Unlike</button><br>
-        				<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button><br>
-						Uploaded By: {{ file.user.username }} <br><br>
+            {% if file.group %}
+            Privacy: Group
+            {% endif %}
+          {% else %}
+            <h3 id="like-success{{file.id}}" class="success-message" hidden>You liked this file</h3>
+            <button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button" hidden>Unlike</button><br>
+                <button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button><br>
+            Uploaded By: {{ file.user.username }} <br><br>
 
-						{% if file.public %}
-						Privacy: Public
-						{% endif %}
+            {% if file.public %}
+            Privacy: Public
+            {% endif %}
 
-						{% if file.registered_users %}
-						Privacy: Registered Users
-						{% endif %}
+            {% if file.registered_users %}
+            Privacy: Registered Users
+            {% endif %}
 
-						{% if file.group %}
-						Privacy: Group
-						{% endif %}
-        			{% endif %}
+            {% if file.group %}
+            Privacy: Group
+            {% endif %}
+              {% endif %}
 
-        		{% if file.user == user %}
-        		<form action="{% url 'delete-file' file.id %}" method="get"> {% csrf_token %}
-        		<input type="submit" value="Delete File"></input>
-        		</form>
-        		{% endif %}
-        		<hr>
+            {% if file.user == user %}
+            <form action="{% url 'delete-file' file.id %}" method="get"> {% csrf_token %}
+            <input type="submit" value="Delete File"></input>
+            </form>
+            {% endif %}
+            <hr>
 
-        	{% endfor %}
+          {% endfor %}
         {% else %}
-	        {% for file in object_list %}
-			    <a href="{{  file.file_uploaded.url}}">{{  file.file_uploaded.url}}</a><br><br>
-				<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
-				<a href="{% url 'file-detail' file.id %}">Share this file</a>
-				<a href="{% url 'download-file' file.id %}">Download</a><br><br>
-				<b id="like_count">{{ file.likes_count }}</b>
-				{% if file.likes_count = 1 %} 
-					User likes
-				{% else %} 
-					Users like
-				{% endif %}
-				this file
+          {% for file in object_list %}
+          <a href="{{  file.file_uploaded.url}}">{{  file.file_uploaded.url}}</a><br><br>
+        <a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
+        <a href="{% url 'file-detail' file.id %}">Share this file</a>
+        <a href="{% url 'download-file' file.id %}">Download</a><br><br>
+        <b id="like_count">{{ file.likes_count }}</b>
+        {% if file.likes_count = 1 %} 
+          User likes
+        {% else %} 
+          Users like
+        {% endif %}
+        this file
 
         <hr>
-			{% endfor %}
+      {% endfor %}
 
-		{% endif %}
+    {% endif %}
 
-	<br>
-	<a href="{% url 'upload'%}"> Upload</a>
-	{% if messages %}
-		<ul class="messages">
-		    {% for message in messages %}
-		    {% if message.tags %} <class="{{ message.tags }}"{% endif %}>
-		    <script type="">alert("{{message}}")</script>
-		    {% endfor %}
-		</ul>
-	{% endif %}
-	<br>
-	<a href="{% url 'home' %}"> return to home page </a>
+  <br>
+  <a href="{% url 'upload'%}"> Upload</a>
+  {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        {% if message.tags %} <class="{{ message.tags }}"{% endif %}>
+        <script type="">alert("{{message}}")</script>
+        {% endfor %}
+    </ul>
+  {% endif %}
+  <br>
+  <a href="{% url 'home' %}"> return to home page </a>
 </body>
 </html>
 

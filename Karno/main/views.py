@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.views.generic import (
-    FormView, ListView, DeleteView, DetailView, TemplateView)
+    FormView, ListView, DeleteView, DetailView)
 from django.core.urlresolvers import reverse_lazy, reverse
-from main.forms import FileUploadForm, AudioFileUploadForm, TempFileForm, ProfileImageForm
+from main.forms import (FileUploadForm, AudioFileUploadForm,
+                        TempFileForm, ProfileImageForm)
 from main.models import (
     File,
     GroupPermission,
@@ -13,7 +14,8 @@ from main.models import (
     CommentNotification,
     Like,
     ProfileImage,
-    Notification)
+    Notification, Tag
+)
 from django.contrib.auth.models import User
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
@@ -37,7 +39,8 @@ import json
 @receiver(post_save, sender=GroupPermission)
 def notify_shared_with_user(sender, instance, **kwargs):
     """
-    Sends a notification to the user when another user shares a file with the earlier
+    Sends a notification to the user
+    when another user shares a file with the earlier
     Author: Moustafa
     """
     message = 'has shared a file with you'
@@ -149,11 +152,23 @@ class FileListView(View):
     """
 
     def get(self, request):
+        if self.request.user.is_authenticated():
+            file_list = File.objects.all()
+            object_list = []
+            for file in file_list:
+                if (file.privacy() == "Public" or
+                        file.privacy() == "Registered Users" or
+                        self.request.user in file.group_users()
+                        or file.user == self.request.user):
+                    object_list.append(file)
+        else:
+            object_list = File.objects.filter(public=1)
+
         if request.is_ajax():
             context = {}
             object_list = []
             category = request.GET['category']
-            files = File.objects.all()
+            files = object_list
             for file in files:
                 extension = file.file_uploaded.url.split(".")[-1]
                 if ((extension == "mp3"
@@ -200,7 +215,7 @@ class FileListView(View):
                                                    context_instance=RequestContext(request)))
         else:
             context = {}
-            files = File.objects.all()
+            files = object_list
             all_tags = []
             if self.request.user.is_authenticated():
                 user = self.request.user
@@ -503,7 +518,7 @@ def create_notification(sender, **kwargs):
             user_notified=comment.file_uploaded.user)
 
 
-class CommentDelete(DeleteView):
+class CommentDelete(LoginRequiredMixin, DeleteView):
 
     """
     Deletes a comment model.
@@ -524,7 +539,9 @@ class CommentDelete(DeleteView):
         return context
 
     def get_success_url(self):
-
+        messages.add_message(self.request,
+                             messages.INFO,
+                             "Comment was deleted successfully")
         return reverse_lazy(
             'file-detail',
             kwargs={'pk': self.object.file_uploaded.id}
@@ -593,7 +610,7 @@ class FileDetailView(DetailView):
                 kwargs={"pk": file_uploaded.id}))
 
 
-class FileDelete(DeleteView):
+class FileDelete(LoginRequiredMixin, DeleteView):
 
     """
     Deletes a file model.
@@ -670,6 +687,7 @@ class LikesListView(ListView):
 
 
 class ProfileView(DetailView):
+
     """
     A class that lists details of a User (Profile Image and Files Uploaded)
     Author: Rana El-Garem
@@ -690,7 +708,7 @@ class ProfileView(DetailView):
             pass
 
         files = File.objects.filter(user_id=self.object.id)
-        if self.request.user:
+        if self.request.user.is_authenticated():
             if self.request.user == self.object:
                 context['files'] = files
 
@@ -714,13 +732,14 @@ class ProfileView(DetailView):
 
 
 class UploadProfileImage(LoginRequiredMixin, SuccessMessageMixin, FormView):
+
     """
     A class that allows a User to Upload a ProfileImage
     Author: Rana El-Garem
     """
     template_name = 'main/upload-profile-image.html'
     form_class = ProfileImageForm
-    success_message = 'File was Uploaded Successfully'
+    success_message = 'Profile Picture was Uploaded Successfully'
 
     def get_success_url(self):
         """
@@ -734,7 +753,7 @@ class UploadProfileImage(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return super(UploadProfileImage, self).form_valid(form)
 
 
-class ProfileImageDelete(DeleteView):
+class ProfileImageDelete(LoginRequiredMixin, DeleteView):
 
     """
     Deletes a ProfileImage model.
@@ -752,8 +771,36 @@ class ProfileImageDelete(DeleteView):
         return context
 
     def get_success_url(self):
-
+        messages.add_message(
+            self.request, messages.INFO,
+            "Profile Picture was removed successfully")
         return reverse_lazy(
             'profile',
             kwargs={'pk': self.object.user.id}
         )
+
+
+class TagListView(ListView):
+    model = Tag
+
+
+class TagDetailView(DetailView):
+    model = Tag
+
+    def get_context_data(self, **kwargs):
+        context = super(TagDetailView, self).get_context_data(**kwargs)
+        files = File.objects.filter(tags=self.object)
+        if self.request.user.is_authenticated():
+            object_list = []
+            for file in files:
+                if (file.privacy() == "Public" or
+                        file.privacy() == "Registered Users" or
+                    self.request.user in file.group_users()
+                        or file.user == self.request.user):
+                    object_list.append(file)
+            context['files'] = object_list
+
+        else:
+            context['files'] = files.filter(public=1)
+        context['tags'] = Tag.objects.all()
+        return context

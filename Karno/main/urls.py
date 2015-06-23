@@ -7,7 +7,8 @@ from main.views import (
     FileDelete, UploadFile, FileListView, AudioUpdate,
     FileDetailView, preview_image, YoutubeUrlFormView,
     download_handler, LikeFile, UnlikeFile, LikesListView,
-    ProfileView, UploadProfileImage, ProfileImageDelete)
+    ProfileView, UploadProfileImage, ProfileImageDelete,
+    TagListView, TagDetailView)
 
 
 urlpatterns = patterns(
@@ -94,5 +95,9 @@ urlpatterns = patterns(
 
     url(r'^profile/image/delete/(?P<pk>[-\w]+)/$',
         ProfileImageDelete.as_view(), name='image-delete'),
+    url(r'^tag/list$', TagListView.as_view(), name='tag-list'),
+    url(r'^tag/(?P<pk>[0-9]+)/$', TagDetailView.as_view(), name='tag-detail'),
+
+
 
 )
