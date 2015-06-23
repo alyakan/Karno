@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.views.generic import FormView, ListView, DetailView, DeleteView
+from django.views.generic import (
+    FormView, ListView, DeleteView, DetailView)
 from django.core.urlresolvers import reverse_lazy, reverse
 from main.forms import FileUploadForm, AudioFileUploadForm
 from main.models import File, GroupPermission, AudioFile
@@ -17,6 +18,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from filetransfers.api import serve_file
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 
 class LoginRequiredMixin(object):
@@ -101,6 +103,22 @@ class FileListView(ListView):
     Author: Rana El-Garem
     """
     model = File
+
+    def get_queryset(self):
+        """
+        Gets a queryset of files only that I can access/view
+        :author Nourhan Fawzy:
+        :param self:
+        :return File list for certain privacy condition:
+        """
+        if self.request.user.is_authenticated():
+            return File.objects.filter(
+                Q(public=True) | Q(registered_users=True))
+            # add extra check to see if signed in user is
+            # within a group of a file shared or not
+            # displaying to group users is not done yet
+        else:
+            return File.objects.filter(public=True)
 
 
 class UserRegisteration(FormView):
@@ -226,54 +244,6 @@ class PaginateMixin(object):
     paginate_by = 3
 
 
-# login is required to add comment, however not required to display comments
-
-
-class CommentListView(PaginateMixin, ListView):
-    """
-    A class for showing details of Model:main.Comment
-    Author: Nourhan Fawzy
-    """
-    model = Comment
-
-    def get_queryset(self):
-        """
-        Gets a queryset of comments for a certain file.
-        :author Nourhan Fawzy:
-        :param self:
-        :return Books list for certain library:
-        """
-        return Comment.objects.filter(
-            file_uploaded=File.objects.get(id=self.kwargs['file_id']))
-
-    def get_context_data(self, **kwargs):
-        """
-        Gets details of Model:main.Comment
-        :author Nourhan Fawzy:
-        """
-
-        context = super(CommentListView, self).get_context_data(**kwargs)
-        context['file'] = File.objects.get(id=self.kwargs['file_id'])
-        return context
-
-    def post(self, args, **kwargs):
-        """
-        Adds a new comment to the database and post it
-        :author Nourhan Fawzy:
-        """
-        file_uploaded = File.objects.get(id=self.kwargs['file_id'])
-        description = self.request.POST['description']
-        user = self.request.user
-        comment = Comment(
-            description=description, user=user,
-            file_uploaded=file_uploaded)
-        comment.save()
-        return HttpResponseRedirect(
-            reverse(
-                'comment-list',
-                kwargs={"file_id": file_uploaded.id}))
-
-
 class NotificationListView(PaginateMixin, ListView):
     """
     Lists all notifications when a new comment is added on a file I shared.
@@ -346,14 +316,13 @@ class CommentDelete(DeleteView):
     :param DeleteView:
     :return:
     """
-
     model = Comment
 
     def get_success_url(self):
 
-        return reverse(
+        return reverse_lazy(
             'comment-list',
-            kwargs={'file_id': self.request.user.file_uploaded.id}
+            kwargs={'file_id': self.object.file_uploaded.id}
                        )
 
 
@@ -370,3 +339,60 @@ class FileDetailView(DetailView):
     """
     model = File
     template_name = "main/file_detail.html"
+
+
+class CommentListView(PaginateMixin, ListView):
+    """
+    A class for showing details of Model:main.Comment
+    Author: Nourhan Fawzy
+    """
+    model = Comment
+
+    def get_queryset(self):
+        """
+        Gets a queryset of comments for a certain file.
+        :author Nourhan Fawzy:
+        :param self:
+        :return Books list for certain library:
+        """
+        return Comment.objects.filter(
+            file_uploaded=
+            File.objects.get(id=self.kwargs['file_id'])).order_by('-date')
+
+    def get_context_data(self, **kwargs):
+        """
+        Gets details of Model:main.Comment
+        :author Nourhan Fawzy:
+        """
+
+        context = super(CommentListView, self).get_context_data(**kwargs)
+        context['file'] = File.objects.get(id=self.kwargs['file_id'])
+        return context
+
+    def post(self, args, **kwargs):
+        """
+        Adds a new comment to the database and post it
+        :author Nourhan Fawzy:
+        """
+        file_uploaded = File.objects.get(id=self.kwargs['file_id'])
+        description = self.request.POST['description']
+        user = self.request.user
+        comment = Comment(
+            description=description, user=user,
+            file_uploaded=file_uploaded)
+        comment.save()
+        return HttpResponseRedirect(
+            reverse(
+                'comment-list',
+                kwargs={"file_id": file_uploaded.id}))
+
+
+class FileDelete(DeleteView):
+    """
+    Deletes a file model.
+    :author Nourhan Fawzy:
+    :param DeleteView:
+    :return:
+    """
+    model = File
+    success_url = reverse_lazy('file-list')

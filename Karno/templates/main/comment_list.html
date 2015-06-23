@@ -21,8 +21,8 @@
         Comment Posted By = {{ comment.user }}
         <br>
 
-        {% if comment.user == user %}
-        <form action="{% url 'delete-comment' comment.id %}" method="post"> {% csrf_token %}
+        {% if comment.user == user or comment.file_uploaded.user == user %}
+        <form action="{% url 'delete-comment' comment.id %}" method="get"> {% csrf_token %}
         <input type="submit" value="Delete Comment"></input>
         </form>
         {% endif %}

@@ -5,23 +5,41 @@
 	<title>Files</title>
 </head>
 <body>
-<<<<<<< HEAD
-	<h1>Files</h1>
-		{% for file in object_list %}
-		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a></h1>
-			<a href="{% url 'comment-list' file.id %}">{{file.file_uploaded.name}}</a>
-		{% endfor %}
-		<br>
-		<a href="{% url 'upload'%}"> Share File</a>
-=======
->>>>>>> master
+{% if user.is_authenticated %}
+Signed in as "{{ user.username }}"
+{% endif %}
+<br>
 
 	<h1>Files</h1><br>
 	{% for file in object_list %}
-	    <a href="{{  file.file_uploaded.url}}">{{  file.file_uploaded.url}}</a><br><br>
 		<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
-		<a href="{% url "file-detail" file.id %}">Share this file</a>
+		<a href="{% url 'file-detail' file.id %}">{{file.file_uploaded.name}}</a><br><br>
+		<a href="{% url 'file-detail' file.id %}">Share this file</a>
 		<a href="{% url 'download-file' file.id %}">Download</a><br><br>
+		Uploaded By: {{ file.user.username }} <br><br>
+
+		{% if file.public %}
+		Privacy: Public
+		{% endif %}
+
+		{% if file.registered_users %}
+		Privacy: Registered Users
+		{% endif %}
+
+		{% if file.group %}
+		Privacy: Group
+		{% endif %}
+
+		<br><br>
+
+        {% if file.user == user %}
+        <form action="{% url 'delete-file' file.id %}" method="get"> {% csrf_token %}
+        <input type="submit" value="Delete File"></input>
+        </form>
+        {% endif %}
+
+        <hr>
+
 	{% endfor %}
 	<br>
 	<a href="{% url 'upload'%}"> Upload</a>
@@ -33,5 +51,7 @@
 		    {% endfor %}
 		</ul>
 	{% endif %}
+	<br>
+	<a href="{% url 'home' %}"> return to home page </a>
 </body>
 </html>

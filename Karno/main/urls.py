@@ -6,7 +6,8 @@ from main.views import UploadFile, FileListView, AudioUpdate, FileDetailView
 from main.views import YoutubeUrlFormView, download_handler
 from django.contrib.auth.forms import PasswordResetForm
 from main.views import (
-    CommentListView, NotificationListView, CommentDelete)
+    CommentListView, NotificationListView, CommentDelete,
+    FileDelete)
 
 
 urlpatterns = patterns(
@@ -54,7 +55,7 @@ urlpatterns = patterns(
     url(r'^file/comment-list/(?P<file_id>\d+)$',
         CommentListView.as_view(), name='comment-list'),
 
-    url(r'^file/comment/delete/(?P<comment_id>\d+)$',
+    url(r'^file/comment/delete/(?P<pk>[-\w]+)$',
         CommentDelete.as_view(), name='delete-comment'),
 
     url(
@@ -67,5 +68,8 @@ urlpatterns = patterns(
         download_handler, name='download-file'),
     url(
         r'^file/list/(?P<pk>[0-9]+)/$',
-        FileDetailView.as_view(), name="file-detail"),
+        FileDetailView.as_view(), name='file-detail'),
+
+    url(r'^file/delete/(?P<pk>[-\w]+)$',
+        FileDelete.as_view(), name='delete-file'),
 )

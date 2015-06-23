@@ -2,8 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import main.RestrictedFileField
+import datetime
 from django.conf import settings
+import main.RestrictedFileField
 
 
 class Migration(migrations.Migration):
@@ -13,6 +14,31 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.CreateModel(
+            name='AudioFile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=32)),
+                ('artist', models.CharField(max_length=12)),
+                ('genre', models.CharField(max_length=12)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='Comment',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('description', models.CharField(max_length=512)),
+                ('date', models.DateTimeField(default=datetime.datetime.now, blank=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='CommentNotification',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('status', models.BooleanField(default=0)),
+                ('comment', models.ForeignKey(to='main.Comment')),
+            ],
+        ),
         migrations.CreateModel(
             name='File',
             fields=[
@@ -55,6 +81,31 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='file',
             name='user',
+            field=models.ForeignKey(related_name='file', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='commentnotification',
+            name='file_shared',
+            field=models.ForeignKey(to='main.File'),
+        ),
+        migrations.AddField(
+            model_name='commentnotification',
+            name='user_notified',
             field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='comment',
+            name='file_uploaded',
+            field=models.ForeignKey(to='main.File'),
+        ),
+        migrations.AddField(
+            model_name='comment',
+            name='user',
+            field=models.ForeignKey(related_name='comment', to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='audiofile',
+            name='source_file',
+            field=models.ForeignKey(to='main.File'),
         ),
     ]
