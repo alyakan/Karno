@@ -39,58 +39,182 @@
 
 </head>
 <body>
-    <h1>Share A File</h1>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="{% url "index" %}"><i class="fa fa-share-alt"> <span>Karno</span></i></a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url "file-list" %}"><i class="fa fa-home"></i> Home</a></li>
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'upload' %}"><i class="fa fa-file"></i> File</a></li>
+                <li><a href="{% url 'upload' %}"><i class="fa fa-youtube"></i> Video</a></li>
+              </ul>
+            </li>
+            <li class="fsearch hidden-xs"><a class="btn-search"></a></li>
+            {% if user.is_authenticated %}
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <strong>{{ user.username }}</strong> <span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="{% url 'profile' user.id %}"><i class="fa fa-user"></i> Profile</a></li>
+                  <li><a href="{% url 'notification-list' user.id %}"> <i class="fa fa-flag"></i> Notifications</a></li>
+                  <li><a href="/messages/"><i class="fa fa-inbox"></i> Messages</a></li>
+                  <li class="divider"></li>
+                  <li><a href="{% url 'user-manage' %}"><i class="fa fa-cog fa-spin"></i> Account Settings</a></li>
+                  <li><a href="{% url 'user-logout' %}"><i class="fa fa-power-off"></i> Sign Out</a></li>
+                </ul>
+              </li>
+            {% else %}
+                <li><a href="{% url 'user-login' %}"><i class="fa fa-lock"></i> Signin</a></li>
+                <li><a href="{% url 'user-new' %}"><i class="fa fa-edit"></i> Signup</a></li>
+            {% endif%}
 
 
+          </ul>
+        </div><!-- /.navbar-collapse -->
+        <ul class="nav navbar-nav navbar-right nav-search visible-xs">
+          <li class="fsearch"><a class="btn-search"></a></li>
+        </ul>
+      </div><!-- /.container-fluid -->
+    </nav>
+    <!-- end:navbar -->
 
-            <form id="myForm" action="" method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            <p>{{ form.non_field_errors }}</p>
-            <p>{{ form.file_uploaded.label_tag }} {{ form.file_uploaded.help_text }}</p>
-            <p>
-                {{ form.errors }}
-                {{ form.file_uploaded.errors }}
+    <!-- begin:search -->
+    <div id="searchbox">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <!-- <form role="form"> -->
+              <div class="form-group">
+                <label for="inputSearch" class="sr-only">Search</label>
+                <input type="text" class="form-control input-lg" placeholder="Enter your keyword">
+              </div>
+            <!-- </form> -->
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end:search -->
 
-                <input id="id_file_uploaded" name="file_uploaded" type="file">
-                <input id="id_tempId" name="tempId" type="hidden">
+    <!-- begin:content -->
+    <div id="content">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4 col-sm-6 col-xs-10 col-md-offset-4 col-sm-offset-3 col-xs-offset-1">
+            <div class="post-container">
+              <div class="post-content">
+                <div class="form-signin">
+                  <div class="heading-title">
+                    <h3><i class="fa fa-files-o"></i> Upload A File </h3>
+                  </div>
+                    <form class="form-horizontal" role="form" action="{% url "upload" %}" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <p>{{ form.non_field_errors }}</p>
+                        <p>{{ form.file_uploaded.label_tag }} {{ form.file_uploaded.help_text }}</p>
+                        <p>
+                            {{ form.errors }}
+                            {{ form.file_uploaded.errors }}
+                            <input id="id_file_uploaded" name="file_uploaded" type="file" class="btn btn-primary btn-sm"/>
+                            <input id="id_tempId" name="tempId" type="hidden">
 
-                <input  type="hidden" name="user" value={{ user.id }}>
-                <br><br>
-                <div id="image"></div>
-                Add Tags To Your File: <br>
-                {{form.tags}}
-                <br><br>
-                <br> Share With: <br>
-                Public:
-                <input id="id_public" name="public" type="checkbox" class="radio">
-                Registered Users:
-                <input id="id_registered_users" name="registered_users" type="checkbox" class="radio">
-                Group:
-                <input id="id_group" name="group" type="checkbox" class="radio" ><br><br>
+                            <input  type="hidden" name="user" value={{ user.id }}>
+                            <br><br>
+                            <div id="image"></div>
+                            Add Tags To Your File: <br>
+                            {{form.tags}}
+                            <br><br>
+                            <br> Share With: <br>
+                            Public:
+                            <input id="id_public" name="public" type="checkbox" class="radio">
+                            Registered Users:
+                            <input id="id_registered_users" name="registered_users" type="checkbox" class="radio">
+                            Group:
+                            <input id="id_group" name="group" type="checkbox" class="radio" ><br><br>
 
-            </p>
-                <div id="hidden" class="hidden">
-                <h3> Select Users To Share File With </h3>
-                <select class="js-example-basic-multiple" multiple="multiple" size="100" name="users">
-                {% for user in users%}
-                  <option value="{{user.id}}"> {{user.username}}</option>
-                {% endfor %}
-                </select>
-                </div>
+                        </p>
+                        <div id="hidden" class="hidden">
+                        <h3> Select Users To Share File With </h3>
+                        <select class="js-example-basic-multiple" multiple="multiple" size="100" name="users">
+                        {% for user in users%}
+                          <option value="{{user.id}}"> {{user.username}}</option>
+                        {% endfor %}
+                        </select>
+                        </div>
 
-                <div id="audioform" class="audioform">
+                        <div id="audioform" class="audioform heading-title">
 
-                  <h3> Plonk more details to your audio </h3>
-                {% for field in audioform.visible_fields %}
-                {{ field.errors }}
-                {{ field.name }}  {{ field }} <br><br>      
-                {% endfor %}  <br> </h6>
+                          <h3><i class="fa fa-music"></i> Plonk more details to your audio </h3>
+                            <div class="input-group">
+                              <span class="input-group-addon"><i class="fa fa-info"></i></span>
+                              <input id="id_audioform-title" name="audioform-title" type="text" placeholder="Title" class="form-control input-md">
+                            </div>
+                            <div class="input-group">
+                              <span class="input-group-addon"><i class="fa fa-info"></i></span>
+                              <input id="id_audioform-artist" name="audioform-artist" type="text" placeholder="Artist" class="form-control input-md">
+                            </div>
+                            <div class="input-group">
+                              <span class="input-group-addon"><i class="fa fa-info"></i></span>
+                              <input id="id_audioform-genre" name="audioform-genre" type="text" placeholder="Genre" class="form-control input-md">
+                            </div>
+                          
+                          
+                       <!-- {% for field in audioform.visible_fields %}
+                        {{ field.errors }}
+                        {{ field.name }}  {{ field }} <br><br>      
+                        {% endfor %}  <br> </h6> -->
 
-                </div>
-            <p><input type="submit" value="Upload" /></p> 
+                        </div>
+                        <p><input type="submit" value="Upload" class="btn btn-primary btn-sm"/></p> 
+                    </form>
+                </div>  
+              </div>
+            </div>
+          </div>
+          <!-- break -->          
+        </div>
+      </div>
+    </div>
+    <!-- end:content -->
 
-        </form>
-
+    <!-- begin:footer -->
+    <div class="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <hr>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <p>Copyright &copy; 2014 All Right Reserved.</p>
+            <ul class="list-inline">
+                <li><a href="#">Terms Of Service</a></li>
+                <li><a href="#">Privacy</a></li>
+            </ul>
+          </div>
+          <div class="col-md-6 col-sm-6 col-xs-12">
+            <ul class="list-social">
+              <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+              <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+              <li><a href="#"><i class="fa fa-linkedin"></i></a></li>
+              <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
 
 
 <script type="text/javascript">
