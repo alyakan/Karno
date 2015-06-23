@@ -60,6 +60,24 @@ class File(models.Model):
         else:
             return 'File'
 
+    def privacy(self):
+        if self.public:
+            return "Public"
+        elif self.registered_users:
+            return "Registered Users"
+        elif self.group:
+            return "Group"
+        else:
+            return "Only You"
+
+    def group_users(self):
+        users = []
+        groups = GroupPermission.objects.filter(file_uploaded=self)
+        for group in groups:
+            User.objects.get(id=group.user.id).username
+            users.append(User.objects.get(id=group.user.id))
+        return users
+
 
 class AudioFile(models.Model):
     title = models.CharField(max_length=32)
@@ -144,3 +162,9 @@ class CommentNotification(models.Model):
 
     def __unicode__(self):
         return unicode(self.status)
+
+
+class ProfileImage(models.Model):
+
+    image = models.ImageField(upload_to='profile/', null=True)
+    user = models.ForeignKey(User)
