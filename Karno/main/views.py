@@ -218,7 +218,7 @@ class UserRegisteration(FormView):
         """
         Saves user and automatically logs him/her in
         """
-        form1 = form.save()
+        form.save()
         user = authenticate(
             username=form.cleaned_data['username'],
             password=form.cleaned_data['password1'])
@@ -226,7 +226,7 @@ class UserRegisteration(FormView):
         messages.add_message(
             self.request, messages.INFO,
             'welcome ' + self.request.user.username + '.')
-        return HttpResponseRedirect(reverse_lazy('home'))
+        return HttpResponseRedirect(reverse_lazy('file-list'))
 
 
 class UserChangePassword(LoginRequiredMixin, FormView):
@@ -586,13 +586,21 @@ class LikesListView(ListView):
 
 
 class ProfileView(DetailView):
+    """
+    A class that lists details of a User (Profile Image and Files Uploaded)
+    Author: Rana El-Garem
+    """
     model = User
     template_name = 'main/profile.html'
 
     def get_context_data(self, **kwargs):
+        """
+        Returns files that the current_user can view
+        Author: Rana El-Garem
+        """
         context = super(ProfileView, self).get_context_data(**kwargs)
         try:
-            context['user_profile'] = User.objects.get(id=self.request.user.id)
+            context['user_profile'] = User.objects.get(id=self.object.id)
             context['current_user'] = self.request.user
         except:
             pass
@@ -603,7 +611,6 @@ class ProfileView(DetailView):
                 context['files'] = files
 
             else:
-                print "hi"
                 object_list = []
                 for file in files:
                     if (file.privacy() == "Public" or
@@ -622,16 +629,21 @@ class ProfileView(DetailView):
         return context
 
 
-class UploadProfileImage(FormView):
+class UploadProfileImage(LoginRequiredMixin, SuccessMessageMixin, FormView):
+    """
+    A class that allows a User to Upload a ProfileImage
+    Author: Rana El-Garem
+    """
     template_name = 'main/upload-profile-image.html'
     form_class = ProfileImageForm
+    success_message = 'File was Uploaded Successfully'
 
     def get_success_url(self):
         """
-        Redirects to the library page
+        Redirects to user's profile
         """
-        user_profile = User.objects.get(id=self.request.user.id).pk
-        return reverse('profile', args=(user_profile,))
+        user = User.objects.get(id=self.request.user.id).pk
+        return reverse('profile', args=(user,))
 
     def form_valid(self, form, **kwargs):
         form.save()

@@ -42,7 +42,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="{% url 'file-list'%}"><span>Karno</span></a>
+          <a class="navbar-brand" href="{% url 'file-list'%}"> <span> Karno</span></a>
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
@@ -57,13 +57,13 @@
               </ul>
             </li>
             <li class="fsearch hidden-xs"><a class="btn-search"></a></li>
-            {% if current_user %}
+            {% if current_user.is_authenticated %}
 	            <li class="dropdown">
 	              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <strong>{{ current_user.username }}</strong> <span class="caret"></span></a>
 	              <ul class="dropdown-menu" role="menu">
 	                <li><a href="{% url 'profile' current_user.id %}"><i class="fa fa-user"></i> Profile</a></li>
 	                <li><a href="{% url 'notification-list' user.id %}"> <i class="fa fa-flag"></i> Notifications</a></li>
-	                <li><a href="/messages/"><i class="fa fa-inbox"></i> Messages</a></li>
+	                <li><a href="/messages/"><i class="fa fa-inbox"></i> Inbox</a></li>
 	                <li class="divider"></li>
 	                <li><a href="{% url 'user-manage' %}"><i class="fa fa-cogs"></i> Account Settings</a></li>
 	                <li><a href="{% url 'user-logout' %}"><i class="fa fa-power-off"></i> Sign Out</a></li>
@@ -108,6 +108,7 @@
             <div class="post-container">
               <div class="post-content">
                 <div class="profile-account">
+                {% if current_user.username == user_profile.username %}
                  {% if image %}
                     <img src="{{image.image.url}}" class="img-responsive img-thumbnail">
                     <h3> {{ user.username }}</h3>
@@ -116,6 +117,15 @@
                     <h3> {{ user.username }}</h3>
                     <a href="{% url "profile-upload"%}"> Upload Profile Picture </a>
                   {% endif %}
+                {% else %}
+					{% if image %}
+	                    <img src="{{image.image.url}}" class="img-responsive img-thumbnail">
+	                    <h3> {{ user.username }}</h3>
+                  {% else %}
+                    <img src="{% static 'img/profile.png' %}" class="img-responsive img-thumbnail">
+                    <h3> {{ user.username }}</h3>
+                  {% endif %}
+                {% endif %}
                 </div>
               </div>
             </div>
@@ -175,7 +185,7 @@
                       </div>
                       <div class="post-desc">
                       	{% if file.privacy == "Group" %}
-                        	<i class="fa fa-tags"></i> Shared With:
+                        	<i class="fa fa-bullhorn"></i> Shared With:
                       		{% for user in file.group_users %}
                       			{% if user.username == current_user.username %}
                       				<a href="{% url 'profile' user.id %}"> you</a>, 

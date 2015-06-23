@@ -18,11 +18,11 @@ from main.views import (
     LikesListView,
     ProfileView,
     UploadProfileImage
-    )
+)
 
 urlpatterns = patterns(
     '',
-    url(r'^$', TemplateView.as_view(template_name='main/index.html'),
+    url(r'^$', FileListView.as_view(),
         name='index'),
     url(r'^upload/$', UploadFile.as_view(), name='upload'),
     url(r'^file/list$', FileListView.as_view(), name='file-list'),
@@ -31,7 +31,7 @@ urlpatterns = patterns(
     url(r'^user/new/$', UserRegisteration.as_view(), name='user-new'),
     url(
         r'^user/logout/$', auth_views.logout,
-        {'next_page': '/main/'}, name='user-logout'),
+        {'next_page': '/main/file/list'}, name='user-logout'),
     url(r'^user/login/$', auth_views.login, name='user-login'),
     url(r'^user/manage/$', TemplateView.as_view(
         template_name='registration/manage-account.html'), name='user-manage'),
@@ -91,5 +91,6 @@ urlpatterns = patterns(
     url(
         r'^preview/$', preview_image, name="preview"),
     url(r'^profile/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="profile"),
-    url(r'^profile/upload/$', UploadProfileImage.as_view(), name="profile-upload"),
+    url(r'^profile/upload/$', UploadProfileImage.as_view(),
+        name="profile-upload"),
 )
