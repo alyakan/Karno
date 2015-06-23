@@ -140,13 +140,13 @@
           </div>
           <!-- break -->
           {% if user.is_authenticated %}
-            {% for file,liked in zipped_list %}
+            {% for file,liked,tags in zipped_list %}
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="post-container">
                       <div class="post-option">
                         <ul class="list-options">
                           <li><a href="{% url "file-detail" file.id %}"><i class="fa fa-plus"></i> <span>Detail</span></a></li>
-                          <li><a href="#"><i class="fa fa-comment"></i> <span>Comment</span></a></li>
+                          <li><a href="{% url "file-detail" file.id %}"><i class="fa fa-comment"></i> <span>Comment</span></a></li>
                           <li><a href="{% url "download-file" file.id %}"><i class="fa fa-cloud-download"></i> <span>Download</span></a></li>
                           {% if user.is_authenticated %}
                             {% if liked %}
@@ -181,13 +181,13 @@
                         </ul>
                       </div>
                       <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : <a href="#">Tower</a>, <a href="#">City</a>, <a href="#">Building</a>
+                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% endfor %}
                       </div>
                     </div>
                 </div>
             {% endfor %}
         {% else %}
-            {% for file in object_list %}
+            {% for file,tags in zipped_list %}
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="post-container">
                       <div class="post-option">
@@ -213,7 +213,7 @@
                         </ul>
                       </div>
                       <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : <a href="#">Tower</a>, <a href="#">City</a>, <a href="#">Building</a>
+                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% endfor %}
                       </div>
                     </div>
                 </div>

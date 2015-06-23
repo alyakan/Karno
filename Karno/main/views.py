@@ -160,36 +160,45 @@ class FileListView(View):
                 user = self.request.user
                 files = object_list
                 liked_or_not = []
+                all_tags = []
                 for f in files:
+                    all_tags.append(f.tags.all())
                     try:
                         Like.objects.get(source_file=f.id, user=user)
                         liked_or_not.append(True)
                     except:
                         liked_or_not.append(False)
-                zipped_list = zip(files, liked_or_not)
+                zipped_list = zip(files, liked_or_not, all_tags)
                 context['zipped_list'] = zipped_list
             else:
-                context['object_list'] = File.objects.all()
-
+                for f in files:
+                    all_tags.append(f.tags.all())
+                zipped_list = zip(files, all_tags)
+                context['zipped_list'] = zipped_list
             return HttpResponse(render_to_response('main/file_list.html',
                                                    context,
                                                    context_instance=RequestContext(request)))
         else:
             context = {}
+            files = File.objects.all()
+            all_tags = []
             if self.request.user.is_authenticated():
                 user = self.request.user
-                files = File.objects.all()
                 liked_or_not = []
                 for f in files:
+                    all_tags.append(f.tags.all())
                     try:
                         Like.objects.get(source_file=f.id, user=user)
                         liked_or_not.append(True)
                     except:
                         liked_or_not.append(False)
-                zipped_list = zip(files, liked_or_not)
+                zipped_list = zip(files, liked_or_not, all_tags)
                 context['zipped_list'] = zipped_list
             else:
-                context['object_list'] = File.objects.all()
+                for f in files:
+                    all_tags.append(f.tags.all())
+                zipped_list = zip(files, all_tags)
+                context['zipped_list'] = zipped_list
             return render_to_response('main/file_list.html',
                                       context,
                                       context_instance=RequestContext(request))

@@ -124,15 +124,15 @@
                       <ul class="list-options">
                         <!--<li><a href="#"><i class="fa fa-comment"></i> <span>Comment</span></a></li>-->
                         <li><a href="{% url "download-file" file.id %}"><i class="fa fa-cloud-download"></i> <span>Download</span></a></li>
-						{% if user.is_authenticated %}
-							{% if liked %}
-								<li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button"><i class="fa fa-heart"></i> <span>UnLike</span></a>
-								<a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn hidden" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a><li>
-							{% else %}
-								<li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn hidden" type="button" ><i class="fa fa-heart"></i> <span>Unlike</span></a>
-								<a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a></li>
-							{% endif %}
-						{% endif %}
+            						{% if user.is_authenticated %}
+            							{% if liked %}
+            								<li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button"><i class="fa fa-heart"></i> <span>UnLike</span></a>
+            								<a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn hidden" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a></li>
+            							{% else %}
+            								<li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn hidden" type="button" ><i class="fa fa-heart"></i> <span>Unlike</span></a>
+            								<a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a></li>
+            							{% endif %}
+            						{% endif %}
                       </ul>
                     </div>
                   </div>
@@ -160,14 +160,6 @@
               </div>
             </div>
             <!-- end:detail-option -->
-
-            <!-- begin:recent-images -->
-
-            <!-- end:recent-images -->
-
-            <!-- begin:similiar-images -->
-
-            <!-- end:similiar-images -->
 
             <!-- begin:tags -->
             <div class="row">
@@ -230,7 +222,8 @@
                         {% for tag in tags %}
                         	 {{ tag }},
                         {% endfor %} 
-                        <a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}">{{ file.likes_count }} </span>
+                        <br>
+                        <a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}"> <strong>{{ file.likes_count }}</strong> </span>
                         </div>
                       </div>
                     </div>
