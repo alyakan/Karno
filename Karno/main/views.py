@@ -144,7 +144,8 @@ class FileListView(View):
                     object_list.append(file)
                 elif ((extension == "jpeg"
                        or extension == "jpg"
-                       or extension == "png")
+                       or extension == "png"
+                       or extension == "bmp")
                         and category == "images"):
                     object_list.append(file)
                 elif ((extension == "mov"
@@ -365,10 +366,15 @@ class CommentListView(PaginateMixin, ListView):
             description=description, user=user,
             file_uploaded=file_uploaded)
         comment.save()
+        # return HttpResponseRedirect(
+        #     reverse(
+        #         'comment-list',
+        #         kwargs={"file_id": file_uploaded.id}))
+
         return HttpResponseRedirect(
             reverse(
-                'comment-list',
-                kwargs={"file_id": file_uploaded.id}))
+                'file-detail',
+                kwargs={"pk": file_uploaded.id}))
 
 
 class NotificationListView(PaginateMixin, ListView):
@@ -489,8 +495,10 @@ class FileDetailView(DetailView):
             pass
 
         context['tags'] = self.object.tags.all()
-        context['comments'] = Comment.objects.filter(
+        comments = Comment.objects.filter(
                             file_uploaded=self.object.id)
+        context['count'] = comments.count()
+        context['comments'] = comments
         return context
 
 

@@ -27,9 +27,15 @@
 
 
 	<script type="text/javascript">var switchTo5x=true;</script>
-	<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>
+	<!--<script type="text/javascript" src="http://w.sharethis.com/button/buttons.js"></script>-->
 	<script type="text/javascript">stLight.options({publisher: "19b54de1-bc03-466a-aca3-919232e87a2e", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
 	<script src="{% static "js/likes.js" %}"></script>
+
+	<style type="text/css">
+		.hidden {
+        display: none;
+    		}
+	</style>
 </head>
 <body>
 
@@ -50,33 +56,33 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="about.html">Home</a></li>
+            <li><a href="{% url "file-list" %}">Home</a></li>
             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Pages <span class="caret"></span></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="index.html">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="detail.html">Detail</a></li>
-                <li><a href="profile.html">Profile</a></li>
-                <li><a href="account_setting.html">Account Setting</a></li>
-                <li><a href="signin.html">Signin</a></li>
-                <li><a href="signup.html">Signup</a></li>
-                <li class="divider"></li>
-                <li><a href="portfolio.html">Portfolio</a></li>
-                <li><a href="portfolio-single.html">Portfolio Single</a></li>
-                <li><a href="blog.html">Blog</a></li>
-                <li><a href="blog-single.html">Blog Single</a></li>
+                <li><a href="{% url 'upload' %}"><i class="fa fa-file"></i> File</a></li>
+                <li><a href="{% url 'upload' %}"><i class="fa fa-youtube"></i> Video</a></li>
               </ul>
             </li>
             <li class="fsearch hidden-xs"><a class="btn-search"></a></li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <strong>{{ user.username }}</strong> <span class="caret"></span></a>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="account_setting.html"><i class="fa fa-cogs"></i> Account Settings</a></li>
-                <li class="divider"></li>
-                <li><a href="#"><i class="fa fa-power-off"></i> Sign Out</a></li>
-              </ul>
-            </li>
+            {% if user.is_authenticated %}
+	            <li class="dropdown">
+	              <a href="#" class="dropdown-toggle" data-toggle="dropdown"> <strong>{{ user.username }}</strong> <span class="caret"></span></a>
+	              <ul class="dropdown-menu" role="menu">
+	                <li><a href="{% url 'user-manage' %}"><i class="fa fa-user"></i> Profile</a></li>
+	                <li><a href="{% url 'notification-list' user.id %}"> <i class="fa fa-flag"></i> Notifications</a></li>
+	                <li><a href="/messages/"><i class="fa fa-inbox"></i> Messages</a></li>
+	                <li class="divider"></li>
+	                <li><a href="{% url 'user-manage' %}"><i class="fa fa-cogs"></i> Account Settings</a></li>
+	                <li><a href="{% url 'user-logout' %}"><i class="fa fa-power-off"></i> Sign Out</a></li>
+	              </ul>
+	            </li>
+            {% else %}
+		            <li><a href="{% url 'user-login' %}"><i class="fa fa-lock"></i> Signin</a></li>
+		            <li><a href="{% url 'user-new' %}"><i class="fa fa-edit"></i> Signup</a></li>
+            {% endif%}
+
+
           </ul>
         </div><!-- /.navbar-collapse -->
         <ul class="nav navbar-nav navbar-right nav-search visible-xs">
@@ -117,17 +123,16 @@
                     <div class="detail-option">
                       <ul class="list-options">
                         <!--<li><a href="#"><i class="fa fa-comment"></i> <span>Comment</span></a></li>-->
-                        <li><a href="#"><i class="fa fa-cloud-download"></i> <span>Download</span></a></li>
-                        <li><a href="#"><i class="fa fa-heart"></i> <span>Like</span></a></li>
-                        {% if user.is_authenticated %}
-						{% if liked %}
-							<li><button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn fa fa-heart" type="button">Unlike</button></li><br>
-							<li><button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn fa fa-heart" type="hidden" >Like</button><br></li>
-						{% else %}
-							<li><button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn fa fa-heart" type="hidden">Unlike</button><br></li>
-							<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn fa fa-heart" type="button">Like</button><br>
+                        <li><a href="{% url "download-file" file.id %}"><i class="fa fa-cloud-download"></i> <span>Download</span></a></li>
+						{% if user.is_authenticated %}
+							{% if liked %}
+								<li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button"><i class="fa fa-heart"></i> <span>UnLike</span></a>
+								<a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn hidden" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a><li>
+							{% else %}
+								<li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn hidden" type="button" ><i class="fa fa-heart"></i> <span>Unlike</span></a>
+								<a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a></li>
+							{% endif %}
 						{% endif %}
-					{% endif %}
                       </ul>
                     </div>
                   </div>
@@ -140,6 +145,9 @@
                   <div class="post-content">
                     <div class="detail-option">
                       <ul class="list-options">
+                        <div class="widget-title">
+	                      <h3>Share</h3>
+	                    </div>
                         <!--<li><a href="#"><i class="fa fa-comment"></i> <span>Comment</span></a></li>-->
 						<span class='st_sharethis_large' displayText='ShareThis'></span>
 						<span class='st_facebook_large' displayText='Facebook'></span>
@@ -172,6 +180,8 @@
                     <ul class="tags">
                     	{% for tag in tags%}
                       <li><a href="#">{{ tag }}</a></li>
+                      {% empty%}
+                      <p>No Tags</p>
                       {% endfor %}
                     </ul>
                   </div>
@@ -192,27 +202,35 @@
                     <div class="row">
                       <div class="col-md-12">
                         <div class="detail-meta">
-                          <span><em>in</em> <a href="#">Photos</a></span>
+                          <span><em>in</em> <a href="#">{{file.type}}s</a></span>
                           <span><em>by</em> <a href="#">{{ user.username }}</a></span>
-                          <span><em>December 04, 2014</em></span>
-                          <span><a href="#">3 comments</a></span>
+                          <span><em>{{ file.date }}</em></span>
+                          <span><a href="#">{{ count }} comments</a></span>
                         </div>
                         <div class="detail-heading-title">
                           <h2></h2>
                         </div>
-                        {% if file.type == 'image' %}
-                         	<img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ file.file_uploaded.name }}">
+                        {% if file.type == 'Image' %}
+                         	<img src="{{  file.file_uploaded.url}}" width="500" height="r" alt="{{ file.file_uploaded.name }}">
+                         {% elif file.type == 'Video' %}
+                         <video controls="true" width="700">
+                            <source src="{{ file.file_uploaded.url }}" type="video/mp4"/>
+                        </video>
+                         {% elif file.type == 'Audio' %}
+                         <audio controls="true" width="700">
+                            <source src="{{ file.file_uploaded.url }}" type="video/mp4"/>
+                        </audio>
                          {% else %}
-							<iframe id="ytplayer" type="text/html" width="{{ 500 }}" height="{{ 400 }}"
+							<iframe id="ytplayer" type="text/html" width="{{ 600 }}" height="{{ 400 }}"
 				            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
 				         {% endif %}
                         <div class="detail-meta">
 
-
                           <span><em>Tags : </em>
                         {% for tag in tags %}
                         	 {{ tag }},
-                        {% endfor %} </span>
+                        {% endfor %} 
+                        <a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}">{{ file.likes_count }} </span>
                         </div>
                       </div>
                     </div>
@@ -222,14 +240,13 @@
             </div>
             <!-- end:article-content -->
 
-
             <!-- begin:comments -->
             <div class="row">
               <div class="col-md-12">
                 <div class="post-container">
                   <div class="post-content">
                     <div class="heading-title">
-                      <h3>3 Comments On This Image</h3>
+                      <h3>{{ count }} Comments On This {{ file.type }}</h3>
                     </div>
 
                     <!-- begin:comment-list -->
@@ -252,7 +269,6 @@
                         <!-- break -->
                       </ul>
          			{% empty %}
-		    		<li>No Comments Currently Available.</li>
 							{% endfor %}
                     </div>
                     <!-- end:comment-list -->
@@ -297,11 +313,7 @@
         </div>
         <div class="row">
           <div class="col-md-6 col-sm-6 col-xs-12">
-            <p>Copyright &copy; 2014 All Right Reserved.</p>
-            <ul class="list-inline">
-                <li><a href="#">Terms Of Service</a></li>
-                <li><a href="#">Privacy</a></li>
-            </ul>
+            <p>Copyright &copy; 2015 All Right Reserved.</p>
           </div>
           <div class="col-md-6 col-sm-6 col-xs-12">
             <ul class="list-social">
@@ -315,27 +327,3 @@
       </div>
     </div>
   </body>
-
-
-
-<body>
-	<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
-	<a href="{% url "likes-list" file.id %}"><b id="like_count{{file.id}}" class="popover">{{ file.likes_count }}</b> Users like this file</a>
-	{% if user.is_authenticated %}
-		{% if liked %}
-			<h3 id="like-success{{file.id}}" class="success-message">You liked this file</h3>
-			<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button">Unlike</button><br>
-			<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button" hidden>Like</button><br>
-		{% else %}
-			<h3 id="like-success{{file.id}}" class="success-message" hidden>You liked this file</h3>
-			<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button" hidden>Unlike</button><br>
-			<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button><br>
-		{% endif %}
-	{% endif %}
-
-	<span class='st_sharethis_large' displayText='ShareThis'></span>
-	<span class='st_facebook_large' displayText='Facebook'></span>
-	<span class='st_twitter_large' displayText='Tweet'></span>
-	<span class='st_email_large' displayText='Email'></span>
-</body>
-</html>

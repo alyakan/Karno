@@ -33,6 +33,7 @@ class File(models.Model):
     tags = models.ManyToManyField(Tag)
     likes_count = models.IntegerField(default=0)
     tempId = models.IntegerField(default=0)
+    date = models.DateTimeField(default=datetime.now, blank=True)
 
     def extension(self):
         """
@@ -44,10 +45,20 @@ class File(models.Model):
 
     def type(self):
         if (self.extension() == "png" or
-                self.extension() == "jpeg" or self.extension() == "jpg"):
-            return 'image'
+                self.extension() == "jpeg" or self.extension() == "jpg"
+                or self.extension() == "bmp"):
+            return 'Image'
+        elif (self.extension() == "mp4" or
+                self.extension() == "mov"):
+            return 'Video'
+        elif (self.extension() == "mp3"
+              or self.extension() == "ogg"
+              or self.extension() == "wav"):
+            return 'Audio'
+        elif (self.extension() == "pdf"):
+            return 'Document'
         else:
-            return 'video'
+            return 'File'
 
 
 class AudioFile(models.Model):

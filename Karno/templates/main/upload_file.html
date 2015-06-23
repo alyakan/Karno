@@ -112,7 +112,7 @@
             $('input[type="file"]').change(function(){
                 var filename = $('input[type=file]').val().replace(/C:\\fakepath\\/i, '')
                 var extension = $('input[type=file]').val().split('.').pop();
-                if(extension ==='png' || extension ==='jpg'  || extension ==='jpeg') {
+                if(extension ==='png' || extension ==='jpg'  || extension ==='jpeg' || extension ==='bmp') {
                         upload();       
                     }
                 else {
