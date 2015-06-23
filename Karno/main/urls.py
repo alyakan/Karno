@@ -74,7 +74,7 @@ urlpatterns = patterns(
     url(r'^file_download/(?P<pk>\d+)/$',
         download_handler, name='download-file'),
     url(
-        r'^file/list/(?P<pk>[0-9]+)/$',
+        r'^file/detail/(?P<pk>[0-9]+)/$',
         FileDetailView.as_view(), name="file-detail"),
     url(
         r'^like/file/$',
