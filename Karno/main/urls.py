@@ -4,21 +4,27 @@ from django.contrib.auth import views as auth_views
 from main.views import UserRegisteration, UserChangePassword
 from django.contrib.auth.forms import PasswordResetForm
 from main.views import (
-    UploadFile,
-    FileListView,
-    AudioUpdate,
-    FileDetailView,
-    preview_image,
-    CommentListView,
-    NotificationListView,
-    CommentDelete,
-    YoutubeUrlFormView,
-    download_handler,
-    LikeFile, UnlikeFile,
-    LikesListView,
-    ProfileView,
-    UploadProfileImage
-)
+#     UploadFile,
+#     FileListView,
+#     AudioUpdate,
+#     FileDetailView,
+#     preview_image,
+#     CommentListView,
+#     NotificationListView,
+#     CommentDelete,
+#     YoutubeUrlFormView,
+#     download_handler,
+#     LikeFile, UnlikeFile,
+#     LikesListView,
+#     ProfileView,
+#     UploadProfileImage
+# )
+    CommentListView, NotificationListView, CommentDelete,
+    FileDelete, UploadFile, FileListView, AudioUpdate,
+    FileDetailView, preview_image, YoutubeUrlFormView,
+    download_handler, LikeFile, UnlikeFile, LikesListView,
+    ProfileView, UploadProfileImage)
+
 
 urlpatterns = patterns(
     '',
@@ -55,17 +61,20 @@ urlpatterns = patterns(
         auth_views.password_reset_confirm,
         {'template_name': 'registration/confirm_reset.html'},
         name='password_reset_confirm'),
+
     url(r'^$', TemplateView.as_view(template_name='main/index.html'),
         name='index'),
+
     url(r'^upload/$', UploadFile.as_view(), name='upload'),
     url(r'^file/list$', FileListView.as_view(), name='file-list'),
+
     url(
         r'^reset/done/$', auth_views.login,
         name='password_reset_complete'),
     url(r'^file/comment-list/(?P<file_id>\d+)$',
         CommentListView.as_view(), name='comment-list'),
 
-    url(r'^file/comment/delete/(?P<comment_id>\d+)$',
+    url(r'^file/comment/delete/(?P<pk>[-\w]+)$',
         CommentDelete.as_view(), name='delete-comment'),
 
     url(
@@ -79,6 +88,10 @@ urlpatterns = patterns(
     url(
         r'^file/detail/(?P<pk>[0-9]+)/$',
         FileDetailView.as_view(), name="file-detail"),
+
+    url(r'^file/delete/(?P<pk>[-\w]+)$',
+        FileDelete.as_view(), name='delete-file'),
+
     url(
         r'^like/file/$',
         LikeFile.as_view(), name="like-file"),
@@ -91,6 +104,8 @@ urlpatterns = patterns(
     url(
         r'^preview/$', preview_image, name="preview"),
     url(r'^profile/(?P<pk>[0-9]+)/$', ProfileView.as_view(), name="profile"),
+
     url(r'^profile/upload/$', UploadProfileImage.as_view(),
         name="profile-upload"),
+
 )
