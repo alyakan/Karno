@@ -172,7 +172,7 @@
                     </div>
                     <ul class="tags">
                     	{% for tag in tags%}
-                      <li><a href="#">{{ tag }}</a></li>
+                      <li><a href="{% url 'tag-detail' tag.pk%}">{{ tag }}</a></li>
                       {% empty%}
                       <p>No Tags</p>
                       {% endfor %}
@@ -225,7 +225,7 @@
 
                           <span><em>Tags : </em>
                         {% for tag in tags %}
-                        	 {{ tag }},
+                        	 <a href="{% url 'tag-detail' tag.pk %}">{{ tag }},</a>
                         {% empty %}
                         No Tags
                         {% endfor %} 
@@ -316,7 +316,14 @@
       </div>
     </div>
     <!-- end:content -->
-
+    {% if messages %}
+          <ul class="messages">
+              {% for message in messages %}
+              {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+              <script type="">alert("{{message}}")</script>
+              {% endfor %}
+          </ul>
+          {% endif %}
     <!-- begin:footer -->
     <div class="footer">
       <div class="container">

@@ -57,6 +57,7 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav navbar-nav navbar-right">
+            <li><a href="{% url "file-list" %}">Home</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown">Share <span class="caret"></span></a>
               <ul class="dropdown-menu" role="menu">
@@ -114,77 +115,20 @@
           <div class="col-md-3 col-sm-6 col-xs-12">
             <div class="post-container">
               <div class="post-desc">
-                <h2>Filter by &rarr;</h2>
-                <!-- <a href="#" class="btn btn-default btn-sm">Learn More &rarr;</a> -->
-                <button type="button" name="audiodisplay" id="audi" class="btn btn-default btn-sm"> Audio </button>
-
-                <button type="button" name="imagedisplay" id="img" class="btn btn-default btn-sm"> Image </button> 
-
-                <button type="button" name="videodisplay" id="vid" class="btn btn-default btn-sm"> Video </button>
-
-                <button type="button" name="documentdisplay" id="doc" class="btn btn-default btn-sm"> Doc </button>
+                <h2>All Tags</h2>
 
               </div>
               <div class="sidebar-menu">
                 <ul class="nav nav-pills nav-stacked">
-                  <li><a href="{% url "tag-list" %}"><i class="fa fa-tags"></i> Tags</a></li>
-                  <li><a href="#"><i class="fa fa-bookmark"></i> Most Viewed</a></li>
-                  <li><a href="#"><i class="fa fa-arrow-circle-o-down"></i> Most Download</a></li>
-                  <li><a href="#"><i class="fa fa-heart-o"></i> Recomended</a></li>
+                {% for tag in tags %}
+                  <li><a href="{% url "tag-detail" tag.pk %}"><i class="fa fa-tags"></i> {{ tag }}</a></li>
+                {% endfor %}
                 </ul>
               </div>
             </div>
           </div>
           <!-- break -->
-          {% if user.is_authenticated %}
-            {% for file,liked,tags in zipped_list %}
-                <div class="col-md-3 col-sm-6 col-xs-12">
-                    <div class="post-container">
-                      <div class="post-option">
-                        <ul class="list-options">
-                          <li><a href="{% url "file-detail" file.id %}"><i class="fa fa-plus"></i> <span>Detail</span></a></li>
-                          <li><a href="{% url "file-detail" file.id %}"><i class="fa fa-comment"></i> <span>Comment</span></a></li>
-                          <li><a href="{% url "download-file" file.id %}"><i class="fa fa-cloud-download"></i> <span>Download</span></a></li>
-                          {% if user.is_authenticated %}
-                            {% if liked %}
-                                <li><a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn hidden" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a>
-                                <a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button"><i class="fa fa-heart"></i> <span>UnLike</span></a></li>
-                            {% else %}
-                                <li><a id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn hidden" type="button" ><i class="fa fa-heart"></i> <span>Unlike</span></a>
-                                <a id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button"><i class="fa fa-heart-o"></i> <span>Like</span></a></li>
-                            {% endif %}
-                          {% endif %}
-                          
-                        </ul>
-                      </div>
-                      <div class="post-image">
-                          {% if file.type = "Image" %}
-                            <img src="{{ file.file_uploaded.url }}" class="img-responsive" alt="fransisca gallery"></a>
-                          {% elif file.type = "Video" %}
-                            <iframe id="ytplayer" type="text/html" width="{{ 230 }}" height="{{ 300 }}"
-                            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
-                          {% elif file.type = "Audio" %}
-                            <audio controls="true" width="230" height="300">
-                                <source src="{{ file.file_uploaded.url }}" type="audio/mp3"/>
-                            </audio>
-                          {% else %}
-                            <iframe id="ytplayer" type="text/html" width="{{ 230 }}" height="{{ 300 }}"
-                            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
-                          {% endif %}
-                      </div>
-                      <div class="post-meta">
-                        <ul class="list-meta list-inline">
-                          <li><a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}"> <strong>{{ file.likes_count }}</strong></span></li>
-                        </ul>
-                      </div>
-                      <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% empty%} NO TAGS {% endfor %}
-                      </div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            {% for file,tags in zipped_list %}
+            {% for file  in files %}
                 <div class="col-md-3 col-sm-6 col-xs-12">
                     <div class="post-container">
                       <div class="post-option">
@@ -209,25 +153,14 @@
                           <li><a href="{% url "likes-list" file.id %}"><i class="fa fa-heart"></a></i><span id="like_count{{file.id}}"> <strong>{{ file.likes_count }}</strong></span></li>
                         </ul>
                       </div>
-                      <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% endfor %}
-                      </div>
+
                     </div>
                 </div>
             {% endfor %}
-        {% endif %}
 
           <!-- begin:pagination -->
           <div class="col-md-12">
-            <ul class="pagination">
-              <li><a href="#">&laquo;</a></li>
-              <li><a href="#">1</a></li>
-              <li><a href="#">2</a></li>
-              <li><a href="#">3</a></li>
-              <li><a href="#">4</a></li>
-              <li><a href="#">5</a></li>
-              <li><a href="#">&raquo;</a></li>
-            </ul>
+
           </div>
           <!-- end:pagination -->
         </div>

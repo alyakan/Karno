@@ -199,7 +199,7 @@
 				            {% endfor%}
 
                       {% else %} 
-                      <i class="fa fa-tags"></i> Shared With: {{file.privacy}}
+                      <i class="fa fa-bullhorn"></i> Shared With: {{file.privacy}}
                       {% endif %}
                       </div>
                     </div>
@@ -218,7 +218,14 @@
       </div>
     </div>
     <!-- end:content -->
-
+    {% if messages %}
+          <ul class="messages">
+              {% for message in messages %}
+              {% if message.tags %} class="{{ message.tags }}"{% endif %}>
+              <script type="">alert("{{message}}")</script>
+              {% endfor %}
+          </ul>
+          {% endif %}
     <!-- begin:footer -->
     <div class="footer">
       <div class="container">
