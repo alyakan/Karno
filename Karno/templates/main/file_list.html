@@ -164,6 +164,8 @@
                             <iframe id="ytplayer" type="text/html" width="{{ 230 }}" height="{{ 300 }}"
                             src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
                           {% elif file.type = "Audio" %}
+                            <br><br><br>
+
                             <audio controls="true" width="230" height="300">
                                 <source src="{{ file.file_uploaded.url }}" type="audio/mp3"/>
                             </audio>
@@ -178,7 +180,7 @@
                         </ul>
                       </div>
                       <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% empty%} NO TAGS {% endfor %}
+                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="{% url "tag-detail" tag.pk %}">{{ tag }}, </a> {% empty%} NO TAGS {% endfor %}
                       </div>
                     </div>
                 </div>
@@ -210,7 +212,7 @@
                         </ul>
                       </div>
                       <div class="post-desc">
-                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="#">{{ tag }}, </a> {% endfor %}
+                        <i class="fa fa-tags"></i> Tags : {% for tag in tags %} <a href="{% url "tag-detail" tag.pk %}">{{ tag }}, </a> {% endfor %}
                       </div>
                     </div>
                 </div>

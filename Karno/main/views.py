@@ -749,7 +749,9 @@ class UploadProfileImage(LoginRequiredMixin, SuccessMessageMixin, FormView):
         return reverse('profile', args=(user,))
 
     def form_valid(self, form, **kwargs):
-        form.save()
+        image = form.save()
+        if image.tempId != 0:
+            TempFile.objects.get(id=image.tempId).delete()
         return super(UploadProfileImage, self).form_valid(form)
 
 
@@ -781,10 +783,18 @@ class ProfileImageDelete(LoginRequiredMixin, DeleteView):
 
 
 class TagListView(ListView):
+    """
+    A class that lists all instances of Tags
+    Author: Rana El-Garem
+    """
     model = Tag
 
 
 class TagDetailView(DetailView):
+    """
+    A class that lists files belonging to an instance of a Tag
+    Author: Rana El-Garem
+    """
     model = Tag
 
     def get_context_data(self, **kwargs):
