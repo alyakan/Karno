@@ -22,7 +22,6 @@ from django.utils.translation import ugettext, ugettext_lazy as _
 from . import OPTION_MESSAGES
 from .query import PostmanQuery
 from .utils import email_visitor, notify_user
-from main.models import File
 
 # moderation constants
 STATUS_PENDING = 'p'
@@ -583,3 +582,19 @@ class PendingMessage(Message):
     def set_rejected(self):
         """Set the message as rejected."""
         self.moderation_status = STATUS_REJECTED
+
+
+class File(models.Model):
+
+    """
+    A Single File Entry
+    """
+    file_uploaded = models.FileField(upload_to='%Y/%m/%d')
+
+    def extension(self):
+        """
+        Returns extension of file_uploaded
+        Author: Rana El-Garem
+        """
+        name, extension = self.file_uploaded.name.split(".")
+        return extension

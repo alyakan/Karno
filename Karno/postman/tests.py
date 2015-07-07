@@ -1827,3 +1827,9 @@ class ApiTest(BaseTest):
         self.check_now(m.moderation_date)
         self.check_now(m.recipient_deleted_at)
         self.assertEqual(len(mail.outbox), 0)  # sender is not notified in the case of auto moderation
+
+
+class AttachmentTestCase(TestCase):
+    """
+
+    """
