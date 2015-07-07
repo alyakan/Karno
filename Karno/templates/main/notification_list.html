@@ -121,12 +121,22 @@
               </div>
               <div class="sidebar-menu">
                 <ul class="nav nav-pills nav-stacked">
-                {% if unread %}
+                {% if unread or share_notifications_unread %}
+
                     {% for notification in unread %}
 
                         <li><a href= "{% url 'file-detail' notification.file_shared.id %}"><i class="fa fa-flag"></i><strong>{{ notification.comment.user }}:</strong> commented on your photo</a></li>
 
                     {% endfor %}
+
+                    {% for notification in share_notifications_unread %}
+
+               <li><a href= "{% url 'file-detail' notification.file_shared.id %}"><i class="fa fa-flag"></i> <strong>{{ notification.file_shared.user.username }} {{ notification.message }}</strong></a></li>
+
+                    <br></br>
+
+                    {% endfor %}
+
                 {% else %}
                     <li><a href=""><strong>No New Notifications</strong></a></li>
                 {% endif %}
@@ -149,12 +159,18 @@
                     <div class="sidebar-menu">
                     <ul class="nav nav-pills nav-stacked">
                     {% block content %}
-                    {% if read %}
+                    {% if read or share_notifications_read %}
                         {% for notification in read %}
 
                             <li><a href= "{% url 'file-detail' notification.file_shared.id %}"><i class="fa fa-flag"></i> <strong>{{ notification.comment.user }}:</strong> commented on your photo</a></li>
 
                         {% endfor %} 
+                          {% for notification in share_notifications_read %}
+                            <li><a href= "{% url 'file-detail' notification.file_shared.id %}"><i class="fa fa-flag"></i> <strong>{{ notification.file_shared.user.username }} {{ notification.message }}</strong></a></li>
+
+                          <br></br>
+
+                          {% endfor %}
                     {% else %}
                         <li><a href=""><i class="fa fa-flag"></i> <strong>No Notifications</strong></a></li>
                     {% endif %}  

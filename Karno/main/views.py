@@ -72,7 +72,7 @@ class UploadFile(LoginRequiredMixin, SuccessMessageMixin, FormView):
 
     """
     A class responsible for uploading a file
-    and creating an instance of Model:main.File
+    and creating an instance of Model:main.models.File
     Author: Rana El-Garem
     """
     form_class = FileUploadForm
@@ -147,28 +147,29 @@ class FileListView(View):
 
     """
     A class responsible for listing files with respect to their category
-    Author: Kareem Tarek .
-
+    Author: Kareem Tarek and Aly Yakan
     """
 
     def get(self, request):
-        if self.request.user.is_authenticated():
-            file_list = File.objects.all()
-            object_list = []
-            for file in file_list:
-                if (file.privacy() == "Public" or
-                        file.privacy() == "Registered Users" or
-                        self.request.user in file.group_users()
-                        or file.user == self.request.user):
-                    object_list.append(file)
-        else:
-            object_list = File.objects.filter(public=1)
-
         if request.is_ajax():
             context = {}
             object_list = []
             category = request.GET['category']
-            files = object_list
+            group_permissions = GroupPermission.objects.all()
+
+            # get all group permissions, if signed in user in it
+            # then get the file of him or her and append it in
+            # object list
+
+            if self.request.user.is_authenticated():
+                files = File.objects.filter(
+                    Q(public=True) | Q(registered_users=True))
+                for gp in group_permissions:
+                    if self.request.user == gp.user:
+                        files.append(gp.file_uploaded)
+            else:
+                files = File.objects.filter(public=True)
+
             for file in files:
                 extension = file.file_uploaded.url.split(".")[-1]
                 if ((extension == "mp3"
@@ -179,23 +180,21 @@ class FileListView(View):
                 elif ((extension == "jpeg"
                        or extension == "jpg"
                        or extension == "png"
-                       or extension == "bmp"
                        or extension == "JPG")
                         and category == "images"):
                     object_list.append(file)
                 elif ((extension == "mov"
-                        or extension == "mp4"
                         and category == "videos")):
                     object_list.append(file)
                 elif ((extension == "pdf"
                         and category == "documents")):
                     object_list.append(file)
             context['object_list'] = object_list
+            all_tags = []
+            files = object_list
             if self.request.user.is_authenticated():
                 user = self.request.user
-                files = object_list
                 liked_or_not = []
-                all_tags = []
                 for f in files:
                     all_tags.append(f.tags.all())
                     try:
@@ -203,22 +202,35 @@ class FileListView(View):
                         liked_or_not.append(True)
                     except:
                         liked_or_not.append(False)
-                zipped_list = zip(files, liked_or_not, all_tags)
+                zipped_list = zip(files, liked_or_not)
                 context['zipped_list'] = zipped_list
             else:
+                files = File.objects.filter(public=True)
                 for f in files:
                     all_tags.append(f.tags.all())
                 zipped_list = zip(files, all_tags)
                 context['zipped_list'] = zipped_list
-            return HttpResponse(render_to_response('main/file_list.html',
-                                                   context,
-                                                   context_instance=RequestContext(request)))
+            return HttpResponse(
+                render_to_response('main/file_list.html', context,
+                                   context_instance=RequestContext(request)))
         else:
-            context = {}
-            files = object_list
             all_tags = []
+            context = {}
             if self.request.user.is_authenticated():
                 user = self.request.user
+                group_permissions = GroupPermission.objects.all()
+                files = []
+
+                temp_files = File.objects.filter(
+                    Q(public=True) | Q(registered_users=True))
+
+                for gp in group_permissions:
+                    if self.request.user == gp.user:
+                        files.append(gp.file_uploaded)
+
+                for f in temp_files:
+                    files.append(f)
+
                 liked_or_not = []
                 for f in files:
                     all_tags.append(f.tags.all())
@@ -230,6 +242,7 @@ class FileListView(View):
                 zipped_list = zip(files, liked_or_not, all_tags)
                 context['zipped_list'] = zipped_list
             else:
+                files = File.objects.filter(public=True)
                 for f in files:
                     all_tags.append(f.tags.all())
                 zipped_list = zip(files, all_tags)
@@ -237,22 +250,6 @@ class FileListView(View):
             return render_to_response('main/file_list.html',
                                       context,
                                       context_instance=RequestContext(request))
-
-    def get_queryset(self):
-        """
-        Gets a queryset of files only that I can access/view
-        :author Nourhan Fawzy:
-        :param self:
-        :return File list for certain privacy condition:
-        """
-        if self.request.user.is_authenticated():
-            return File.objects.filter(
-                Q(public=True) | Q(registered_users=True))
-            # add extra check to see if signed in user is
-            # within a group of a file shared or not
-            # displaying to group users is not done yet
-        else:
-            return File.objects.filter(public=True)
 
 
 class UserRegisteration(FormView):
@@ -275,7 +272,7 @@ class UserRegisteration(FormView):
         login(self.request, user)
         messages.add_message(
             self.request, messages.INFO,
-            'welcome ' + self.request.user.username + '.')
+            'welcome %s.' % self.request.user.username)
         return HttpResponseRedirect(reverse_lazy('file-list'))
 
 
@@ -452,7 +449,7 @@ class NotificationListView(PaginateMixin, ListView):
     :return:
     """
 
-    model = CommentNotification
+    model = Notification
 
     def get_context_data(self, **kwargs):
         """
@@ -472,19 +469,16 @@ class NotificationListView(PaginateMixin, ListView):
             status=0, user_notified=self.request.user.id)
         read = CommentNotification.objects.filter(
             status=1, user_notified=self.request.user.id)
+        # using list() to force evaluate queries because they are lazy
+        context['share_notifications_unread'] = list(
+            share_notifications_unread)
+        context['share_notifications_read'] = list(share_notifications_read)
+        context['read'] = list(read)
+        context['unread'] = list(unread)
 
-        for notification in unread:
-            notification.status = 1
-            notification.save()
-
-        for n in share_notifications_unread:
-            n.status = 1
-            n.save()
-
-        context['share_notifications_unread'] = share_notifications_unread
-        context['share_notifications_read'] = share_notifications_read
-        context['read'] = read
-        context['unread'] = unread
+        unread.update(status=1)
+        share_notifications_unread.update(status=1)
+        print list(share_notifications_read)
 
         return context
 
@@ -571,7 +565,7 @@ class FileDetailView(DetailView):
         """
         context = super(FileDetailView, self).get_context_data(**kwargs)
         context['comments'] = Comment.objects.filter(
-            file_uploaded=File.objects.get(id=self.kwargs['pk']))
+            file_uploaded=File.objects.get(id=self.kwargs['pk'])).order_by('-date')
         try:
             user = self.request.user
             like = Like.objects.get(user=user, source_file=self.object)
@@ -783,6 +777,7 @@ class ProfileImageDelete(LoginRequiredMixin, DeleteView):
 
 
 class TagListView(ListView):
+
     """
     A class that lists all instances of Tags
     Author: Rana El-Garem
@@ -791,6 +786,7 @@ class TagListView(ListView):
 
 
 class TagDetailView(DetailView):
+
     """
     A class that lists files belonging to an instance of a Tag
     Author: Rana El-Garem

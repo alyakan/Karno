@@ -43,7 +43,7 @@ INSTALLED_APPS = (
     'my_youtube',
     'django_select2',
     'filetransfers',
-    'django_crontab'
+    'django_crontab',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -206,5 +206,5 @@ class Notification(models.Model):
     """
     message = models.CharField(max_length=128)
     file_shared = models.ForeignKey(File)
-    user_notified = models.ForeignKey(User)
+    user_notified = models.ForeignKey(User, related_name="notification")
     status = models.BooleanField(default=0)

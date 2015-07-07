@@ -382,37 +382,33 @@
 
 
 	<h1>Files</h1><br>
-	<a href="{% url "index" %}">Home</a><br>
+	<a href="{% url 'index' %}">Home</a><br>
+	<a href="{% url 'upload'%}"> Upload</a><br>
 		{% if user.is_authenticated %}
+		Signed in as <a href="{% url 'user-manage' %}">{{ user.username }}</a>
+		<br><br><hr>
 			{% for file,liked in zipped_list %}
 					<iframe id="ytplayer" type="text/html" width="{{ 500 }}" height="{{ 400 }}"
 		            src="{{file.file_uploaded.url}}" frameborder="0"/></iframe>
-		            <br><br>
+		            <br>
 		            <a href="{% url 'file-detail' file.id %}">View this file</a>
 					<a href="{% url 'file-detail' file.id %}">Share this file</a>
 					<a href="{% url 'download-file' file.id %}">Download</a><br><br>
 					<a href="{% url 'likes-list' file.id %}"><b id="like_count{{file.id}}" class="popover">
-				Uploaded By: {{ file.user.username }} <br><br>
-
-				{% if file.public %}
-				Privacy: Public
-				{% endif %}
-
-				{% if file.registered_users %}
-				Privacy: Registered Users
-				{% endif %}
-
-				{% if file.group %}
-				Privacy: Group
-				{% endif %}
-
-				<br><br>
 
 					{{ file.likes_count }}</b> Users like this file</a>	
 					{% if liked %}
+
 						<h3 id="like-success{{file.id}}" class="success-message">You liked this file</h3>
 						<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button">Unlike</button><br>
 						<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button" hidden>Like</button><br>
+						
+        				{% if file.user == user %}
+		        		<form action="{% url 'delete-file' file.id %}" method="get"> {% csrf_token %}
+		        		<input type="submit" value="Delete File"></input>
+		        		</form>
+		        		{% endif %}
+
 						Uploaded By: {{ file.user.username }} <br><br>
 
 						{% if file.public %}
@@ -426,10 +422,18 @@
 						{% if file.group %}
 						Privacy: Group
 						{% endif %}
+
 					{% else %}
 						<h3 id="like-success{{file.id}}" class="success-message" hidden>You liked this file</h3>
 						<button id="unlike{{file.id}}" data-fileid="{{file.id}}" class="unlike-btn" type="button" hidden>Unlike</button><br>
-        				<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button><br>
+        				<button id="like{{file.id}}" data-fileid="{{file.id}}" class="like-btn" type="button">Like</button>
+
+        				{% if file.user == user %}
+		        		<form action="{% url 'delete-file' file.id %}" method="get"> {% csrf_token %}
+		        		<input type="submit" value="Delete File"></input>
+		        		</form>
+		        		{% endif %}
+
 						Uploaded By: {{ file.user.username }} <br><br>
 
 						{% if file.public %}
@@ -445,19 +449,19 @@
 						{% endif %}
         			{% endif %}
 
-        		{% if file.user == user %}
-        		<form action="{% url 'delete-file' file.id %}" method="get"> {% csrf_token %}
-        		<input type="submit" value="Delete File"></input>
-        		</form>
-        		{% endif %}
+
         		<hr>
 
         	{% endfor %}
         {% else %}
+        You're currently not logged in.
+        <a href="{% url 'user-login' %}">Click here</a> to sign in.
+        <br><br>
+        <hr>
 	        {% for file in object_list %}
 			    <a href="{{  file.file_uploaded.url}}">{{  file.file_uploaded.url}}</a><br><br>
 				<a href="{{ file.file_uploaded.url }}"><img src="{{  file.file_uploaded.url}}" width="400" height="400" alt="{{ image.image.name }}"></a><br>
-				<a href="{% url 'file-detail' file.id %}">Share this file</a>
+		        <a href="{% url 'file-detail' file.id %}">View this file</a>
 				<a href="{% url 'download-file' file.id %}">Download</a><br><br>
 				<b id="like_count">{{ file.likes_count }}</b>
 				{% if file.likes_count = 1 %} 
@@ -466,6 +470,20 @@
 					Users like
 				{% endif %}
 				this file
+				<br>
+				Uploaded By: {{ file.user.username }} <br><br>
+
+				{% if file.public %}
+				Privacy: Public
+				{% endif %}
+
+				{% if file.registered_users %}
+				Privacy: Registered Users
+				{% endif %}
+
+				{% if file.group %}
+				Privacy: Group
+				{% endif %}
 
         <hr>
 			{% endfor %}
@@ -473,7 +491,7 @@
 		{% endif %}
 
 	<br>
-	<a href="{% url 'upload'%}"> Upload</a>
+
 	{% if messages %}
 		<ul class="messages">
 		    {% for message in messages %}
@@ -482,8 +500,6 @@
 		    {% endfor %}
 		</ul>
 	{% endif %}
-	<br>
-	<a href="{% url 'home' %}"> return to home page </a>
 </body>
 </html>
 
