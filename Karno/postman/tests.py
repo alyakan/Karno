@@ -1833,3 +1833,6 @@ class AttachmentTestCase(TestCase):
     """
 
     """
+    def setUp(self):
+        self.user1 = get_user_model().objects.create_user('foo', 'foo@domain.com', 'pass')
+        self.user2 = get_user_model().objects.create_user('bar', 'bar@domain.com', 'pass')

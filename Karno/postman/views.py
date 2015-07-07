@@ -33,8 +33,9 @@ from django.views.generic import FormView, TemplateView, View
 from . import OPTION_MESSAGES
 from .fields import autocompleter_app
 from .forms import WriteForm, AnonymousWriteForm, QuickReplyForm, FullReplyForm
-from .models import Message, get_order_by
+from .models import Message, get_order_by, File
 from .utils import format_subject, format_body
+from filetransfers.api import serve_file
 
 login_required_m = method_decorator(login_required)
 csrf_protect_m = method_decorator(csrf_protect)
@@ -48,6 +49,12 @@ def _get_referer(request):
     if 'HTTP_REFERER' in request.META:
         sr = urlsplit(request.META['HTTP_REFERER'])
         return urlunsplit(('', '', sr.path, sr.query, sr.fragment))
+
+
+def download_handler(request, pk):
+    """Function that handles a download request of a file."""
+    upload = get_object_or_404(File, pk=pk)
+    return serve_file(request, upload.file_uploaded, save_as=True)
 
 
 ########
